@@ -25,4 +25,4 @@ jobs:
            
       - name: Build with Maven
         run: mvn verify
-        working-directory: todo-list/pom.xml
+        working-directory: todo-list
