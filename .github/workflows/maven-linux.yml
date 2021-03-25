@@ -1,7 +1,7 @@
 name: Java CI with Maven in Linux
 on:
-   push: null
-   pull_request: null
+   push:
+   pull_request: 
 jobs:
    build:
       runs-on: ubuntu-20.04
@@ -21,8 +21,10 @@ jobs:
             key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml', '**/*.yml') }}
             restore-keys: ${{ runner.os }}-m2-
       -  name: Build with Maven
-         run: mvn verify -Pjacoco
+         run: mvn verify -Pjacoco -DrepoToken=$COVERALLS_TOKEN coveralls:report
          working-directory: ${{ env.workdir }}
+         env: 
+            COVERALLS_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
       -  name: Generate JUnit Report
          run: mvn surefire-report:report-only site:site -DgenerateReports=false
          working-directory: ${{ env.workdir }}

@@ -1,6 +1,6 @@
 name: Java CI with Maven in Windows and Macos
 on:
-   pull_request: null
+   pull_request:
 jobs:
    build:
       runs-on: ${{ matrix.os }}
