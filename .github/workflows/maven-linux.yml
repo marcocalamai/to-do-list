@@ -10,7 +10,8 @@ jobs:
       env:
          workdir: todo-list
    
-   
+      
+      name: Build with Java on Linux
       steps:
       - uses: actions/checkout@v2
      

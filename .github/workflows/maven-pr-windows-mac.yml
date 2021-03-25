@@ -1,4 +1,4 @@
-name: Java CI with Maven in Linux
+name: Java CI with Maven in Windows and Macos
 
 on:
    pull_request:
