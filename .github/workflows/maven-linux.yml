@@ -26,7 +26,7 @@ jobs:
             key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml', '**/*.yml') }}
             restore-keys: ${{ runner.os }}-m2-
       -  name: Build with Maven
-         run: mvn verify ${{ matrix.additional-maven-args }}
+         run: mvn verify ${{env.additional-maven-args }}
          working-directory: ${{ env.workdir }}
          env: 
             COVERALLS_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
