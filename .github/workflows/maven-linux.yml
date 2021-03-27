@@ -30,7 +30,7 @@ jobs:
             restore-keys: ${{ runner.os }}-m2-
       -  name: Build with Maven
          run: >
-            ./mvnw verify ${{ env.additional-maven-args }} sonar:sonar
+            ./mvnw verify sonar:sonar ${{ env.additional-maven-args }}
          working-directory: ${{ env.workdir }}
          env:
             COVERALLS_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
