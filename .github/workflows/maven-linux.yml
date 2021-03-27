@@ -11,6 +11,7 @@ jobs:
             -Pjacoco 
             -DrepoToken=$COVERALLS_TOKEN 
             -DpullRequest=${{ github.event.pull_request.number }}
+            sonar:sonar
       name: Build with Java on Linux
       steps:
       -  uses: actions/checkout@v2
@@ -30,7 +31,7 @@ jobs:
             restore-keys: ${{ runner.os }}-m2-
       -  name: Build with Maven
          run: >
-            ./mvnw verify sonar:sonar ${{ env.additional-maven-args }}
+            ./mvnw verify ${{ env.additional-maven-args }}
          working-directory: ${{ env.workdir }}
          env:
             COVERALLS_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
