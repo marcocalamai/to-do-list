@@ -25,8 +25,8 @@
 		<sonar.coverage.exclusions>
 			**/TodoListApplication.java,
 		</sonar.coverage.exclusions>
-
 	</properties>
+	
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
