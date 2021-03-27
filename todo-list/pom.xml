@@ -16,6 +16,16 @@
 	<description>todo list</description>
 	<properties>
 		<java.version>1.8</java.version>
+		<sonar.projectKey>marcocalamai_to-do-list</sonar.projectKey>
+		<sonar.organization>marcocalamai</sonar.organization>
+		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
+		<sonar.junit.reportPaths>target/surefire-reports,target/failsafe-reports</sonar.junit.reportPaths>
+		<sonar.coverage.jacoco.xmlReportPaths>
+			${project.reporting.outputDirectory}/jacoco/jacoco.xml </sonar.coverage.jacoco.xmlReportPaths>
+		<sonar.coverage.exclusions>
+			**/TodoListApplication.java,
+		</sonar.coverage.exclusions>
+
 	</properties>
 	<dependencies>
 		<dependency>
@@ -121,6 +131,11 @@
 							<version>2.3.1</version>
 						</dependency>
 					</dependencies>
+				</plugin>
+				<plugin>
+					<groupId>org.sonarsource.scanner.maven</groupId>
+					<artifactId>sonar-maven-plugin</artifactId>
+					<version>3.8.0.2131</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
