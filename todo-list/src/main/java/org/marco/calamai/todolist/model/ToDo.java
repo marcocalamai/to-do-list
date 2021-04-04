@@ -8,7 +8,6 @@ public class ToDo {
 	private String description;
 	private boolean done;
 	private LocalDate deadline;
-
 	
 	public ToDo(User user, String title, String description, LocalDate deadline) {
 		this.user = user;
@@ -102,17 +101,4 @@ public class ToDo {
 			return false;
 		return true;
 	}
-	
-	
-
-
-	
-	
-	
-	
-	
-	
-	
-	
-
 }

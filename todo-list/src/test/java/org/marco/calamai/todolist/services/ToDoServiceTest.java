@@ -29,6 +29,4 @@ class ToDoServiceTest {
 		assertEquals("a_description", result.getDescription());
 		assertEquals(deadline, result.getDeadline());
 	}
-	
-
 }

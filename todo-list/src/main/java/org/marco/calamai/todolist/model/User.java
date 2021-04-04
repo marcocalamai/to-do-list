@@ -17,6 +17,4 @@ public class User {
 	public String getPsw() {
 		return psw;
 	}
-	
-
 }
