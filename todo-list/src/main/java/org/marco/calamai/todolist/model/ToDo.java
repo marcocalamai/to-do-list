@@ -8,6 +8,7 @@ public class ToDo {
 	private String description;
 	private boolean done;
 	private LocalDate deadline;
+
 	
 	public ToDo(User user, String title, String description, LocalDate deadline) {
 		this.user = user;
@@ -16,7 +17,6 @@ public class ToDo {
 		this.done = false;
 		this.deadline = deadline;
 	}
-
 
 	public User getUser() {
 		return user;
