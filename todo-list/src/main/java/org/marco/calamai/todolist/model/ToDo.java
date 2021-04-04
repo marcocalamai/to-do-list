@@ -1,22 +1,27 @@
 package org.marco.calamai.todolist.model;
 
 import java.time.LocalDate;
-import org.springframework.stereotype.Component;
 
-@Component
 public class ToDo {
+	private User user;
 	private String title;
 	private String description;
 	private boolean done;
-	private LocalDate date;
+	private LocalDate deadline;
 
-	public ToDo(String title, String description, boolean done, LocalDate date) {
+	
+	public ToDo(User user, String title, String description, LocalDate deadline) {
+		this.user = user;
 		this.title = title;
 		this.description = description;
-		this.done = done;
-		this.date = date;
+		this.done = false;
+		this.deadline = deadline;
 	}
 
+
+	public User getUser() {
+		return user;
+	}
 
 	public String getTitle() {
 		return title;
@@ -41,27 +46,27 @@ public class ToDo {
 	public void setDone(boolean done) {
 		this.done = done;
 	}
-
-	public LocalDate getDate() {
-		return date;
+	
+	public LocalDate getDeadline() {
+		return deadline;
 	}
 
-	public void setDate(LocalDate date) {
-		this.date = date;
+	public void setDeadline(LocalDate deadline) {
+		this.deadline = deadline;
 	}
 	
 
 	@Override
 	public String toString() {
-		return "ToDo [title=" + title + ", done=" + done + ", date=" + date + "]";
+		return "ToDo [title=" + title + ", description=" + description + ", done=" + done + ", deadline=" + deadline
+				+ "]";
 	}
-
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((date == null) ? 0 : date.hashCode());
+		result = prime * result + ((deadline == null) ? 0 : deadline.hashCode());
 		result = prime * result + ((description == null) ? 0 : description.hashCode());
 		result = prime * result + (done ? 1231 : 1237);
 		result = prime * result + ((title == null) ? 0 : title.hashCode());
@@ -78,10 +83,10 @@ public class ToDo {
 		if (getClass() != obj.getClass())
 			return false;
 		ToDo other = (ToDo) obj;
-		if (date == null) {
-			if (other.date != null)
+		if (deadline == null) {
+			if (other.deadline != null)
 				return false;
-		} else if (!date.equals(other.date))
+		} else if (!deadline.equals(other.deadline))
 			return false;
 		if (description == null) {
 			if (other.description != null)
@@ -97,6 +102,10 @@ public class ToDo {
 			return false;
 		return true;
 	}
+	
+	
+
+
 	
 	
 	
