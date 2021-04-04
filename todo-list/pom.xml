@@ -32,7 +32,7 @@
 		</sonar.tests>
 		<sonar.coverage.exclusions>
 			**/TodoListApplication.java,
-			org/marco/calamai/todolist/model/*
+			src/main/java/org/marco/calamai/todolist/model/*
 		</sonar.coverage.exclusions>
 	</properties>
 
