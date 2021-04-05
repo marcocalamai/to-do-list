@@ -3,13 +3,13 @@ package org.marco.calamai.todolist.model;
 import java.time.LocalDate;
 
 public class ToDo {
-	private User user;
+	private String user;
 	private String title;
 	private String description;
 	private boolean done;
 	private LocalDate deadline;
 	
-	public ToDo(User user, String title, String description, LocalDate deadline) {
+	public ToDo(String user, String title, String description, LocalDate deadline) {
 		this.user = user;
 		this.title = title;
 		this.description = description;
@@ -18,7 +18,7 @@ public class ToDo {
 	}
 
 
-	public User getUser() {
+	public String getUser() {
 		return user;
 	}
 
