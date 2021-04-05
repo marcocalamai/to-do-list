@@ -9,6 +9,9 @@ import org.springframework.stereotype.Service;
 public class ToDoService {
 	
 	public ToDo createAndSaveToDo(String user, String title, String description, LocalDate deadline) {
+		if (deadline.isBefore(LocalDate.now())){
+			throw new IllegalArgumentException("Past date");
+		}
 		return new ToDo(user, title, description, deadline);
 	}
 	
