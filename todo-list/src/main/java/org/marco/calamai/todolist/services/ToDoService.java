@@ -23,6 +23,7 @@ public class ToDoService {
 	}
 
 	public ToDo updateToDo(BigInteger id, ToDo toDo) {
+		toDo.setId(id);
 		return toDoMongoRepository.save(toDo);
 	}
 	

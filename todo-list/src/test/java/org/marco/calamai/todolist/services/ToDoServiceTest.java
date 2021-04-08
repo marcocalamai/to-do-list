@@ -72,6 +72,9 @@ class ToDoServiceTest {
 			when(toDoMongoRepository.save(any(ToDo.class))).thenReturn(updated);
 			ToDo result = toDoService.updateToDo(id, toUpdate);
 			assertThat(result).isSameAs(updated);
+			InOrder inOrder = inOrder(toUpdate, toDoMongoRepository);
+			inOrder.verify(toUpdate).setId(id);
+			inOrder.verify(toDoMongoRepository).save(toUpdate);
 		}
 
 	}
