@@ -76,6 +76,18 @@ class ToDoServiceTest {
 			inOrder.verify(toUpdate).setId(id);
 			inOrder.verify(toDoMongoRepository).save(toUpdate);
 		}
+		
+		@Test @DisplayName("Update error past date")
+		void testUpdateToDoWithDateBeforeTodayShouldThrow() {
+			LocalDate deadline = LocalDate.now().minusDays(1);
+			String user1 = "username_1"; 
+			ToDo toSave = new ToDo(user1, "to_save", "to_save_description", deadline);
+			BigInteger id = new BigInteger("0");
+			assertThatThrownBy(() -> toDoService.updateToDo(id, toSave))
+			.isInstanceOf(IllegalArgumentException.class)
+			.hasMessage("Past date");
+		}
+		
 
 	}
 	

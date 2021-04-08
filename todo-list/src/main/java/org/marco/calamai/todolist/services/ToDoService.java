@@ -23,6 +23,9 @@ public class ToDoService {
 	}
 
 	public ToDo updateToDo(BigInteger id, ToDo toDo) {
+		if (toDo.getDeadline().isBefore(LocalDate.now())){
+			throw new IllegalArgumentException("Past date");
+		}
 		toDo.setId(id);
 		return toDoMongoRepository.save(toDo);
 	}
