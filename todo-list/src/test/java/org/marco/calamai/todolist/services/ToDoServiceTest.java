@@ -14,6 +14,7 @@ import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.marco.calamai.todolist.exceptions.InvalidTimeException;
 import org.marco.calamai.todolist.model.ToDo;
 import org.marco.calamai.todolist.repositories.mongo.ToDoMongoRepository;
 
@@ -46,14 +47,14 @@ class ToDoServiceTest {
 			inOrder.verify(toDoMongoRepository).save(toSave);
 		}
 	
-		@Test @DisplayName("Insert error past date")
+		@Test @DisplayName("Insert error: date before today")
 		void testInsertToDoWithDateBeforeTodayShouldThrow() {
 			LocalDate deadline = LocalDate.now().minusDays(1);
 			String user1 = "username_1"; 
 			ToDo toSave = new ToDo(user1, "to_save", "to_save_description", deadline);
 			assertThatThrownBy(() -> toDoService.insertToDo(toSave))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("Past date");
+			.isInstanceOf(InvalidTimeException.class)
+			.hasMessage(ToDoService.DATE_IS_BEFORE_TODAY);
 		}	
 	}	
 	
@@ -77,7 +78,7 @@ class ToDoServiceTest {
 			inOrder.verify(toDoMongoRepository).save(toUpdate);
 		}
 		
-		@Test @DisplayName("Update error past date")
+		@Test @DisplayName("Update error: date before today")
 		void testUpdateToDoWithDateBeforeTodayShouldThrow() {
 			LocalDate deadline = LocalDate.now().minusDays(1);
 			String user1 = "username_1"; 
@@ -85,7 +86,7 @@ class ToDoServiceTest {
 			BigInteger id = new BigInteger("0");
 			assertThatThrownBy(() -> toDoService.updateToDo(id, toSave))
 			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("Past date");
+			.hasMessage(ToDoService.DATE_IS_BEFORE_TODAY);
 		}
 		
 
