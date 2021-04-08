@@ -3,6 +3,7 @@ package org.marco.calamai.todolist.services;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import java.math.BigInteger;
 import java.time.LocalDate;
 
 import org.junit.jupiter.api.DisplayName;
@@ -30,6 +31,7 @@ class ToDoServiceTest {
 	@Nested
 	@DisplayName("Tests for insert ToDo")
 	class InsertToDo{
+		
 		@Test @DisplayName("Insert happy case")
 		void testInsertToDo() {
 			LocalDate deadline = LocalDate.now();
@@ -53,6 +55,25 @@ class ToDoServiceTest {
 			.isInstanceOf(IllegalArgumentException.class)
 			.hasMessage("Past date");
 		}	
-	}		
+	}	
+	
+	@Nested
+	@DisplayName("Test for update ToDo")
+	class UpdateToDo{
+		
+		@Test @DisplayName("Update happy case")
+		void testUpdateToDo() {
+			LocalDate deadline = LocalDate.now();
+			String user1 = "username_1"; 
+			BigInteger id = new BigInteger("0");
+			ToDo toUpdate = spy(new ToDo(user1, "to_update", "to_update_description", deadline));
+			ToDo updated = new ToDo(user1, "saved", "saved_description", deadline.plusDays(1));
+			updated.setId(id);
+			when(toDoMongoRepository.save(any(ToDo.class))).thenReturn(updated);
+			ToDo result = toDoService.updateToDo(id, toUpdate);
+			assertThat(result).isSameAs(updated);
+		}
+
+	}
 	
 }

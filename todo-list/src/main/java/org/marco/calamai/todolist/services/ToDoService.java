@@ -1,5 +1,6 @@
 package org.marco.calamai.todolist.services;
 
+import java.math.BigInteger;
 import java.time.LocalDate;
 
 import org.marco.calamai.todolist.model.ToDo;
@@ -19,6 +20,11 @@ public class ToDoService {
 		}
 		toDo.setId(null);
 		return toDoMongoRepository.save(toDo);
+	}
+
+	public ToDo updateToDo(BigInteger id, ToDo toUpdate) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }
