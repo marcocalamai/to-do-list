@@ -22,9 +22,8 @@ public class ToDoService {
 		return toDoMongoRepository.save(toDo);
 	}
 
-	public ToDo updateToDo(BigInteger id, ToDo toUpdate) {
-		// TODO Auto-generated method stub
-		return null;
+	public ToDo updateToDo(BigInteger id, ToDo toDo) {
+		return toDoMongoRepository.save(toDo);
 	}
 	
 }
