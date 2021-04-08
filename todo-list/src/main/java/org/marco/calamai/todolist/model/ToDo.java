@@ -1,8 +1,10 @@
 package org.marco.calamai.todolist.model;
 
+import java.math.BigInteger;
 import java.time.LocalDate;
 
 public class ToDo {
+	private BigInteger id;
 	private String user;
 	private String title;
 	private String description;
@@ -16,7 +18,14 @@ public class ToDo {
 		this.done = false;
 		this.deadline = deadline;
 	}
+	
+	public BigInteger getId() {
+		return id;
+	}
 
+	public void setId(BigInteger id) {
+		this.id = id;
+	}
 
 	public String getUser() {
 		return user;

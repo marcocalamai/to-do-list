@@ -3,16 +3,22 @@ package org.marco.calamai.todolist.services;
 import java.time.LocalDate;
 
 import org.marco.calamai.todolist.model.ToDo;
+import org.marco.calamai.todolist.repositories.mongo.ToDoMongoRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service("toDoService")
 public class ToDoService {
 	
-	public ToDo createAndSaveToDo(String user, String title, String description, LocalDate deadline) {
-		if (deadline.isBefore(LocalDate.now())){
+	@Autowired
+	private ToDoMongoRepository toDoMongoRepository;
+	
+	public ToDo insertToDo(ToDo toDo) {
+		if (toDo.getDeadline().isBefore(LocalDate.now())){
 			throw new IllegalArgumentException("Past date");
 		}
-		return new ToDo(user, title, description, deadline);
+		toDo.setId(null);
+		return toDoMongoRepository.save(toDo);
 	}
 	
 }
