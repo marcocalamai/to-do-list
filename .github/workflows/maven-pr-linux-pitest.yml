@@ -1,4 +1,4 @@
-name: Java CI with Maven in Windows and Macos
+name: Java CI with Maven in Linux with PIT mutation tests
 on:
    pull_request:
 jobs:
