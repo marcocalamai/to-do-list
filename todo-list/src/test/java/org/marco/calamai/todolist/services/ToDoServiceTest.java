@@ -1,10 +1,14 @@
 package org.marco.calamai.todolist.services;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 import java.math.BigInteger;
 import java.time.LocalDate;
+import java.util.List;
+
+import static java.util.Arrays.asList;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -14,6 +18,7 @@ import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
 import org.marco.calamai.todolist.exceptions.InvalidTimeException;
 import org.marco.calamai.todolist.model.ToDo;
 import org.marco.calamai.todolist.repositories.mongo.ToDoMongoRepository;
@@ -88,8 +93,36 @@ class ToDoServiceTest {
 			.isInstanceOf(IllegalArgumentException.class)
 			.hasMessage(ToDoService.DATE_IS_BEFORE_TODAY);
 		}
-		
-
 	}
 	
+	@Nested
+	@DisplayName("Test for find ToDo")
+	class FindToDo{
+		
+		@Test @DisplayName("Find by user name")
+		void testFindToDoByUsername() {
+			String user1 = "a_username"; 
+			String userToFind = "usernameToFind";
+			ToDo toDo1 = new ToDo(user1, "title_1", "description_1", LocalDate.now());
+			ToDo toDo2 = new ToDo(userToFind, "title_2", "description_2", LocalDate.now());
+			when(toDoMongoRepository.findAll()).thenReturn(asList(toDo1, toDo2));
+			List<ToDo> result = toDoService.findToDoByUser(userToFind);
+			assertEquals(1, result.size());
+			assertEquals(userToFind, result.get(0).getUser());
+			verify(toDoMongoRepository, times(1)).findAll();
+		}
+		
+		@Test @DisplayName("Find by user name where there are none")
+		void testFindToDoByUsernameWhereThereAreNone() {
+			String user1 = "a_username"; 
+			String userToFind = "usernameToFind";
+			ToDo toDo1 = new ToDo(user1, "title_1", "description_1", LocalDate.now());
+			when(toDoMongoRepository.findAll()).thenReturn(asList(toDo1));
+			List<ToDo> result = toDoService.findToDoByUser(userToFind);
+			assertEquals(0, result.size());
+			verify(toDoMongoRepository, times(1)).findAll();
+		}
+	
+	}
 }
+	

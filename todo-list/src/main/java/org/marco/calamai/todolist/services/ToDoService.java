@@ -2,6 +2,8 @@ package org.marco.calamai.todolist.services;
 
 import java.math.BigInteger;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.marco.calamai.todolist.exceptions.InvalidTimeException;
 import org.marco.calamai.todolist.model.ToDo;
@@ -32,6 +34,17 @@ public class ToDoService {
 		}
 		toDo.setId(id);
 		return toDoMongoRepository.save(toDo);
+	}
+
+	public List<ToDo> findToDoByUser(String username) {
+		List<ToDo> allToDo = toDoMongoRepository.findAll();
+		List<ToDo> toDoByUser = new ArrayList<>();
+		for (ToDo toDo : allToDo) {
+			if (toDo.getUser().equals(username)) {
+				toDoByUser.add(toDo);
+				}
+			}
+		return toDoByUser;
 	}
 	
 }
