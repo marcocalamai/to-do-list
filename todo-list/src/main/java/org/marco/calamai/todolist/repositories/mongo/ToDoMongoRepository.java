@@ -1,5 +1,7 @@
 package org.marco.calamai.todolist.repositories.mongo;
+import java.math.BigInteger;
 import java.util.List;
+import java.util.Optional;
 
 import org.marco.calamai.todolist.model.ToDo;
 
@@ -12,6 +14,10 @@ public class ToDoMongoRepository {
 		}
 
 	public List<ToDo> findAll() {
+		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
+		}
+
+	public Optional<ToDo> findById(BigInteger id) {
 		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
 		}
 

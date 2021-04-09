@@ -7,6 +7,7 @@ import static org.mockito.Mockito.*;
 import java.math.BigInteger;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.Arrays.asList;
 
@@ -134,6 +135,16 @@ class ToDoServiceTest {
 			verify(toDoMongoRepository, times(1)).findAll();
 		}
 	
+		@Test @DisplayName("Find ToDo by id when it is found")
+		void testFindToDoById(){
+			ToDo toDo1 = new ToDo("username1", "title_1", "description_1", LocalDate.now());
+			BigInteger id = new BigInteger("0");
+			toDo1.setId(new BigInteger("0"));
+			when(toDoMongoRepository.findById(id)).thenReturn(Optional.of(toDo1));
+			ToDo result = toDoService.findToDoById(id);
+			assertThat(result).isSameAs(toDo1); 
+			verify(toDoMongoRepository, times(1)).findById(id);
+		}
 	}
 	
 

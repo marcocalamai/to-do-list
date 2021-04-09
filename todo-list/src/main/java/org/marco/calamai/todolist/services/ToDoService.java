@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.marco.calamai.todolist.exceptions.InvalidTimeException;
 import org.marco.calamai.todolist.model.ToDo;
@@ -49,6 +50,11 @@ public class ToDoService {
 
 	public List<ToDo> findAllToDo() {
 		return toDoMongoRepository.findAll();
+	}
+
+	public ToDo findToDoById(BigInteger id) {
+		Optional<ToDo> toDo = toDoMongoRepository.findById(id);
+		return toDo.get();
 	}
 	
 }
