@@ -46,5 +46,9 @@ public class ToDoService {
 			}
 		return toDoByUser;
 	}
+
+	public List<ToDo> findAllToDo() {
+		return toDoMongoRepository.findAll();
+	}
 	
 }

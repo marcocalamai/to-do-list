@@ -99,7 +99,18 @@ class ToDoServiceTest {
 	@DisplayName("Test for find ToDo")
 	class FindToDo{
 		
-		@Test @DisplayName("Find by user name")
+		@Test  @DisplayName("Find all ToDo")
+		void FindAllToDo(){
+			ToDo toDo1 = new ToDo("username1", "title_1","description_1", LocalDate.now());
+			ToDo toDo2 = new ToDo("username2", "title_2","description_2", LocalDate.now());
+			when(toDoMongoRepository.findAll()).thenReturn(asList(toDo1, toDo2));
+			List<ToDo> result = toDoService.findAllToDo();
+			assertEquals(2, result.size());
+			assertThat(result).containsExactly(toDo1, toDo2);
+			verify(toDoMongoRepository, times(1)).findAll();
+		}
+		
+		@Test @DisplayName("Find all ToDo by user name")
 		void testFindToDoByUsername() {
 			String user1 = "a_username"; 
 			String userToFind = "usernameToFind";
@@ -112,7 +123,7 @@ class ToDoServiceTest {
 			verify(toDoMongoRepository, times(1)).findAll();
 		}
 		
-		@Test @DisplayName("Find by user name where there are none")
+		@Test @DisplayName("Find all ToDo by user name where there are none")
 		void testFindToDoByUsernameWhereThereAreNone() {
 			String user1 = "a_username"; 
 			String userToFind = "usernameToFind";
@@ -124,5 +135,7 @@ class ToDoServiceTest {
 		}
 	
 	}
+	
+
 }
 	
