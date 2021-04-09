@@ -61,5 +61,14 @@ public class ToDoService {
 			}
 		throw new ToDoNotFoundException(TO_DO_NOT_FOUND);
 	}
+
+	public ToDo deleteToDoById(BigInteger id) {
+		Optional<ToDo> toDo = toDoMongoRepository.findById(id);
+		if (toDo.isPresent()){
+			toDoMongoRepository.deleteById(id);
+			return toDo.get();
+		}
+		throw new ToDoNotFoundException(TO_DO_NOT_FOUND);	
+	}
 	
 }

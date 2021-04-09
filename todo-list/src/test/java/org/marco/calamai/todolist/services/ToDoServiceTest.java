@@ -136,7 +136,7 @@ class ToDoServiceTest {
 			verify(toDoMongoRepository, times(1)).findAll();
 		}
 	
-		@Test @DisplayName("Find ToDo by id when it is found")
+		@Test @DisplayName("Find ToDo by id")
 		void testFindToDoById(){
 			ToDo toDo1 = new ToDo("username1", "title_1", "description_1", LocalDate.now());
 			BigInteger id = new BigInteger("0");
@@ -153,10 +153,39 @@ class ToDoServiceTest {
 			when(toDoMongoRepository.findById(id)).thenReturn(Optional.empty());
 			assertThatThrownBy(() -> toDoService.findToDoById(id))
 			.isInstanceOf(ToDoNotFoundException.class)
-			.hasMessage("ToDo not found!");
+			.hasMessage(ToDoService.TO_DO_NOT_FOUND);
 			verify(toDoMongoRepository, times(1)).findById(id);
 		}
 	}
+	@Nested
+	@DisplayName("Test for delete ToDo")
+	class DeleteToDo{
+		@Test @DisplayName("Delete ToDo by id")
+		void testDeleteToDoById() {
+			ToDo toDo1 = new ToDo("username1", "title_1", "description_1", LocalDate.now());
+			BigInteger id = new BigInteger("0");
+			toDo1.setId(new BigInteger("0"));
+			when(toDoMongoRepository.findById(id)).thenReturn(Optional.of(toDo1));
+			ToDo result = toDoService.deleteToDoById(id);
+			assertThat(result).isSameAs(toDo1);
+			InOrder inOrder = inOrder(toDoMongoRepository);
+			inOrder.verify(toDoMongoRepository).findById(id);
+			inOrder.verify(toDoMongoRepository).deleteById(id);			
+		}
+		
+		@Test @DisplayName("Delete ToDo by id when it is not found")
+		void testDeleteToDoByIdWhenNotFound() {
+			BigInteger id = new BigInteger("0");
+			when(toDoMongoRepository.findById(id)).thenReturn(Optional.empty());
+			assertThatThrownBy(() -> toDoService.deleteToDoById(id))
+			.isInstanceOf(ToDoNotFoundException.class)
+			.hasMessage(ToDoService.TO_DO_NOT_FOUND);	
+			verify(toDoMongoRepository).findById(id);	
+		}
+		
+	}
+	
+	
 }
 
 	

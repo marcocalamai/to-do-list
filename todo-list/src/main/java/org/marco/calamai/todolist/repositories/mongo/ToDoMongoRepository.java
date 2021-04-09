@@ -21,4 +21,8 @@ public class ToDoMongoRepository {
 		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
 		}
 
+	public void deleteById(BigInteger id) {
+		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
+		}
+
 }
