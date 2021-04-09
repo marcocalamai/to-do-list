@@ -1,19 +1,35 @@
 package org.marco.calamai.todolist.model;
 
+import java.math.BigInteger;
 import java.time.LocalDate;
 
 public class ToDo {
+	private BigInteger id;
+	private String user;
 	private String title;
 	private String description;
 	private boolean done;
 	private LocalDate deadline;
 
 	
-	public ToDo(String title, String description, LocalDate deadline) {
+	public ToDo(String user, String title, String description, LocalDate deadline) {
+		this.user = user;
 		this.title = title;
 		this.description = description;
 		this.done = false;
 		this.deadline = deadline;
+	}
+	
+	public BigInteger getId() {
+		return id;
+	}
+
+	public void setId(BigInteger id) {
+		this.id = id;
+	}
+
+	public String getUser() {
+		return user;
 	}
 
 	public String getTitle() {
@@ -54,7 +70,6 @@ public class ToDo {
 		return "ToDo [title=" + title + ", description=" + description + ", done=" + done + ", deadline=" + deadline
 				+ "]";
 	}
-	
 
 	@Override
 	public int hashCode() {
@@ -96,17 +111,4 @@ public class ToDo {
 			return false;
 		return true;
 	}
-	
-	
-
-
-	
-	
-	
-	
-	
-	
-	
-	
-
 }
