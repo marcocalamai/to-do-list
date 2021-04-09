@@ -22,6 +22,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import org.marco.calamai.todolist.exceptions.InvalidTimeException;
 import org.marco.calamai.todolist.exceptions.ToDoNotFoundException;
+import org.marco.calamai.todolist.exceptions.WrongUsernameException;
 import org.marco.calamai.todolist.model.ToDo;
 import org.marco.calamai.todolist.repositories.mongo.ToDoMongoRepository;
 
@@ -162,11 +163,12 @@ class ToDoServiceTest {
 	class DeleteToDo{
 		@Test @DisplayName("Delete ToDo by id")
 		void testDeleteToDoById() {
-			ToDo toDo1 = new ToDo("username1", "title_1", "description_1", LocalDate.now());
+			String user1 = "username_1"; 
+			ToDo toDo1 = new ToDo(user1, "title_1", "description_1", LocalDate.now());
 			BigInteger id = new BigInteger("0");
 			toDo1.setId(new BigInteger("0"));
 			when(toDoMongoRepository.findById(id)).thenReturn(Optional.of(toDo1));
-			ToDo result = toDoService.deleteToDoById(id);
+			ToDo result = toDoService.deleteToDoById(id, user1);
 			assertThat(result).isSameAs(toDo1);
 			InOrder inOrder = inOrder(toDoMongoRepository);
 			inOrder.verify(toDoMongoRepository).findById(id);
@@ -175,14 +177,29 @@ class ToDoServiceTest {
 		
 		@Test @DisplayName("Delete ToDo by id when it is not found")
 		void testDeleteToDoByIdWhenNotFound() {
+			String user1 = "username_1"; 
 			BigInteger id = new BigInteger("0");
 			when(toDoMongoRepository.findById(id)).thenReturn(Optional.empty());
-			assertThatThrownBy(() -> toDoService.deleteToDoById(id))
+			assertThatThrownBy(() -> toDoService.deleteToDoById(id, user1))
 			.isInstanceOf(ToDoNotFoundException.class)
 			.hasMessage(ToDoService.TO_DO_NOT_FOUND);	
 			verify(toDoMongoRepository).findById(id);	
 		}
 		
+		
+		@Test @DisplayName("Delete ToDo by id when username is wrong")
+		void testDeleteToDoByIdWhenUsernameIsWrong() {
+			String userToFind = "usernameToFind"; 
+			ToDo toDo1 = new ToDo("username_1", "title_1", "description_1", LocalDate.now());
+			BigInteger id = new BigInteger("0");
+			toDo1.setId(new BigInteger("0"));
+			when(toDoMongoRepository.findById(id)).thenReturn(Optional.of(toDo1));
+			assertThatThrownBy(() -> toDoService.deleteToDoById(id, userToFind))
+			.isInstanceOf(WrongUsernameException.class)
+			.hasMessage(ToDoService.WRONG_USERNAME);
+			verify(toDoMongoRepository, times(1)).findById(id);
+			verifyNoMoreInteractions(toDoMongoRepository);
+		}
 	}
 	
 	
