@@ -10,6 +10,7 @@ public class ToDo {
 	private String description;
 	private boolean done;
 	private LocalDate deadline;
+
 	
 	public ToDo(String user, String title, String description, LocalDate deadline) {
 		this.user = user;
