@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.Optional;
 
 import org.marco.calamai.todolist.model.ToDo;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class ToDoMongoRepository {
 	
 	private static final String TEMPORARY_IMPLEMENTATION = "Temporary implementation";

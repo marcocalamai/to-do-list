@@ -30,9 +30,16 @@
 			${project.build.testSourceDirectory},
 			${basedir}/src/it/java
 		</sonar.tests>
+		<sonar.sources>
+			pom.xml,
+			${project.build.sourceDirectory},
+			${basedir}/src/main/resources
+		</sonar.sources>
 		<sonar.coverage.exclusions>
 			**/TodoListApplication.java,
 			src/main/java/org/marco/calamai/todolist/model/*
+			src/main/java/org/marco/calamai/todolist/repositories/mongo/*,
+			src/main/java/org/unifi/ft/rehearsal/exceptions/*
 		</sonar.coverage.exclusions>
 	</properties>
 
