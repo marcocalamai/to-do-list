@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.marco.calamai.todolist.exceptions.InvalidTimeException;
+import org.marco.calamai.todolist.exceptions.ToDoNotFoundException;
 import org.marco.calamai.todolist.model.ToDo;
 import org.marco.calamai.todolist.repositories.mongo.ToDoMongoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 public class ToDoService {
 	
 	public static final String DATE_IS_BEFORE_TODAY = "Date not valid. It has passed!";
+	public static final String TO_DO_NOT_FOUND = "ToDo not found!";
 
 	
 	@Autowired
@@ -57,7 +59,7 @@ public class ToDoService {
 		if (toDo.isPresent()){
 			return toDo.get();
 			}
-		throw new RuntimeException("ToDo not found");
+		throw new ToDoNotFoundException(TO_DO_NOT_FOUND);
 	}
 	
 }

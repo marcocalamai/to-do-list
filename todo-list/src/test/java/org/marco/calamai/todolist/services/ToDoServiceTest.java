@@ -21,6 +21,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import org.marco.calamai.todolist.exceptions.InvalidTimeException;
+import org.marco.calamai.todolist.exceptions.ToDoNotFoundException;
 import org.marco.calamai.todolist.model.ToDo;
 import org.marco.calamai.todolist.repositories.mongo.ToDoMongoRepository;
 
@@ -151,8 +152,8 @@ class ToDoServiceTest {
 			BigInteger id = new BigInteger("0");
 			when(toDoMongoRepository.findById(id)).thenReturn(Optional.empty());
 			assertThatThrownBy(() -> toDoService.findToDoById(id))
-			.isInstanceOf(RuntimeException.class)
-			.hasMessage("ToDo not found");
+			.isInstanceOf(ToDoNotFoundException.class)
+			.hasMessage("ToDo not found!");
 			verify(toDoMongoRepository, times(1)).findById(id);
 		}
 	}
