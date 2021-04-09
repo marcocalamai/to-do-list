@@ -54,7 +54,10 @@ public class ToDoService {
 
 	public ToDo findToDoById(BigInteger id) {
 		Optional<ToDo> toDo = toDoMongoRepository.findById(id);
-		return toDo.get();
+		if (toDo.isPresent()){
+			return toDo.get();
+			}
+		throw new RuntimeException("ToDo not found");
 	}
 	
 }

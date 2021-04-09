@@ -145,8 +145,17 @@ class ToDoServiceTest {
 			assertThat(result).isSameAs(toDo1); 
 			verify(toDoMongoRepository, times(1)).findById(id);
 		}
+		
+		@Test @DisplayName("Find ToDo by id when it is not found")
+		void testFindToDoByIdWhenNotFound() {
+			BigInteger id = new BigInteger("0");
+			when(toDoMongoRepository.findById(id)).thenReturn(Optional.empty());
+			assertThatThrownBy(() -> toDoService.findToDoById(id))
+			.isInstanceOf(RuntimeException.class)
+			.hasMessage("ToDo not found");
+			verify(toDoMongoRepository, times(1)).findById(id);
+		}
 	}
-	
-
 }
+
 	
