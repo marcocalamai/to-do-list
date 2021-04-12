@@ -39,9 +39,8 @@ public class ToDoService {
 	}
 
 
-
-	public List<ToDo> findToDoByUser(String username) {
-		List<ToDo> allToDo = toDoMongoRepository.findAll();
+	public List<ToDo> findToDoByUserOrderByDoneAscDeadlineAsc(String username) {
+		List<ToDo> allToDo = toDoMongoRepository.findByOrderByDoneAscDeadlineAsc();
 		List<ToDo> toDoByUser = new ArrayList<>();
 		for (ToDo toDo : allToDo) {
 			if (toDo.getUser().equals(username)) {
@@ -51,8 +50,8 @@ public class ToDoService {
 		return toDoByUser;
 	}
 
-	public List<ToDo> findAllToDo() {
-		return toDoMongoRepository.findAll();
+	public List<ToDo> findAllToDoOrderByDoneAscDeadlineAsc() {
+		return toDoMongoRepository.findByOrderByDoneAscDeadlineAsc();
 	}
 
 	public ToDo findToDoById(BigInteger id) {
