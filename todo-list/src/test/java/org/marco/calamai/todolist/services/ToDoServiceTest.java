@@ -137,6 +137,32 @@ class ToDoServiceTest {
 			verify(toDoMongoRepository, times(1)).findByUserOrderByDoneAscDeadlineAsc(userToFind);
 		}
 		
+		@Test @DisplayName("Get all ToDo by deadline sorted by done")
+		void testGetAllToDoByDeadlineOrderByDoneAsc() {
+			LocalDate today = LocalDate.now();
+			ToDo toDo1 = new ToDo("username_1", "title_1", "description_1", today);
+			ToDo toDo2 = new ToDo("a_username_2", "title_2", "description_2", today);
+			ToDo toDo3 = new ToDo("a_username_3", "title_3", "description_3", today);
+			toDo2.setDone(true);
+			when(toDoMongoRepository.findByDeadlineOrderByDoneAsc(any(LocalDate.class))).thenReturn(asList(toDo3, toDo1, toDo2));
+			List<ToDo> result = toDoService.getAllToDoByDeadlineOrderByDoneAsc(today.getYear(), today.getMonthValue(), today.getDayOfMonth());
+			assertThat(result).containsExactly(toDo3, toDo1, toDo2);
+			verify(toDoMongoRepository, times(1)).findByDeadlineOrderByDoneAsc(today);
+		}
+		
+		@Test @DisplayName("Get all ToDo by title sorted by done and deadline")
+		void testGetAllToDoByTitleOrderByDoneAscDeadlineAsc() {
+			String titleToFind = "titleToFind";
+			ToDo toDo1 = new ToDo("username_1", titleToFind, "description_1", LocalDate.now().plusMonths(1));
+			ToDo toDo2 = new ToDo("username_2", titleToFind, "description_2", LocalDate.now().plusDays(1));
+			ToDo toDo3 = new ToDo("username_3", titleToFind, "description_3", LocalDate.now());
+			toDo3.setDone(true);
+			when(toDoMongoRepository.findByTitleOrderByDoneAscDeadlineAsc(any(String.class))).thenReturn(asList(toDo3, toDo1, toDo2));
+			List<ToDo> result = toDoService.getAllToDoByTitleOrderByDoneAscDeadlineAsc(titleToFind);
+			assertThat(result).containsExactly(toDo3, toDo1, toDo2);
+			verify(toDoMongoRepository, times(1)).findByTitleOrderByDoneAscDeadlineAsc(titleToFind);
+		}
+		
 	
 		@Test @DisplayName("Get ToDo by id")
 		void testGetToDoById(){
@@ -158,6 +184,8 @@ class ToDoServiceTest {
 			.hasMessage(ToDoService.TO_DO_NOT_FOUND);
 			verify(toDoMongoRepository, times(1)).findById(id);
 		}
+		
+
 	}
 	@Nested
 	@DisplayName("Test for delete ToDo")

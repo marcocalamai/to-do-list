@@ -45,6 +45,15 @@ public class ToDoService {
 	public List<ToDo> getAllToDoOrderByDoneAscDeadlineAsc() {
 		return toDoMongoRepository.findByOrderByDoneAscDeadlineAsc();
 	}
+	
+	public List<ToDo> getAllToDoByDeadlineOrderByDoneAsc(int year, int month, int day) {
+		LocalDate deadline = LocalDate.of(year, month, day);
+		return toDoMongoRepository.findByDeadlineOrderByDoneAsc(deadline);
+	}
+	
+	public List<ToDo> getAllToDoByTitleOrderByDoneAscDeadlineAsc(String title) {
+		return toDoMongoRepository.findByTitleOrderByDoneAscDeadlineAsc(title);
+	}
 
 	public ToDo getToDoById(BigInteger id) {
 		Optional<ToDo> toDo = toDoMongoRepository.findById(id);
@@ -76,5 +85,7 @@ public class ToDoService {
 			throw new WrongUsernameException(WRONG_USERNAME);
 		}
 	}
+
+
 	
 }
