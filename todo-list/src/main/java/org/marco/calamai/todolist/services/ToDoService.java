@@ -21,9 +21,14 @@ public class ToDoService {
 	public static final String WRONG_USERNAME = "Wrong username!";
 
 	
-	@Autowired
 	private ToDoMongoRepository toDoMongoRepository;
 	
+	
+	@Autowired
+	public ToDoService(ToDoMongoRepository toDoMongoRepository) {
+		this.toDoMongoRepository = toDoMongoRepository;
+	}
+
 	public ToDo insertToDo(ToDo toDo) {
 		deadlineCheck(toDo);
 		toDo.setId(null);
