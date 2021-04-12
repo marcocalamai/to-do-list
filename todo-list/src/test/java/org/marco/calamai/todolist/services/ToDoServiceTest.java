@@ -1,7 +1,6 @@
 package org.marco.calamai.todolist.services;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 import java.math.BigInteger;
@@ -110,64 +109,51 @@ class ToDoServiceTest {
 	}
 	
 	@Nested
-	@DisplayName("Test for find ToDo")
+	@DisplayName("Test for get ToDo")
 	class FindToDo{
 		
-		@Test  @DisplayName("Find all ToDo sorted by done and deadline")
-		void testFindAllToDoOrderByDoneAscDeadlineAsc(){
+		@Test  @DisplayName("Get all ToDo sorted by done and deadline")
+		void testGetAllToDoOrderByDoneAscDeadlineAsc(){
 			ToDo toDo1 = new ToDo("username_1", "title_1", "description_1", LocalDate.now().plusMonths(1));
 			ToDo toDo2 = new ToDo("username_2", "title_2", "description_2", LocalDate.now().plusDays(1));
 			ToDo toDo3 = new ToDo("username_3", "title_3", "description_3", LocalDate.now());
 			toDo2.setDone(true);
 			when(toDoMongoRepository.findByOrderByDoneAscDeadlineAsc()).thenReturn(asList(toDo3, toDo1, toDo2));
-			List<ToDo> result = toDoService.findAllToDoOrderByDoneAscDeadlineAsc();
+			List<ToDo> result = toDoService.getAllToDoOrderByDoneAscDeadlineAsc();
 			assertThat(result).containsExactly(toDo3, toDo1, toDo2);
 			verify(toDoMongoRepository, times(1)).findByOrderByDoneAscDeadlineAsc();
 		}
 		
-		@Test @DisplayName("Find all ToDo by user name sorted by done and deadline")
-		void testFindToDoByUserOrderByDoneAscDeadlineAsc() {
-			String user1 = "a_username"; 
+		@Test @DisplayName("Get all ToDo by user name sorted by done and deadline")
+		void testGetToDoByUserOrderByDoneAscDeadlineAsc() {
 			String userToFind = "usernameToFind";
-			ToDo toDo1 = new ToDo(user1, "title_1", "description_1", LocalDate.now());
-			ToDo toDo2 = new ToDo(userToFind, "title_2", "description_2", LocalDate.now().plusMonths(1));
-			ToDo toDo3 = new ToDo(userToFind, "title_3", "description_3", LocalDate.now().plusDays(1));
-			ToDo toDo4 = new ToDo(userToFind, "title_4", "description_4", LocalDate.now());
+			ToDo toDo1 = new ToDo(userToFind, "title_1", "description_1", LocalDate.now().plusMonths(1));
+			ToDo toDo2 = new ToDo(userToFind, "title_2", "description_2", LocalDate.now().plusDays(1));
+			ToDo toDo3 = new ToDo(userToFind, "title_2", "description_3", LocalDate.now());
 			toDo3.setDone(true);
-			when(toDoMongoRepository.findByOrderByDoneAscDeadlineAsc()).thenReturn(asList(toDo1, toDo4, toDo2, toDo3));
-			List<ToDo> result = toDoService.findToDoByUserOrderByDoneAscDeadlineAsc(userToFind);
-			assertThat(result).containsExactly(toDo4, toDo2, toDo3);
-			verify(toDoMongoRepository, times(1)).findByOrderByDoneAscDeadlineAsc();
+			when(toDoMongoRepository.findByUserOrderByDoneAscDeadlineAsc(any(String.class))).thenReturn(asList(toDo3, toDo1, toDo2));
+			List<ToDo> result = toDoService.getToDoByUserOrderByDoneAscDeadlineAsc(userToFind);
+			assertThat(result).containsExactly(toDo3, toDo1, toDo2);
+			verify(toDoMongoRepository, times(1)).findByUserOrderByDoneAscDeadlineAsc(userToFind);
 		}
 		
-		
-		@Test @DisplayName("Find all ToDo by user name sorted sorted by done and deadline where there are not")
-		void testFindToDoByUserOrderByDoneAscDeadlineAscWhereThereAreNot() {
-			String user1 = "a_username"; 
-			String userToFind = "usernameToFind";
-			ToDo toDo1 = new ToDo(user1, "title_1", "description_1", LocalDate.now());
-			when(toDoMongoRepository.findByOrderByDoneAscDeadlineAsc()).thenReturn(asList(toDo1));
-			List<ToDo> result = toDoService.findToDoByUserOrderByDoneAscDeadlineAsc(userToFind);
-			assertEquals(0, result.size());
-			verify(toDoMongoRepository, times(1)).findByOrderByDoneAscDeadlineAsc();
-		}
 	
-		@Test @DisplayName("Find ToDo by id")
-		void testFindToDoById(){
+		@Test @DisplayName("Get ToDo by id")
+		void testGetToDoById(){
 			ToDo toDo1 = new ToDo("username1", "title_1", "description_1", LocalDate.now());
 			BigInteger id = new BigInteger("0");
 			toDo1.setId(new BigInteger("0"));
 			when(toDoMongoRepository.findById(id)).thenReturn(Optional.of(toDo1));
-			ToDo result = toDoService.findToDoById(id);
+			ToDo result = toDoService.getToDoById(id);
 			assertThat(result).isSameAs(toDo1); 
 			verify(toDoMongoRepository, times(1)).findById(id);
 		}
 		
-		@Test @DisplayName("Find ToDo by id when it is not found")
-		void testFindToDoByIdWhenNotFoundShouldThrow() {
+		@Test @DisplayName("Get ToDo by id when it is not found")
+		void testGetToDoByIdWhenNotFoundShouldThrow() {
 			BigInteger id = new BigInteger("0");
 			when(toDoMongoRepository.findById(id)).thenReturn(Optional.empty());
-			assertThatThrownBy(() -> toDoService.findToDoById(id))
+			assertThatThrownBy(() -> toDoService.getToDoById(id))
 			.isInstanceOf(ToDoNotFoundException.class)
 			.hasMessage(ToDoService.TO_DO_NOT_FOUND);
 			verify(toDoMongoRepository, times(1)).findById(id);

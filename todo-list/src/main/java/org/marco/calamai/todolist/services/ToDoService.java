@@ -2,7 +2,6 @@ package org.marco.calamai.todolist.services;
 
 import java.math.BigInteger;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,35 +25,28 @@ public class ToDoService {
 	private ToDoMongoRepository toDoMongoRepository;
 	
 	public ToDo insertToDo(ToDo toDo) {
-		dataCheck(toDo);
+		deadlineCheck(toDo);
 		toDo.setId(null);
 		return toDoMongoRepository.save(toDo);
 	}
 
 	public ToDo updateToDo(BigInteger id, String username, ToDo toDo) {
-		dataCheck(toDo);
+		deadlineCheck(toDo);
 		usernameCheck(username, toDo);
 		toDo.setId(id);
 		return toDoMongoRepository.save(toDo);
 	}
 
 
-	public List<ToDo> findToDoByUserOrderByDoneAscDeadlineAsc(String username) {
-		List<ToDo> allToDo = toDoMongoRepository.findByOrderByDoneAscDeadlineAsc();
-		List<ToDo> toDoByUser = new ArrayList<>();
-		for (ToDo toDo : allToDo) {
-			if (toDo.getUser().equals(username)) {
-				toDoByUser.add(toDo);
-				}
-			}
-		return toDoByUser;
+	public List<ToDo> getToDoByUserOrderByDoneAscDeadlineAsc(String username) {
+		return  toDoMongoRepository.findByUserOrderByDoneAscDeadlineAsc(username);
 	}
 
-	public List<ToDo> findAllToDoOrderByDoneAscDeadlineAsc() {
+	public List<ToDo> getAllToDoOrderByDoneAscDeadlineAsc() {
 		return toDoMongoRepository.findByOrderByDoneAscDeadlineAsc();
 	}
 
-	public ToDo findToDoById(BigInteger id) {
+	public ToDo getToDoById(BigInteger id) {
 		Optional<ToDo> toDo = toDoMongoRepository.findById(id);
 		if (toDo.isPresent()){
 			return toDo.get();
@@ -73,7 +65,7 @@ public class ToDoService {
 	}
 	
 	
-	private void dataCheck(ToDo toDo) {
+	private void deadlineCheck(ToDo toDo) {
 		if (toDo.getDeadline().isBefore(LocalDate.now())){
 			throw new InvalidTimeException(DATE_IS_BEFORE_TODAY);
 		}
