@@ -55,7 +55,7 @@ class ToDoServiceTest {
 			inOrder.verify(toDoMongoRepository).save(toSave);
 		}
 	
-		@Test @DisplayName("Insert error: date before today")
+		@Test @DisplayName("Insert ToDo when date is before today")
 		void testInsertToDoWithDateBeforeTodayShouldThrow() {
 			LocalDate deadline = LocalDate.now().minusDays(1);
 			String user1 = "username_1"; 
@@ -79,22 +79,33 @@ class ToDoServiceTest {
 			ToDo updated = new ToDo(user1, "saved", "saved_description", deadline.plusDays(1));
 			updated.setId(id);
 			when(toDoMongoRepository.save(any(ToDo.class))).thenReturn(updated);
-			ToDo result = toDoService.updateToDo(id, toUpdate);
+			ToDo result = toDoService.updateToDo(id, user1,  toUpdate);
 			assertThat(result).isSameAs(updated);
 			InOrder inOrder = inOrder(toUpdate, toDoMongoRepository);
 			inOrder.verify(toUpdate).setId(id);
 			inOrder.verify(toDoMongoRepository).save(toUpdate);
 		}
 		
-		@Test @DisplayName("Update error: date before today")
+		@Test @DisplayName("Update ToDo when date is before today")
 		void testUpdateToDoWithDateBeforeTodayShouldThrow() {
 			LocalDate deadline = LocalDate.now().minusDays(1);
 			String user1 = "username_1"; 
 			ToDo toSave = new ToDo(user1, "to_save", "to_save_description", deadline);
 			BigInteger id = new BigInteger("0");
-			assertThatThrownBy(() -> toDoService.updateToDo(id, toSave))
-			.isInstanceOf(IllegalArgumentException.class)
+			assertThatThrownBy(() -> toDoService.updateToDo(id, user1, toSave))
+			.isInstanceOf(InvalidTimeException.class)
 			.hasMessage(ToDoService.DATE_IS_BEFORE_TODAY);
+		}
+		
+		@Test @DisplayName("Update ToDo when username is wrong")
+		void testUpdateToDoWhenUsernameIsWrongShouldThrow() {
+			LocalDate deadline = LocalDate.now();
+			String user1 = "username_1"; 
+			ToDo toSave = new ToDo(user1, "to_save", "to_save_description", deadline);
+			BigInteger id = new BigInteger("0");
+			assertThatThrownBy(() -> toDoService.updateToDo(id, "username_2", toSave))
+			.isInstanceOf(WrongUsernameException.class)
+			.hasMessage(ToDoService.WRONG_USERNAME);
 		}
 	}
 	
@@ -149,7 +160,7 @@ class ToDoServiceTest {
 		}
 		
 		@Test @DisplayName("Find ToDo by id when it is not found")
-		void testFindToDoByIdWhenNotFound() {
+		void testFindToDoByIdWhenNotFoundShouldThrow() {
 			BigInteger id = new BigInteger("0");
 			when(toDoMongoRepository.findById(id)).thenReturn(Optional.empty());
 			assertThatThrownBy(() -> toDoService.findToDoById(id))
@@ -176,7 +187,7 @@ class ToDoServiceTest {
 		}
 		
 		@Test @DisplayName("Delete ToDo by id when it is not found")
-		void testDeleteToDoByIdWhenNotFound() {
+		void testDeleteToDoByIdWhenNotFoundShouldThrow() {
 			String user1 = "username_1"; 
 			BigInteger id = new BigInteger("0");
 			when(toDoMongoRepository.findById(id)).thenReturn(Optional.empty());
@@ -188,7 +199,7 @@ class ToDoServiceTest {
 		
 		
 		@Test @DisplayName("Delete ToDo by id when username is wrong")
-		void testDeleteToDoByIdWhenUsernameIsWrong() {
+		void testDeleteToDoByIdWhenUsernameIsWrongShouldThrow() {
 			String userToFind = "usernameToFind"; 
 			ToDo toDo1 = new ToDo("username_1", "title_1", "description_1", LocalDate.now());
 			BigInteger id = new BigInteger("0");

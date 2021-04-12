@@ -26,20 +26,19 @@ public class ToDoService {
 	private ToDoMongoRepository toDoMongoRepository;
 	
 	public ToDo insertToDo(ToDo toDo) {
-		if (toDo.getDeadline().isBefore(LocalDate.now())){
-			throw new InvalidTimeException(DATE_IS_BEFORE_TODAY);
-		}
+		dataCheck(toDo);
 		toDo.setId(null);
 		return toDoMongoRepository.save(toDo);
 	}
 
-	public ToDo updateToDo(BigInteger id, ToDo toDo) {
-		if (toDo.getDeadline().isBefore(LocalDate.now())){
-			throw new InvalidTimeException(DATE_IS_BEFORE_TODAY);
-		}
+	public ToDo updateToDo(BigInteger id, String username, ToDo toDo) {
+		dataCheck(toDo);
+		usernameCheck(username, toDo);
 		toDo.setId(id);
 		return toDoMongoRepository.save(toDo);
 	}
+
+
 
 	public List<ToDo> findToDoByUser(String username) {
 		List<ToDo> allToDo = toDoMongoRepository.findAll();
@@ -67,13 +66,24 @@ public class ToDoService {
 	public ToDo deleteToDoById(BigInteger id, String username) {
 		Optional<ToDo> toDo = toDoMongoRepository.findById(id);
 		if (toDo.isPresent()){
-			if (!toDo.get().getUser().equals(username) ) {
-				throw new WrongUsernameException(WRONG_USERNAME);
-			}
+			usernameCheck(username, toDo.get());
 			toDoMongoRepository.deleteById(id);
 			return toDo.get();
 		}
 		throw new ToDoNotFoundException(TO_DO_NOT_FOUND);	
+	}
+	
+	
+	private void dataCheck(ToDo toDo) {
+		if (toDo.getDeadline().isBefore(LocalDate.now())){
+			throw new InvalidTimeException(DATE_IS_BEFORE_TODAY);
+		}
+	}
+	
+	private void usernameCheck(String username, ToDo toDo) {
+		if (!toDo.getUser().equals(username) ) {
+			throw new WrongUsernameException(WRONG_USERNAME);
+		}
 	}
 	
 }
