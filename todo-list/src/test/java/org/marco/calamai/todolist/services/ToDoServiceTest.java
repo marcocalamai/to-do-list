@@ -126,14 +126,14 @@ class ToDoServiceTest {
 		}
 		
 		@Test @DisplayName("Find all ToDo by user name sorted by done and deadline")
-		void testFindToDoByUsernameOrderByDoneAscDeadlineAsc() {
+		void testFindToDoByUserOrderByDoneAscDeadlineAsc() {
 			String user1 = "a_username"; 
 			String userToFind = "usernameToFind";
 			ToDo toDo1 = new ToDo(user1, "title_1", "description_1", LocalDate.now());
 			ToDo toDo2 = new ToDo(userToFind, "title_2", "description_2", LocalDate.now().plusMonths(1));
 			ToDo toDo3 = new ToDo(userToFind, "title_3", "description_3", LocalDate.now().plusDays(1));
 			ToDo toDo4 = new ToDo(userToFind, "title_4", "description_4", LocalDate.now());
-			toDo2.setDone(true);
+			toDo3.setDone(true);
 			when(toDoMongoRepository.findByOrderByDoneAscDeadlineAsc()).thenReturn(asList(toDo1, toDo4, toDo2, toDo3));
 			List<ToDo> result = toDoService.findToDoByUserOrderByDoneAscDeadlineAsc(userToFind);
 			assertThat(result).containsExactly(toDo4, toDo2, toDo3);
@@ -141,8 +141,8 @@ class ToDoServiceTest {
 		}
 		
 		
-		@Test @DisplayName("Find all ToDo by user name where there are not")
-		void testFindToDoByUsernameOrderByDoneAscDeadlineAscWhereThereAreNot() {
+		@Test @DisplayName("Find all ToDo by user name sorted sorted by done and deadline where there are not")
+		void testFindToDoByUserOrderByDoneAscDeadlineAscWhereThereAreNot() {
 			String user1 = "a_username"; 
 			String userToFind = "usernameToFind";
 			ToDo toDo1 = new ToDo(user1, "title_1", "description_1", LocalDate.now());

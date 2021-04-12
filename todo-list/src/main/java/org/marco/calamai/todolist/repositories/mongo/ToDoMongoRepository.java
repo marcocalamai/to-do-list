@@ -8,4 +8,5 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 public interface ToDoMongoRepository extends MongoRepository<ToDo, BigInteger> {
 
 	List<ToDo> findByOrderByDoneAscDeadlineAsc();
+	List<ToDo> findByUserOrderByDoneAscDeadlineAsc(String user);
 }

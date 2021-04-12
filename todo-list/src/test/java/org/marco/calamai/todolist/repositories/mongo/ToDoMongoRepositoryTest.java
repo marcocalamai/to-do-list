@@ -104,7 +104,7 @@ class ToDoMongoRepositoryTest {
 			assertEquals(0, result.size());
 		}
 		
-		@Test @DisplayName("Find all ToDo ordered by Done and deadline ")
+		@Test @DisplayName("Find all ToDo sorted by done and deadline ")
 		void testFindByOrderByDoneAscDeadlineAsc() {
 			ToDo toDo1 = new ToDo("username_1", "title_1", "description_1", LocalDate.now().plusMonths(1));
 			ToDo toDo2 = new ToDo("username_2", "title_2", "description_2", LocalDate.now().plusDays(1));
@@ -115,6 +115,42 @@ class ToDoMongoRepositoryTest {
 			ToDo toDoSaved3 = mongoOps.save(toDo3);
 			List<ToDo> result = repository.findByOrderByDoneAscDeadlineAsc();
 			assertThat(result).containsExactly(toDoSaved3, toDoSaved1, toDoSaved2);
+		}
+		
+		
+		@Test @DisplayName("Find all ToDo sorted by done and deadline when there are not")
+		void testFindByOrderByDoneAscDeadlineAscWhenThereAreNot() {
+			List<ToDo> result = repository.findByOrderByDoneAscDeadlineAsc();
+			assertThat(result).isEmpty();
+		}
+		
+		
+		@Test @DisplayName("Find ToDo by user name sorted by done and deadline ")
+		void testFindByUserOrderByDoneAscDeadlineAsc() {
+			String user1 = "a_username"; 
+			String userToFind = "usernameToFind";
+			ToDo toDo1 = new ToDo(user1, "title_1", "description_1", LocalDate.now());
+			ToDo toDo2 = new ToDo(userToFind, "title_2", "description_2", LocalDate.now().plusMonths(1));
+			ToDo toDo3 = new ToDo(userToFind, "title_3", "description_3", LocalDate.now().plusDays(1));
+			ToDo toDo4 = new ToDo(userToFind, "title_4", "description_4", LocalDate.now());
+			toDo3.setDone(true);
+			mongoOps.save(toDo1);
+			ToDo toDoSaved2 = mongoOps.save(toDo2);
+			ToDo toDoSaved3 = mongoOps.save(toDo3);
+			ToDo toDoSaved4 = mongoOps.save(toDo4);
+			List<ToDo> result = repository.findByUserOrderByDoneAscDeadlineAsc(userToFind);
+			assertThat(result).containsExactly(toDoSaved4, toDoSaved2, toDoSaved3);
+		}
+		
+		
+		@Test @DisplayName("Find ToDo by user name sorted by done and deadline when there are not")
+		void testFindByUserOrderByDoneAscDeadlineAscWhenThereAreNot() {
+			String user1 = "a_username"; 
+			String userToFind = "usernameToFind";
+			ToDo toDo1 = new ToDo(user1, "title_1", "description_1", LocalDate.now());
+			mongoOps.save(toDo1);
+			List<ToDo> result = repository.findByUserOrderByDoneAscDeadlineAsc(userToFind);
+			assertThat(result).isEmpty();
 		}
 	}
 		
