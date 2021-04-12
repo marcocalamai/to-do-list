@@ -1,30 +1,9 @@
 package org.marco.calamai.todolist.repositories.mongo;
 import java.math.BigInteger;
-import java.util.List;
-import java.util.Optional;
 
 import org.marco.calamai.todolist.model.ToDo;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
-@Repository
-public class ToDoMongoRepository {
+public interface ToDoMongoRepository extends MongoRepository<ToDo, BigInteger> {
 	
-	private static final String TEMPORARY_IMPLEMENTATION = "Temporary implementation";
-	
-	public ToDo save(ToDo toDo) {
-		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
-		}
-
-	public List<ToDo> findAll() {
-		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
-		}
-
-	public Optional<ToDo> findById(BigInteger id) {
-		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
-		}
-
-	public void deleteById(BigInteger id) {
-		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
-		}
-
 }

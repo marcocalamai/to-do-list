@@ -126,8 +126,8 @@ class ToDoServiceTest {
 			verify(toDoMongoRepository, times(1)).findAll();
 		}
 		
-		@Test @DisplayName("Find all ToDo by user name where there are none")
-		void testFindToDoByUsernameWhereThereAreNone() {
+		@Test @DisplayName("Find all ToDo by user name where there are not")
+		void testFindToDoByUsernameWhereThereAreNot() {
 			String user1 = "a_username"; 
 			String userToFind = "usernameToFind";
 			ToDo toDo1 = new ToDo(user1, "title_1", "description_1", LocalDate.now());

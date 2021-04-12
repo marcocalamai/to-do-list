@@ -2,8 +2,14 @@ package org.marco.calamai.todolist.model;
 
 import java.math.BigInteger;
 import java.time.LocalDate;
+import java.util.Objects;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+@Document
 public class ToDo {
+	@Id
 	private BigInteger id;
 	private String user;
 	private String title;
@@ -64,7 +70,6 @@ public class ToDo {
 		this.deadline = deadline;
 	}
 	
-
 	@Override
 	public String toString() {
 		return "ToDo [title=" + title + ", description=" + description + ", done=" + done + ", deadline=" + deadline
@@ -78,10 +83,11 @@ public class ToDo {
 		result = prime * result + ((deadline == null) ? 0 : deadline.hashCode());
 		result = prime * result + ((description == null) ? 0 : description.hashCode());
 		result = prime * result + (done ? 1231 : 1237);
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((title == null) ? 0 : title.hashCode());
+		result = prime * result + ((user == null) ? 0 : user.hashCode());
 		return result;
 	}
-
 
 	@Override
 	public boolean equals(Object obj) {
@@ -92,23 +98,12 @@ public class ToDo {
 		if (getClass() != obj.getClass())
 			return false;
 		ToDo other = (ToDo) obj;
-		if (deadline == null) {
-			if (other.deadline != null)
-				return false;
-		} else if (!deadline.equals(other.deadline))
-			return false;
-		if (description == null) {
-			if (other.description != null)
-				return false;
-		} else if (!description.equals(other.description))
-			return false;
-		if (done != other.done)
-			return false;
-		if (title == null) {
-			if (other.title != null)
-				return false;
-		} else if (!title.equals(other.title))
-			return false;
-		return true;
+		return Objects.equals(id, other.id) && 
+				Objects.equals(user, other.user) &&
+				Objects.equals(title, other.title) && 
+				Objects.equals(description, other.description) &&
+				done == other.done &&
+				Objects.equals(deadline, other.deadline);
 	}
+
 }
