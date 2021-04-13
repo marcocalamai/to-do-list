@@ -3,21 +3,25 @@ package org.marco.calamai.todolist.model;
 import java.math.BigInteger;
 import java.util.Collection;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 
+@Document
 public class User implements UserDetails {
 	
 
 	private static final long serialVersionUID = 1L;
+	@Id
 	private BigInteger id;
 	private String username;
 	private String psw;
 	private String[] authorities;
 	
 	
-	public User(String username, String psw, String[] authorities) {
+	public User(String username, String psw, String... authorities) {
 		this.username = username;
 		this.psw = psw;
 		this.authorities = authorities;
@@ -25,6 +29,10 @@ public class User implements UserDetails {
 
 	public BigInteger getId() {
 		return id;
+	}
+
+	public void setId(BigInteger id) {
+		this.id = id;
 	}
 
 	public String getUsername() {

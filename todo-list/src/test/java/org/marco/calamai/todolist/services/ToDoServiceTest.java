@@ -44,8 +44,9 @@ class ToDoServiceTest {
 		void testInsertToDo() {
 			LocalDate deadline = LocalDate.now();
 			String user1 = "username_1"; 
-			ToDo toSave = spy(new ToDo(user1, "to_save", "to_save_description", deadline));
-			ToDo saved = new ToDo(user1, "saved", "saved_description", deadline.plusDays(1));
+			ToDo toSave = spy(new ToDo(user1, "title", "description", deadline));
+			ToDo saved = new ToDo(user1, "title", "description", deadline);
+			saved.setId(new BigInteger("0"));
 			when(toDoMongoRepository.save(any(ToDo.class))).thenReturn(saved);
 			ToDo result = toDoService.insertToDo(toSave);
 			assertThat(result).isSameAs(saved); 
