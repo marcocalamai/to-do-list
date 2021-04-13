@@ -11,6 +11,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.marco.calamai.todolist.exceptions.UsernameAlreadyPresent;
 import org.marco.calamai.todolist.model.User;
 import org.marco.calamai.todolist.repositories.mongo.UserMongoRepository;
 import org.mockito.InOrder;
@@ -52,8 +53,8 @@ class UserServiceTest {
 			User userRegistered = new User("username_1","password_2");
 			when(userMongoRepository.findByUsername(any(String.class))).thenReturn(Optional.of(userRegistered));
 			assertThatThrownBy(() -> userService.register(userToRegister))
-			.isInstanceOf(RuntimeException.class)
-			.hasMessage("Username already present!");
+			.isInstanceOf(UsernameAlreadyPresent.class)
+			.hasMessage(UserService.USERNAME_ALREADY_PRESENT);
 		}
 		
 	}
