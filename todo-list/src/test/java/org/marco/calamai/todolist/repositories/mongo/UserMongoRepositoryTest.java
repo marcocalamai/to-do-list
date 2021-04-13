@@ -1,10 +1,9 @@
 package org.marco.calamai.todolist.repositories.mongo;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
-import java.math.BigInteger;
-import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -35,13 +34,27 @@ class UserMongoRepositoryTest {
 	}
 	
 	@Nested
+	@DisplayName("Tests for save User")
+	class SaveUser{
+	
+	    @Test @DisplayName("Save new User")
+	    void testSave(){
+	    	User toSave = new User("username", "password", "USER");
+	    	User saved = repository.save(toSave);
+	    	List<User> result = mongoOps.findAll(User.class);
+	    	assertThat(result).containsExactly(saved);
+	    	assertNotNull(result.get(0).getId()); 
+	    }
+	}
+	
+	@Nested
 	@DisplayName("Tests for find Users")
 	class findUsers{
 	
 	    @Test @DisplayName("Find User by username")
 	    void testFindbyUsername(){
-	    	User toSave = new User("username", "password", "USER");
-	    	User saved = mongoOps.save(toSave);
+	    	User user1 = new User("username", "password", "USER");
+	    	User saved = mongoOps.save(user1);
 	    	Optional<User> result = repository.findByUsername("username");
 	    	assertThat(result).isPresent();
 	    	assertEquals(saved, result.get());
