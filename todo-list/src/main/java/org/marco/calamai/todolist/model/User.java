@@ -21,10 +21,10 @@ public class User implements UserDetails {
 	private String[] authorities;
 	
 	
-	public User(String username, String psw, String... authorities) {
+	public User(String username, String psw) {
 		this.username = username;
 		this.psw = psw;
-		this.authorities = authorities;
+		this.authorities = new String[] {"USER"};
 	}
 
 	public BigInteger getId() {

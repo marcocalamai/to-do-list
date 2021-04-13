@@ -39,7 +39,7 @@ class UserMongoRepositoryTest {
 	
 	    @Test @DisplayName("Save new User")
 	    void testSave(){
-	    	User toSave = new User("username", "password", "USER");
+	    	User toSave = new User("username", "password");
 	    	User saved = repository.save(toSave);
 	    	List<User> result = mongoOps.findAll(User.class);
 	    	assertThat(result).containsExactly(saved);
@@ -53,7 +53,7 @@ class UserMongoRepositoryTest {
 	
 	    @Test @DisplayName("Find User by username")
 	    void testFindbyUsername(){
-	    	User user1 = new User("username", "password", "USER");
+	    	User user1 = new User("username", "password");
 	    	User saved = mongoOps.save(user1);
 	    	Optional<User> result = repository.findByUsername("username");
 	    	assertThat(result).isPresent();
@@ -62,7 +62,7 @@ class UserMongoRepositoryTest {
 	    
 	    @Test @DisplayName("Find User by username when there is not")
 	    void testFindbyUsernameWhenThereIsNot() {
-	    	User toSave = new User("username", "password", "USER");
+	    	User toSave = new User("username", "password");
 	    	mongoOps.save(toSave);
 			Optional<User> UserFound = repository.findByUsername("usernameToFound");
 			assertThat(UserFound).isNotPresent();
