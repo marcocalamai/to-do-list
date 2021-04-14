@@ -53,7 +53,7 @@ public class UserService implements UserDetailsService {
 		if (username.isEmpty() || password.isEmpty()) {
 			throw new IllegalArgumentException(EMPTY_FIELD);
 		}
-		if (username.contains(" ")) {
+		if (username.contains(" ") || password.contains(" ")) {
 			throw new IllegalArgumentException(WHITESPACE_IN_FIELD);
 		}
 	}
