@@ -70,11 +70,19 @@ class UserServiceTest {
 			verifyNoInteractions(userMongoRepository);
 		}
 		
-		@Test @DisplayName("Empty username")
+		@Test @DisplayName("Empty password")
 		void testPasswordEmpty() {
 			assertThatThrownBy(() -> userService.register("username", ""))
 			.isInstanceOf(IllegalArgumentException.class)
 			.hasMessage(UserService.EMPTY_FIELD);
+			verifyNoInteractions(userMongoRepository);
+		}
+		
+		@Test @DisplayName("Whitespace character in username field")
+		void testUserContainsWhitespace() {
+			assertThatThrownBy(() -> userService.register(" username", "password"))
+			.isInstanceOf(IllegalArgumentException.class)
+			.hasMessage("The username field contains one or more whitespace!");
 			verifyNoInteractions(userMongoRepository);
 		}
 		
