@@ -82,7 +82,7 @@ class UserServiceTest {
 		void testUserContainsWhitespace() {
 			assertThatThrownBy(() -> userService.register(" username", "password"))
 			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("The username field contains one or more whitespace!");
+			.hasMessage(UserService.WHITESPACE_IN_FIELD);
 			verifyNoInteractions(userMongoRepository);
 		}
 		

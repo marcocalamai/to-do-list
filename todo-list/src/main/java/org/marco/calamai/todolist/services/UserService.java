@@ -17,6 +17,7 @@ public class UserService implements UserDetailsService {
 	
 	public static final String USERNAME_ALREADY_PRESENT = "A user with that username already exists!";
 	public static final String EMPTY_FIELD = "The username or password fields are empty!";
+	public static final String WHITESPACE_IN_FIELD = "The username or password field contains one or more whitespace!";
 	
 
 	private UserMongoRepository userMongoRepository;
@@ -53,7 +54,7 @@ public class UserService implements UserDetailsService {
 			throw new IllegalArgumentException(EMPTY_FIELD);
 		}
 		if (username.contains(" ")) {
-			throw new IllegalArgumentException("The username field contains one or more whitespace!");
+			throw new IllegalArgumentException(WHITESPACE_IN_FIELD);
 		}
 	}
 	
