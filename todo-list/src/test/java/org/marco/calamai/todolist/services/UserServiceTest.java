@@ -2,9 +2,9 @@ package org.marco.calamai.todolist.services;
 
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-import java.math.BigInteger;
 import java.util.Optional;
 
 import org.junit.jupiter.api.DisplayName;
@@ -18,10 +18,14 @@ import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("Tests for UserService")
 class UserServiceTest {
+	
+	@Mock
+	private PasswordEncoder passwordEncoder;
 	
 	@Mock
 	private UserMongoRepository userMongoRepository;
@@ -33,29 +37,30 @@ class UserServiceTest {
 	@DisplayName("Tests for User registration")
 	class UserRegistration{
 		
+		
+		
 		@Test @DisplayName("Success registration")
 		void testRegister() {
-			User userToRegister = spy(new User("username_1","password_1"));
-			User userRegistered = new User("username_1","password_1");
-			userRegistered.setId(new BigInteger("0"));
 			when(userMongoRepository.findByUsername(any(String.class))).thenReturn(Optional.empty());
-			when(userMongoRepository.save(any(User.class))).thenReturn(userRegistered);
-			User result = userService.register(userToRegister);
-			assertThat(result).isSameAs(userRegistered);
-			InOrder inOrder = inOrder(userMongoRepository, userToRegister);
-			inOrder.verify(userToRegister).setId(null);
-			inOrder.verify(userMongoRepository).save(userToRegister);
+			when(passwordEncoder.encode(any(String.class))).thenReturn("password_encoded");
+			User result = userService.register("username_1", "password_1");
+			assertEquals("username_1", result.getUsername());
+			assertEquals("password_encoded", result.getPassword());
+			InOrder inOrder = inOrder(userMongoRepository, passwordEncoder);
+			inOrder.verify(userMongoRepository).findByUsername("username_1");
+			inOrder.verify(passwordEncoder).encode("password_1");
+			inOrder.verify(userMongoRepository).save(result);
 		}
+		
 		
 		@Test @DisplayName("Fail registration")
 		void testFaildRegister() {
-			User userToRegister = new User("username_1","password_1");
 			User userRegistered = new User("username_1","password_2");
 			when(userMongoRepository.findByUsername(any(String.class))).thenReturn(Optional.of(userRegistered));
-			assertThatThrownBy(() -> userService.register(userToRegister))
+			assertThatThrownBy(() -> userService.register("username_1", "password_1"))
 			.isInstanceOf(UsernameAlreadyPresent.class)
 			.hasMessage(UserService.USERNAME_ALREADY_PRESENT);
-		}
+		}	
 		
 	}
 
