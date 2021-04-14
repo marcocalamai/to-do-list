@@ -31,6 +31,9 @@ public class UserService implements UserDetailsService {
 	
 
 	public User register(String username, String password) {
+		if (username.isEmpty()) {
+			throw new IllegalArgumentException("Field username empty!");
+		}
 		Optional<User> result = userMongoRepository.findByUsername(username);
 		if (result.isPresent()){
 			throw new UsernameAlreadyPresent(USERNAME_ALREADY_PRESENT);
