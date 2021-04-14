@@ -70,6 +70,14 @@ class UserServiceTest {
 			verifyNoInteractions(userMongoRepository);
 		}
 		
+		@Test @DisplayName("Empty username")
+		void testPasswordEmpty() {
+			assertThatThrownBy(() -> userService.register("username", ""))
+			.isInstanceOf(IllegalArgumentException.class)
+			.hasMessage(UserService.EMPTY_FIELD);
+			verifyNoInteractions(userMongoRepository);
+		}
+		
 	}
 
 }
