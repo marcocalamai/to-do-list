@@ -86,6 +86,14 @@ class UserServiceTest {
 			verifyNoInteractions(userMongoRepository);
 		}
 		
+		@Test @DisplayName("Whitespace character in password field")
+		void testPasswordContainsWhitespace() {
+			assertThatThrownBy(() -> userService.register("username", " password"))
+			.isInstanceOf(IllegalArgumentException.class)
+			.hasMessage(UserService.WHITESPACE_IN_FIELD);
+			verifyNoInteractions(userMongoRepository);
+		}
+		
 	}
 
 }
