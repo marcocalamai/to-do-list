@@ -20,6 +20,7 @@ import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @ExtendWith(MockitoExtension.class)
@@ -109,6 +110,15 @@ class UserServiceTest {
 			User result = userService.loadUserByUsername("username");
 			assertEquals("username", result.getUsername());
 			verify(userMongoRepository, times(1)).findByUsername("username");			
+		}
+		
+		@Test @DisplayName("Load User by username when it does not exist")
+		void testLoadUserByUsernameWhenItDoesNotExist() {
+			when(userMongoRepository.findByUsername(any(String.class))).thenReturn(Optional.empty());
+			assertThatThrownBy(() -> userService.loadUserByUsername("username"))
+			.isInstanceOf(UsernameNotFoundException.class)
+			.hasMessage("User not found!");
+			verify(userMongoRepository, times(1)).findByUsername("username");
 		}
 	}
 
