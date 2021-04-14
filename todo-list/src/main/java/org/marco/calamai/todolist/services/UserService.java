@@ -52,6 +52,9 @@ public class UserService implements UserDetailsService {
 		if (username.isEmpty() || password.isEmpty()) {
 			throw new IllegalArgumentException(EMPTY_FIELD);
 		}
+		if (username.contains(" ")) {
+			throw new IllegalArgumentException("The username field contains one or more whitespace!");
+		}
 	}
 	
 	private User createUser(String username, String password) {
