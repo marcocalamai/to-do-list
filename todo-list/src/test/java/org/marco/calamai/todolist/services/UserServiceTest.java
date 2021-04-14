@@ -11,7 +11,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.marco.calamai.todolist.exceptions.EmptyRegistrationFieldsException;
 import org.marco.calamai.todolist.exceptions.UsernameAlreadyPresent;
+import org.marco.calamai.todolist.exceptions.WhitespaceInRegistrationFieldsException;
 import org.marco.calamai.todolist.model.User;
 import org.marco.calamai.todolist.repositories.mongo.UserMongoRepository;
 import org.mockito.InOrder;
@@ -65,7 +67,7 @@ class UserServiceTest {
 		@Test @DisplayName("Empty username")
 		void testUserEmpty() {
 			assertThatThrownBy(() -> userService.register("", "password"))
-			.isInstanceOf(IllegalArgumentException.class)
+			.isInstanceOf(EmptyRegistrationFieldsException.class)
 			.hasMessage(UserService.EMPTY_FIELD);
 			verifyNoInteractions(userMongoRepository);
 		}
@@ -73,7 +75,7 @@ class UserServiceTest {
 		@Test @DisplayName("Empty password")
 		void testPasswordEmpty() {
 			assertThatThrownBy(() -> userService.register("username", ""))
-			.isInstanceOf(IllegalArgumentException.class)
+			.isInstanceOf(EmptyRegistrationFieldsException.class)
 			.hasMessage(UserService.EMPTY_FIELD);
 			verifyNoInteractions(userMongoRepository);
 		}
@@ -81,7 +83,7 @@ class UserServiceTest {
 		@Test @DisplayName("Whitespace character in username field")
 		void testUserContainsWhitespace() {
 			assertThatThrownBy(() -> userService.register(" username", "password"))
-			.isInstanceOf(IllegalArgumentException.class)
+			.isInstanceOf(WhitespaceInRegistrationFieldsException.class)
 			.hasMessage(UserService.WHITESPACE_IN_FIELD);
 			verifyNoInteractions(userMongoRepository);
 		}
@@ -89,7 +91,7 @@ class UserServiceTest {
 		@Test @DisplayName("Whitespace character in password field")
 		void testPasswordContainsWhitespace() {
 			assertThatThrownBy(() -> userService.register("username", " password"))
-			.isInstanceOf(IllegalArgumentException.class)
+			.isInstanceOf(WhitespaceInRegistrationFieldsException.class)
 			.hasMessage(UserService.WHITESPACE_IN_FIELD);
 			verifyNoInteractions(userMongoRepository);
 		}

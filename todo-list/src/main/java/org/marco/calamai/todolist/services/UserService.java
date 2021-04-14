@@ -2,7 +2,9 @@ package org.marco.calamai.todolist.services;
 
 import java.util.Optional;
 
+import org.marco.calamai.todolist.exceptions.EmptyRegistrationFieldsException;
 import org.marco.calamai.todolist.exceptions.UsernameAlreadyPresent;
+import org.marco.calamai.todolist.exceptions.WhitespaceInRegistrationFieldsException;
 import org.marco.calamai.todolist.model.User;
 import org.marco.calamai.todolist.repositories.mongo.UserMongoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,10 +53,10 @@ public class UserService implements UserDetailsService {
 	
 	private void checkOnFields(String username, String password) {
 		if (username.isEmpty() || password.isEmpty()) {
-			throw new IllegalArgumentException(EMPTY_FIELD);
+			throw new EmptyRegistrationFieldsException(EMPTY_FIELD);
 		}
 		if (username.contains(" ") || password.contains(" ")) {
-			throw new IllegalArgumentException(WHITESPACE_IN_FIELD);
+			throw new WhitespaceInRegistrationFieldsException(WHITESPACE_IN_FIELD);
 		}
 	}
 	
