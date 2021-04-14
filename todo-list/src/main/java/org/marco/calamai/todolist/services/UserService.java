@@ -32,7 +32,7 @@ public class UserService implements UserDetailsService {
 	
 
 	public User register(String username, String password) {
-		checkOnFields(username);
+		checkOnFields(username, password);
 		Optional<User> result = userMongoRepository.findByUsername(username);
 		if (result.isPresent()){
 			throw new UsernameAlreadyPresent(USERNAME_ALREADY_PRESENT);
@@ -48,8 +48,8 @@ public class UserService implements UserDetailsService {
 		return null;
 	}
 	
-	private void checkOnFields(String username) {
-		if (username.isEmpty()) {
+	private void checkOnFields(String username, String password) {
+		if (username.isEmpty() || password.isEmpty()) {
 			throw new IllegalArgumentException(EMPTY_FIELD);
 		}
 	}
