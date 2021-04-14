@@ -60,7 +60,15 @@ class UserServiceTest {
 			assertThatThrownBy(() -> userService.register("username_1", "password_1"))
 			.isInstanceOf(UsernameAlreadyPresent.class)
 			.hasMessage(UserService.USERNAME_ALREADY_PRESENT);
-		}	
+		}
+		
+		@Test @DisplayName("Empty username")
+		void testUserEmpty() {
+			assertThatThrownBy(() -> userService.register("", "password"))
+			.isInstanceOf(IllegalArgumentException.class)
+			.hasMessage("Field username empty!");
+			verifyNoInteractions(userMongoRepository);
+		}
 		
 	}
 
