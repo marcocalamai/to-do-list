@@ -66,7 +66,7 @@ class UserServiceTest {
 		void testUserEmpty() {
 			assertThatThrownBy(() -> userService.register("", "password"))
 			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("Field username empty!");
+			.hasMessage(UserService.EMPTY_FIELD);
 			verifyNoInteractions(userMongoRepository);
 		}
 		

@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 public class UserService implements UserDetailsService {
 	
 	public static final String USERNAME_ALREADY_PRESENT = "A user with that username already exists!";
+	public static final String EMPTY_FIELD = "The username or password fields are empty!";
 	
 
 	private UserMongoRepository userMongoRepository;
@@ -31,9 +32,7 @@ public class UserService implements UserDetailsService {
 	
 
 	public User register(String username, String password) {
-		if (username.isEmpty()) {
-			throw new IllegalArgumentException("Field username empty!");
-		}
+		checkOnFields(username);
 		Optional<User> result = userMongoRepository.findByUsername(username);
 		if (result.isPresent()){
 			throw new UsernameAlreadyPresent(USERNAME_ALREADY_PRESENT);
@@ -47,6 +46,12 @@ public class UserService implements UserDetailsService {
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	private void checkOnFields(String username) {
+		if (username.isEmpty()) {
+			throw new IllegalArgumentException(EMPTY_FIELD);
+		}
 	}
 	
 	private User createUser(String username, String password) {
