@@ -8,7 +8,6 @@ import org.marco.calamai.todolist.exceptions.WhitespaceInRegistrationFieldsExcep
 import org.marco.calamai.todolist.model.User;
 import org.marco.calamai.todolist.repositories.mongo.UserMongoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -46,9 +45,9 @@ public class UserService implements UserDetailsService {
 	}
 
 	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		// TODO Auto-generated method stub
-		return null;
+	public User loadUserByUsername(String username) throws UsernameNotFoundException {
+		Optional<User> user = userMongoRepository.findByUsername(username);
+		return user.get();
 	}
 	
 	private void checkOnFields(String username, String password) {
