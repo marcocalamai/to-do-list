@@ -40,7 +40,6 @@ class UserServiceTest {
 	class UserRegistration{
 		
 		
-		
 		@Test @DisplayName("Success registration")
 		void testRegister() {
 			when(userMongoRepository.findByUsername(any(String.class))).thenReturn(Optional.empty());
@@ -53,7 +52,6 @@ class UserServiceTest {
 			inOrder.verify(passwordEncoder).encode("password_1");
 			inOrder.verify(userMongoRepository).save(result);
 		}
-		
 		
 		@Test @DisplayName("Fail registration")
 		void testFaildRegister() {
@@ -96,6 +94,22 @@ class UserServiceTest {
 			verifyNoInteractions(userMongoRepository);
 		}
 		
+	}
+	
+	
+	@Nested
+	@DisplayName("Tests for load User")
+	class UserLoad{
+		
+		
+		@Test @DisplayName("Load User by username when it exist")
+		void testLoadUserByUsernameWhenItExist() {
+			User userToFind = new User("username", "password");
+			when(userMongoRepository.findByUsername("username")).thenReturn(Optional.of(userToFind));
+			User result = userService.loadUserByUsername("username");
+			assertEquals("username", result.getUsername());
+			verify(userMongoRepository, times(1)).findByUsername("username");			
+		}
 	}
 
 }
