@@ -15,7 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class RegistrationWebController {
 	
 	public static final String USERNAME_ALREADY_PRESENT = "A user with that username already exists!";
-	public static final String EMPTY_FIEDLD = "The username or password fields are empty!";
+	public static final String EMPTY_FIELD = "The username or password fields are empty!";
 	
 	@Autowired
 	private UserService userService;
@@ -33,18 +33,18 @@ public class RegistrationWebController {
 	
 	@ExceptionHandler(UsernameAlreadyPresent.class)
 	private ModelAndView handleUsernameAlreadyPresent() {
-		ModelAndView mav = new ModelAndView();
-		mav.setViewName("/registrationPage");
-		mav.addObject("error_message", USERNAME_ALREADY_PRESENT);
-		mav.setStatus(HttpStatus.BAD_REQUEST);
-		return mav;
+		return setupModel(USERNAME_ALREADY_PRESENT);
 	}
 	
 	@ExceptionHandler(EmptyRegistrationFieldsException.class)
 	private ModelAndView handleEmptyUsername() {
+		return setupModel(EMPTY_FIELD);
+	}
+
+	private ModelAndView setupModel(String errorMessage) {
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName("/registrationPage");
-		mav.addObject("error_message", EMPTY_FIEDLD);
+		mav.addObject("error_message", errorMessage);
 		mav.setStatus(HttpStatus.BAD_REQUEST);
 		return mav;
 	}

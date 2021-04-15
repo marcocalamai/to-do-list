@@ -77,7 +77,7 @@ class RegistrationWebControllerTest {
 				.with(csrf()))
 				.andExpect(status().is4xxClientError())
 				.andExpect(view().name("/registrationPage"))
-				.andExpect(model().attribute("error_message", RegistrationWebController.EMPTY_FIEDLD));
+				.andExpect(model().attribute("error_message", RegistrationWebController.EMPTY_FIELD));
 	}
 
 
