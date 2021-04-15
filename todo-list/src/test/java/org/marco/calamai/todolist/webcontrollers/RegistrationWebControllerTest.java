@@ -5,6 +5,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
@@ -13,6 +14,7 @@ import java.math.BigInteger;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.marco.calamai.todolist.exceptions.UsernameAlreadyPresent;
 import org.marco.calamai.todolist.model.User;
 import org.marco.calamai.todolist.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,17 +30,17 @@ class RegistrationWebControllerTest {
 	
 	@Autowired
 	private MockMvc mvc;
-	
+
 	@MockBean
 	private UserService userService;
 	
-	
+
 	@Test @DisplayName("Check registration status code and view name")
 	void testStatus200AndReturnRegistrationView() throws Exception{
 		mvc.perform(get("/registration")).andExpect(status().isOk()).andExpect(view().name("registrationPage"));
 	}
 	
-	@Test @DisplayName("")
+	@Test @DisplayName("Test successful user registration")
 	void testRegistration() throws Exception{
 		User user = new User("a_username", "a_password");
 		user.setId(new BigInteger("0"));
@@ -51,6 +53,18 @@ class RegistrationWebControllerTest {
 				.andExpect(status().is3xxRedirection())
 				.andExpect(view().name("redirect:/"));	
 		verify(userService, times(1)).register("a_username", "a_password");
+	}
+	
+	@Test @DisplayName("Test fail registration when user exist")
+	void testRegistrationWhenUserExist() throws Exception {
+		when(userService.register("a_username", "a_password")).thenThrow(new UsernameAlreadyPresent());
+		mvc.perform(post("/registration")
+				.param("username", "a_username")
+				.param("password", "a_password")
+				.with(csrf()))
+				.andExpect(status().is4xxClientError())
+				.andExpect(view().name("/registrationPage"))
+				.andExpect(model().attribute("error_message", RegistrationWebController.USERNAME_ALREADY_PRESENT));
 	}
 
 

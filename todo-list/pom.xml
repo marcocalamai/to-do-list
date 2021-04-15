@@ -177,6 +177,7 @@
 							<exclude>org/marco/calamai/todolist/model/*</exclude>
 							<exclude>org/marco/calamai/todolist/repositories/mongo/*</exclude>
 							<exclude>org/marco/calamai/todolist/exceptions/*</exclude>
+							<exclude>org/marco/calamai/todolist/configurations/*</exclude>
 						</excludes>
 					</configuration>
 					<executions>
