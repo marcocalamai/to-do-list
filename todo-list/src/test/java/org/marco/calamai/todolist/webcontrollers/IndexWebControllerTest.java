@@ -19,8 +19,8 @@ class IndexWebControllerTest {
 	@Autowired
 	private MockMvc mvc;
 	
-	@Test @DisplayName("Index status 200")
-	void testStatus200() throws Exception {
+	@Test @DisplayName("Check Index status code and view name")
+	void testStatus200AndReturnIndexView() throws Exception {
 		mvc.perform(get("/")).andExpect(status().isOk()).andExpect(view().name("index"));
 	}
 
