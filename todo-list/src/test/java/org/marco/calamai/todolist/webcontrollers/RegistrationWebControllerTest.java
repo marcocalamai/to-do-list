@@ -38,7 +38,7 @@ class RegistrationWebControllerTest {
 	private UserService userService;
 	
 
-	@Test @DisplayName("Check registration status code and view name")
+	@Test @DisplayName("Check get registration status code and view name")
 	void testStatus200AndReturnRegistrationView() throws Exception{
 		mvc.perform(get("/registration")).andExpect(status().isOk()).andExpect(view().name("registrationPage"));
 	}

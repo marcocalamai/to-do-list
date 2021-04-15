@@ -13,16 +13,15 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
 @ExtendWith(SpringExtension.class)
-@WebMvcTest(controllers = IndexWebController.class)
-@DisplayName("Test index web controller")
-class IndexWebControllerTest {
+@WebMvcTest(controllers = LoginWebController.class)
+@DisplayName("Test login web controller")
+class LoginWebControllerTest {
 	
 	@Autowired
 	private MockMvc mvc;
 	
-	@Test @DisplayName("Check get index status code and view name")
-	void testStatus200AndReturnIndexView() throws Exception {
-		mvc.perform(get("/")).andExpect(status().isOk()).andExpect(view().name("index"));
+	@Test @DisplayName("Check get login status code and view name")
+	void testStatus200AndReturnLoginView() throws Exception {
+		mvc.perform(get("/login")).andExpect(status().isOk()).andExpect(view().name("loginPage"));
 	}
-
 }
