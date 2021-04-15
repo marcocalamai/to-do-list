@@ -28,7 +28,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		.and()
 		.authorizeRequests().antMatchers("/toDoManager/**").authenticated()
 		.and()
-		.formLogin().loginPage("/login").defaultSuccessUrl("/toDoManager").failureUrl("/login.html?error=true")
+		.formLogin().loginPage("/login").defaultSuccessUrl("/toDoManager", true).failureUrl("/login.html?error=true")
 		.and()
 		.logout().logoutSuccessUrl("/index").permitAll();
 	}
