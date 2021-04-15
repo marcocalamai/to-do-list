@@ -76,8 +76,8 @@ class RegistrationWebControllerTest {
 				.param("password", "a_password")
 				.with(csrf()))
 				.andExpect(status().is4xxClientError())
-				.andExpect(view().name("/registration"))
-				.andExpect(model().attribute("error_message", "The username or password fields are empty!"));
+				.andExpect(view().name("/registrationPage"))
+				.andExpect(model().attribute("error_message", RegistrationWebController.EMPTY_FIEDLD));
 	}
 
 

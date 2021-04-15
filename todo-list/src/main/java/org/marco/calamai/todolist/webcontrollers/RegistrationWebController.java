@@ -1,5 +1,6 @@
 package org.marco.calamai.todolist.webcontrollers;
 
+import org.marco.calamai.todolist.exceptions.EmptyRegistrationFieldsException;
 import org.marco.calamai.todolist.exceptions.UsernameAlreadyPresent;
 import org.marco.calamai.todolist.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class RegistrationWebController {
 	
 	public static final String USERNAME_ALREADY_PRESENT = "A user with that username already exists!";
+	public static final String EMPTY_FIEDLD = "The username or password fields are empty!";
 	
 	@Autowired
 	private UserService userService;
@@ -38,5 +40,13 @@ public class RegistrationWebController {
 		return mav;
 	}
 	
+	@ExceptionHandler(EmptyRegistrationFieldsException.class)
+	private ModelAndView handleEmptyUsername() {
+		ModelAndView mav = new ModelAndView();
+		mav.setViewName("/registrationPage");
+		mav.addObject("error_message", EMPTY_FIEDLD);
+		mav.setStatus(HttpStatus.BAD_REQUEST);
+		return mav;
+	}
 
 }
