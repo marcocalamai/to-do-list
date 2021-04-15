@@ -14,6 +14,7 @@ import java.math.BigInteger;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.marco.calamai.todolist.exceptions.EmptyRegistrationFieldsException;
 import org.marco.calamai.todolist.exceptions.UsernameAlreadyPresent;
 import org.marco.calamai.todolist.model.User;
 import org.marco.calamai.todolist.services.UserService;
@@ -55,7 +56,7 @@ class RegistrationWebControllerTest {
 		verify(userService, times(1)).register("a_username", "a_password");
 	}
 	
-	@Test @DisplayName("Test fail registration when user exist")
+	@Test @DisplayName("Test error registration when user exist")
 	void testRegistrationWhenUserExist() throws Exception {
 		when(userService.register("a_username", "a_password")).thenThrow(new UsernameAlreadyPresent());
 		mvc.perform(post("/registration")
@@ -65,6 +66,18 @@ class RegistrationWebControllerTest {
 				.andExpect(status().is4xxClientError())
 				.andExpect(view().name("/registrationPage"))
 				.andExpect(model().attribute("error_message", RegistrationWebController.USERNAME_ALREADY_PRESENT));
+	}
+	
+	@Test @DisplayName("Test error registration when username is empty")
+	void testeRegistrationWhenUsernameIsEmpty() throws Exception {
+		when(userService.register("", "a_password")).thenThrow(new EmptyRegistrationFieldsException());
+		mvc.perform(post("/registration")
+				.param("username", "")
+				.param("password", "a_password")
+				.with(csrf()))
+				.andExpect(status().is4xxClientError())
+				.andExpect(view().name("/registration"))
+				.andExpect(model().attribute("error_message", "The username or password fields are empty!"));
 	}
 
 
