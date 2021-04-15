@@ -58,7 +58,7 @@ class RegistrationWebControllerTest {
 	
 	@Test @DisplayName("Test error registration when user exist")
 	void testRegistrationWhenUserExist() throws Exception {
-		when(userService.register("a_username", "a_password")).thenThrow(new UsernameAlreadyPresent());
+		when(userService.register("a_username", "a_password")).thenThrow(UsernameAlreadyPresent.class);
 		mvc.perform(post("/registration")
 				.param("username", "a_username")
 				.param("password", "a_password")
@@ -70,10 +70,23 @@ class RegistrationWebControllerTest {
 	
 	@Test @DisplayName("Test error registration when username is empty")
 	void testeRegistrationWhenUsernameIsEmpty() throws Exception {
-		when(userService.register("", "a_password")).thenThrow(new EmptyRegistrationFieldsException());
+		when(userService.register("", "a_password")).thenThrow(EmptyRegistrationFieldsException.class);
 		mvc.perform(post("/registration")
 				.param("username", "")
 				.param("password", "a_password")
+				.with(csrf()))
+				.andExpect(status().is4xxClientError())
+				.andExpect(view().name("/registrationPage"))
+				.andExpect(model().attribute("error_message", RegistrationWebController.EMPTY_FIELD));
+	}
+	
+	
+	@Test @DisplayName("Test erro registration when password is empty")
+	void testeRegistrationWhenPasswordIsEmpty() throws Exception {
+		when(userService.register("a_username", "")).thenThrow(EmptyRegistrationFieldsException.class);
+		mvc.perform(post("/registration")
+				.param("username", "a_username")
+				.param("password", "")
 				.with(csrf()))
 				.andExpect(status().is4xxClientError())
 				.andExpect(view().name("/registrationPage"))
