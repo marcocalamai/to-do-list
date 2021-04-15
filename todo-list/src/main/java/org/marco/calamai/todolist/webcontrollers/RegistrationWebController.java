@@ -2,6 +2,7 @@ package org.marco.calamai.todolist.webcontrollers;
 
 import org.marco.calamai.todolist.exceptions.EmptyRegistrationFieldsException;
 import org.marco.calamai.todolist.exceptions.UsernameAlreadyPresent;
+import org.marco.calamai.todolist.exceptions.WhitespaceInRegistrationFieldsException;
 import org.marco.calamai.todolist.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,7 @@ public class RegistrationWebController {
 	
 	public static final String USERNAME_ALREADY_PRESENT = "A user with that username already exists!";
 	public static final String EMPTY_FIELD = "The username or password fields are empty!";
+	public static final String WHITESPACE_IN_FIELD = "The username or password field contains one or more whitespace!";
 	
 	@Autowired
 	private UserService userService;
@@ -37,8 +39,13 @@ public class RegistrationWebController {
 	}
 	
 	@ExceptionHandler(EmptyRegistrationFieldsException.class)
-	private ModelAndView handleEmptyUsername() {
+	private ModelAndView handleEmptyUsernameOrPassword() {
 		return setupModel(EMPTY_FIELD);
+	}
+	
+	@ExceptionHandler(WhitespaceInRegistrationFieldsException.class)
+	private ModelAndView handleWhitespaceInUsernameOrPassword() {
+		return setupModel(WHITESPACE_IN_FIELD);
 	}
 
 	private ModelAndView setupModel(String errorMessage) {

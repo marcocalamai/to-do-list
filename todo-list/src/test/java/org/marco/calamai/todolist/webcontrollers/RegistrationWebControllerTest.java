@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.marco.calamai.todolist.exceptions.EmptyRegistrationFieldsException;
 import org.marco.calamai.todolist.exceptions.UsernameAlreadyPresent;
+import org.marco.calamai.todolist.exceptions.WhitespaceInRegistrationFieldsException;
 import org.marco.calamai.todolist.model.User;
 import org.marco.calamai.todolist.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(controllers = RegistrationWebController.class)
 
+@DisplayName("Test registration web controller")
 class RegistrationWebControllerTest {
 	
 	@Autowired
@@ -66,6 +68,7 @@ class RegistrationWebControllerTest {
 				.andExpect(status().is4xxClientError())
 				.andExpect(view().name("/registrationPage"))
 				.andExpect(model().attribute("error_message", RegistrationWebController.USERNAME_ALREADY_PRESENT));
+		verify(userService, times(1)).register("a_username", "a_password");
 	}
 	
 	@Test @DisplayName("Test error registration when username is empty")
@@ -78,10 +81,11 @@ class RegistrationWebControllerTest {
 				.andExpect(status().is4xxClientError())
 				.andExpect(view().name("/registrationPage"))
 				.andExpect(model().attribute("error_message", RegistrationWebController.EMPTY_FIELD));
+		verify(userService, times(1)).register("", "a_password");
 	}
 	
 	
-	@Test @DisplayName("Test erro registration when password is empty")
+	@Test @DisplayName("Test error registration when password is empty")
 	void testeRegistrationWhenPasswordIsEmpty() throws Exception {
 		when(userService.register("a_username", "")).thenThrow(EmptyRegistrationFieldsException.class);
 		mvc.perform(post("/registration")
@@ -91,11 +95,32 @@ class RegistrationWebControllerTest {
 				.andExpect(status().is4xxClientError())
 				.andExpect(view().name("/registrationPage"))
 				.andExpect(model().attribute("error_message", RegistrationWebController.EMPTY_FIELD));
+		verify(userService, times(1)).register("a_username", "");
 	}
-
-
 	
+	@Test @DisplayName("Test error registration when username contains whitespaces")
+	void testeRegistrationWhenUsernameContainsWhitespaces() throws Exception {
+		when(userService.register(" a_username", "a_password")).thenThrow(WhitespaceInRegistrationFieldsException.class);
+		mvc.perform(post("/registration")
+				.param("username", " a_username")
+				.param("password", "a_password")
+				.with(csrf()))
+				.andExpect(status().is4xxClientError())
+				.andExpect(view().name("/registrationPage"))
+				.andExpect(model().attribute("error_message", RegistrationWebController.WHITESPACE_IN_FIELD));
+		verify(userService, times(1)).register(" a_username", "a_password");
+	}
 	
-	
-
+	@Test @DisplayName("Test error registration when password contains whitespaces")
+	void testeRegistrationWhenPasswordContainsWhitespaces() throws Exception {
+		when(userService.register("a_username", " a_password")).thenThrow(WhitespaceInRegistrationFieldsException.class);
+		mvc.perform(post("/registration")
+				.param("username", "a_username")
+				.param("password", " a_password")
+				.with(csrf()))
+				.andExpect(status().is4xxClientError())
+				.andExpect(view().name("/registrationPage"))
+				.andExpect(model().attribute("error_message", RegistrationWebController.WHITESPACE_IN_FIELD));
+		verify(userService, times(1)).register("a_username", " a_password");
+	}
 }
