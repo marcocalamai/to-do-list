@@ -100,10 +100,20 @@ class ToDoManagerWebControllerTest {
 					.andExpect(model().attribute(MESSAGE_ATTRIBUTE, ""));
 			
 			verify(toDoService, times(1)).getToDoByUserOrderByDoneAscDeadlineAsc("AuthenticatedUser");
+		}
+		
+		@Test @DisplayName("Test /toDoManager/AllMyToDo show message when there are not my todo")
+		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
+		void testShowAllMyToDoWhenThereAreNotMyToDo() throws Exception {
+			when(toDoService.getToDoByUserOrderByDoneAscDeadlineAsc("AuthenticatedUser")).thenReturn(Collections.emptyList());
 			
+			mvc.perform(get("/toDoManager/AllMyToDo"))
+					.andExpect(status().isOk())
+					.andExpect(view().name("toDoManagerPage"))
+					.andExpect(model().attribute("allToDo", Collections.emptyList()))
+					.andExpect(model().attribute(MESSAGE_ATTRIBUTE, NO_TO_DO_MESSAGE));
 		}
 	}
 	
-
 
 }
