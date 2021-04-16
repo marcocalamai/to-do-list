@@ -117,7 +117,7 @@ class UserServiceTest {
 			when(userMongoRepository.findByUsername(any(String.class))).thenReturn(Optional.empty());
 			assertThatThrownBy(() -> userService.loadUserByUsername("username"))
 			.isInstanceOf(UsernameNotFoundException.class)
-			.hasMessage("User not found!");
+			.hasMessage(UserService.USER_NOT_FOUND);
 			verify(userMongoRepository, times(1)).findByUsername("username");
 		}
 	}

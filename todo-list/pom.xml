@@ -39,8 +39,18 @@
 			**/TodoListApplication.java,
 			src/main/java/org/marco/calamai/todolist/model/*,
 			src/main/java/org/marco/calamai/todolist/repositories/mongo/*,
-			src/main/java/org/marco/calamai/todolist/exceptions/*
+			src/main/java/org/marco/calamai/todolist/exceptions/*,
+			src/main/java/org/marco/calamai/todolist/configurations/*
 		</sonar.coverage.exclusions>
+		<sonar.issue.ignore.multicriteria>e11</sonar.issue.ignore.multicriteria>
+		<!-- "Inject this field value directly into "authProvider", the only method 
+			that uses it" avoid early initialization of beans with @Lazy annotation -->
+		<sonar.issue.ignore.multicriteria.e11.ruleKey>
+			java:S3305
+		</sonar.issue.ignore.multicriteria.e11.ruleKey>
+		<sonar.issue.ignore.multicriteria.e11.resourceKey>
+			**/WebSecurityConfig.java
+		</sonar.issue.ignore.multicriteria.e11.resourceKey>
 	</properties>
 
 	<dependencies>
@@ -79,6 +89,11 @@
 		<dependency>
 			<groupId>de.flapdoodle.embed</groupId>
 			<artifactId>de.flapdoodle.embed.mongo</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -172,6 +187,7 @@
 							<exclude>org/marco/calamai/todolist/model/*</exclude>
 							<exclude>org/marco/calamai/todolist/repositories/mongo/*</exclude>
 							<exclude>org/marco/calamai/todolist/exceptions/*</exclude>
+							<exclude>org/marco/calamai/todolist/configurations/*</exclude>
 						</excludes>
 					</configuration>
 					<executions>
@@ -223,9 +239,11 @@
 					<configuration>
 						<targetClasses>
 							<param>org.marco.calamai.todolist.services.*</param>
+							<param>org.marco.calamai.todolist.webcontrollers.*</param>
 						</targetClasses>
 						<targetTests>
 							<param>org.marco.calamai.todolist.services.*</param>
+							<param>org.marco.calamai.todolist.webcontrollers.*</param>
 						</targetTests>
 						<mutators>
 							<mutator>STRONGER</mutator>
