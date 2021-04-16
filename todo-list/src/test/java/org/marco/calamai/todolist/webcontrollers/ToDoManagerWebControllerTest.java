@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
@@ -42,7 +43,7 @@ class ToDoManagerWebControllerTest {
 		mvc.perform(get("/toDoManager")).andExpect(status().isOk()).andExpect(view().name("toDoManagerPage"));
 	}
 	
-	@Test @DisplayName("Test ToDoManager show all todo")
+	@Test @DisplayName("Test ToDoManager show all todo and empty message")
 	@WithMockUser(username = "userTest", password = "passwordTest", roles = "USER")
 	void testToDoManagerViewShowAllToDo() throws Exception {
 		ToDo toDo1 = new ToDo("username_1", "title_1", "description_1", LocalDate.now());
@@ -51,13 +52,26 @@ class ToDoManagerWebControllerTest {
 		
 		when(toDoService.getAllToDoOrderByDoneAscDeadlineAsc()).thenReturn(allToDo);
 		mvc.perform(get("/toDoManager"))
-				.andExpect(status().isOk())
 				.andExpect(view().name("toDoManagerPage"))
 				.andExpect(model().attribute("allToDo", allToDo))
 				.andExpect(model().attribute("message", ""));
 		
 		verify(toDoService, times(1)).getAllToDoOrderByDoneAscDeadlineAsc();
 	}
+	
+	@Test @DisplayName("Test ToDoManager show message when there are not to do")
+	@WithMockUser(username = "userTest", password = "passwordTest", roles = "USER")
+	void testToDoManagerViewWhenThereAreNotToDo() throws Exception {
+		when(toDoService.getAllToDoOrderByDoneAscDeadlineAsc()).thenReturn(Collections.emptyList());
+		
+		mvc.perform(get("/toDoManager"))
+				.andExpect(view().name("toDoManagerPage"))
+				.andExpect(model().attribute("allToDo", Collections.emptyList()))
+				.andExpect(model().attribute("message", "There are no to do"));
+		
+		verify(toDoService, times(1)).getAllToDoOrderByDoneAscDeadlineAsc();
+	}
+	
 	
 
 
