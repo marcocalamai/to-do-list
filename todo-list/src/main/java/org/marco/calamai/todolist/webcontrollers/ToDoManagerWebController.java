@@ -31,12 +31,7 @@ public class ToDoManagerWebController {
 		List<ToDo> allToDo = toDoService.getAllToDoOrderByDoneAscDeadlineAsc();
 		mav.setViewName("toDoManagerPage");
 		mav.addObject("allToDo", allToDo);
-		if (allToDo.isEmpty()){
-			mav.addObject(MESSAGE_ATTRIBUTE, NO_TO_DO_MESSAGE);
-		}
-		else {
-			mav.addObject(MESSAGE_ATTRIBUTE, "");
-		}
+		addMessageToModel(mav, allToDo);
 		return mav;
 	}
 	
@@ -46,13 +41,17 @@ public class ToDoManagerWebController {
 		List<ToDo> allMyToDo = toDoService.getToDoByUserOrderByDoneAscDeadlineAsc(principal.getUsername());
 		mav.setViewName("toDoManagerPage");
 		mav.addObject("allToDo", allMyToDo);
-		if (allMyToDo.isEmpty()) {
+		addMessageToModel(mav, allMyToDo);
+		return mav;
+	}
+	
+	private void addMessageToModel(ModelAndView mav, List<ToDo> allToDo) {
+		if (allToDo.isEmpty()){
 			mav.addObject(MESSAGE_ATTRIBUTE, NO_TO_DO_MESSAGE);
 		}
 		else {
 			mav.addObject(MESSAGE_ATTRIBUTE, "");
 		}
-		return mav;
 	}
 }
 			
