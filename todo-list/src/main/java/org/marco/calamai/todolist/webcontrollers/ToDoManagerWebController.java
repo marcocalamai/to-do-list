@@ -25,7 +25,12 @@ public class ToDoManagerWebController {
 		List<ToDo> allToDo = toDoService.getAllToDoOrderByDoneAscDeadlineAsc();
 		mav.setViewName("toDoManagerPage");
 		mav.addObject("allToDo", allToDo);
-		mav.addObject("message", "");
+		if (allToDo.isEmpty()){
+			mav.addObject("message", "There are no to do");
+		}
+		else {
+			mav.addObject("message", "");
+		}
 		return mav;
 	}
 	
