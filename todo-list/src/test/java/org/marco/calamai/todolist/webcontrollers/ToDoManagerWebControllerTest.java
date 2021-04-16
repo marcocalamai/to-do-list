@@ -96,7 +96,8 @@ class ToDoManagerWebControllerTest {
 			mvc.perform(get("/toDoManager/AllMyToDo"))
 					.andExpect(status().isOk())
 					.andExpect(view().name("toDoManagerPage"))
-					.andExpect(model().attribute("allToDo", allMyToDo));
+					.andExpect(model().attribute("allToDo", allMyToDo))
+					.andExpect(model().attribute(MESSAGE_ATTRIBUTE, ""));
 			
 			verify(toDoService, times(1)).getToDoByUserOrderByDoneAscDeadlineAsc("AuthenticatedUser");
 			
