@@ -42,7 +42,7 @@ class ToDoManagerWebControllerTest {
 		mvc.perform(get("/toDoManager")).andExpect(status().isOk()).andExpect(view().name("toDoManagerPage"));
 	}
 	
-	@Test @DisplayName("Test ToDoManager return list of all todo")
+	@Test @DisplayName("Test ToDoManager show all todo")
 	@WithMockUser(username = "userTest", password = "passwordTest", roles = "USER")
 	void testToDoManagerViewShowAllToDo() throws Exception {
 		ToDo toDo1 = new ToDo("username_1", "title_1", "description_1", LocalDate.now());
@@ -53,7 +53,8 @@ class ToDoManagerWebControllerTest {
 		mvc.perform(get("/toDoManager"))
 				.andExpect(status().isOk())
 				.andExpect(view().name("toDoManagerPage"))
-				.andExpect(model().attribute("allToDo", allToDo));
+				.andExpect(model().attribute("allToDo", allToDo))
+				.andExpect(model().attribute("message", ""));
 		
 		verify(toDoService, times(1)).getAllToDoOrderByDoneAscDeadlineAsc();
 	}
