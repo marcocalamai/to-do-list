@@ -12,6 +12,10 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class ToDoManagerWebController {
 	
+	static final String MESSAGE_ATTRIBUTE = "message";
+	
+	static final String NO_TO_DO_MESSAGE = "There are no to do";
+	
 	
 	private ToDoService toDoService;
 	
@@ -26,10 +30,10 @@ public class ToDoManagerWebController {
 		mav.setViewName("toDoManagerPage");
 		mav.addObject("allToDo", allToDo);
 		if (allToDo.isEmpty()){
-			mav.addObject("message", "There are no to do");
+			mav.addObject(MESSAGE_ATTRIBUTE, NO_TO_DO_MESSAGE);
 		}
 		else {
-			mav.addObject("message", "");
+			mav.addObject(MESSAGE_ATTRIBUTE, "");
 		}
 		return mav;
 	}

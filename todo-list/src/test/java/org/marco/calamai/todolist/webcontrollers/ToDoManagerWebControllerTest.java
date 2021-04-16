@@ -67,7 +67,7 @@ class ToDoManagerWebControllerTest {
 		mvc.perform(get("/toDoManager"))
 				.andExpect(view().name("toDoManagerPage"))
 				.andExpect(model().attribute("allToDo", Collections.emptyList()))
-				.andExpect(model().attribute("message", "There are no to do"));
+				.andExpect(model().attribute(ToDoManagerWebController.MESSAGE_ATTRIBUTE, ToDoManagerWebController.NO_TO_DO_MESSAGE));
 		
 		verify(toDoService, times(1)).getAllToDoOrderByDoneAscDeadlineAsc();
 	}

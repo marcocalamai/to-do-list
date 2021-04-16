@@ -16,9 +16,9 @@ import org.springframework.stereotype.Service;
 @Service("toDoService")
 public class ToDoService {
 	
-	public static final String DATE_IS_BEFORE_TODAY = "Date not valid. It has passed!";
-	public static final String TO_DO_NOT_FOUND = "ToDo not found!";
-	public static final String WRONG_USERNAME = "Logged username do not match!";
+	static final String DATE_IS_BEFORE_TODAY = "Date not valid. It has passed!";
+	static final String TO_DO_NOT_FOUND = "ToDo not found!";
+	static final String WRONG_USERNAME = "Logged username do not match!";
 
 	
 	private ToDoMongoRepository toDoMongoRepository;
