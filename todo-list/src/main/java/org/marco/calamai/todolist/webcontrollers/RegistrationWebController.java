@@ -49,8 +49,7 @@ public class RegistrationWebController {
 	}
 
 	private ModelAndView setupModel(String errorMessage) {
-		ModelAndView mav = new ModelAndView();
-		mav.setViewName("/registrationPage");
+		ModelAndView mav = new ModelAndView("/registrationPage");
 		mav.addObject("error_message", errorMessage);
 		mav.setStatus(HttpStatus.BAD_REQUEST);
 		return mav;

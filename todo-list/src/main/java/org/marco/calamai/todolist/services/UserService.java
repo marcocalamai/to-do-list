@@ -19,6 +19,7 @@ public class UserService implements UserDetailsService {
 	public static final String USERNAME_ALREADY_PRESENT = "A user with that username already exists!";
 	public static final String EMPTY_FIELD = "The username or password fields are empty!";
 	public static final String WHITESPACE_IN_FIELD = "The username or password field contains one or more whitespace!";
+	public static final String USER_NOT_FOUND = "User not found!";
 	
 
 	private UserMongoRepository userMongoRepository;
@@ -45,10 +46,10 @@ public class UserService implements UserDetailsService {
 	}
 
 	@Override
-	public User loadUserByUsername(String username) throws UsernameNotFoundException {
+	public User loadUserByUsername(String username) {
 		Optional<User> user = userMongoRepository.findByUsername(username);
 		if (!user.isPresent()) {
-			throw new UsernameNotFoundException("User not found!");
+			throw new UsernameNotFoundException(USER_NOT_FOUND);
 		}
 		return user.get();
 	}
