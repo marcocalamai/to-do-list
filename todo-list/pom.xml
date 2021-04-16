@@ -229,9 +229,11 @@
 					<configuration>
 						<targetClasses>
 							<param>org.marco.calamai.todolist.services.*</param>
+							<param>org.marco.calamai.todolist.webcontrollers.*</param>
 						</targetClasses>
 						<targetTests>
 							<param>org.marco.calamai.todolist.services.*</param>
+							<param>org.marco.calamai.todolist.webcontrollers.*</param>
 						</targetTests>
 						<mutators>
 							<mutator>STRONGER</mutator>
