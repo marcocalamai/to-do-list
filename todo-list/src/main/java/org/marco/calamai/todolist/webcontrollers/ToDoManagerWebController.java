@@ -46,6 +46,7 @@ public class ToDoManagerWebController {
 		List<ToDo> allMyToDo = toDoService.getToDoByUserOrderByDoneAscDeadlineAsc(principal.getUsername());
 		mav.setViewName("toDoManagerPage");
 		mav.addObject("allToDo", allMyToDo);
+		mav.addObject(MESSAGE_ATTRIBUTE, "");
 		return mav;
 	}
 	
