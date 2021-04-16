@@ -44,7 +44,7 @@
 		</sonar.coverage.exclusions>
 		<sonar.issue.ignore.multicriteria>e11</sonar.issue.ignore.multicriteria>
 		<!-- "Inject this field value directly into "authProvider", the only method 
-			that uses it" avoid early initialization of beans with @Lazy annotation -->
+			that uses it" avoided early initialization of beans with @Lazy annotation -->
 		<sonar.issue.ignore.multicriteria.e11.ruleKey>
 			java:S3305
 		</sonar.issue.ignore.multicriteria.e11.ruleKey>
