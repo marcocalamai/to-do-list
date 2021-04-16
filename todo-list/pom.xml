@@ -39,7 +39,8 @@
 			**/TodoListApplication.java,
 			src/main/java/org/marco/calamai/todolist/model/*,
 			src/main/java/org/marco/calamai/todolist/repositories/mongo/*,
-			src/main/java/org/marco/calamai/todolist/exceptions/*
+			src/main/java/org/marco/calamai/todolist/exceptions/*,
+			src/main/java/org/marco/calamai/todolist/configurations/*
 		</sonar.coverage.exclusions>
 	</properties>
 

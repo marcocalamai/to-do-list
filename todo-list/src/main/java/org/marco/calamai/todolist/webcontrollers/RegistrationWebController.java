@@ -19,8 +19,13 @@ public class RegistrationWebController {
 	public static final String EMPTY_FIELD = "The username or password fields are empty!";
 	public static final String WHITESPACE_IN_FIELD = "The username or password field contains one or more whitespace!";
 	
-	@Autowired
+	
 	private UserService userService;
+	
+	@Autowired
+	public RegistrationWebController(UserService userService) {
+		this.userService = userService;
+	}
 	
 	@GetMapping("/registration")
 	public String getRegistrationIndex() {
