@@ -5,6 +5,8 @@ import java.util.List;
 import org.marco.calamai.todolist.model.ToDo;
 import org.marco.calamai.todolist.services.ToDoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -12,9 +14,9 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class ToDoManagerWebController {
 	
-	static final String MESSAGE_ATTRIBUTE = "message";
+	private static final String MESSAGE_ATTRIBUTE = "message";
 	
-	static final String NO_TO_DO_MESSAGE = "There are no to do";
+	private static final String NO_TO_DO_MESSAGE = "There are no to do";
 	
 	
 	private ToDoService toDoService;
@@ -25,7 +27,7 @@ public class ToDoManagerWebController {
 	}
 	
 	@GetMapping("/toDoManager")
-	public ModelAndView getToDoModelIndex(ModelAndView mav) {
+	public ModelAndView getAllToDo(ModelAndView mav) {
 		List<ToDo> allToDo = toDoService.getAllToDoOrderByDoneAscDeadlineAsc();
 		mav.setViewName("toDoManagerPage");
 		mav.addObject("allToDo", allToDo);
@@ -35,6 +37,15 @@ public class ToDoManagerWebController {
 		else {
 			mav.addObject(MESSAGE_ATTRIBUTE, "");
 		}
+		return mav;
+	}
+	
+	
+	@GetMapping("/toDoManager/AllMyToDo")
+	public ModelAndView getAllMyToDo(@AuthenticationPrincipal UserDetails principal, ModelAndView mav) {
+		List<ToDo> allMyToDo = toDoService.getToDoByUserOrderByDoneAscDeadlineAsc(principal.getUsername());
+		mav.setViewName("toDoManagerPage");
+		mav.addObject("allToDo", allMyToDo);
 		return mav;
 	}
 	

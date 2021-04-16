@@ -16,10 +16,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserService implements UserDetailsService {
 	
-	static final String USERNAME_ALREADY_PRESENT = "A user with that username already exists!";
-	static final String EMPTY_FIELD = "The username or password fields are empty!";
-	static final String WHITESPACE_IN_FIELD = "The username or password field contains one or more whitespace!";
-	static final String USER_NOT_FOUND = "User not found!";
+	private static final String USERNAME_ALREADY_PRESENT = "A user with that username already exists!";
+	private static final String EMPTY_FIELD = "The username or password fields are empty!";
+	private static final String WHITESPACE_IN_FIELD = "The username or password field contains one or more whitespace!";
+	private static final String USER_NOT_FOUND = "User not found!";
 	
 
 	private UserMongoRepository userMongoRepository;

@@ -15,9 +15,9 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class RegistrationWebController {
 	
-	static final String USERNAME_ALREADY_PRESENT = "A user with that username already exists!";
-	static final String EMPTY_FIELD = "The username or password fields are empty!";
-	static final String WHITESPACE_IN_FIELD = "The username or password field contains one or more whitespace!";
+	private static final String USERNAME_ALREADY_PRESENT = "A user with that username already exists!";
+	private static final String EMPTY_FIELD = "The username or password fields are empty!";
+	private static final String WHITESPACE_IN_FIELD = "The username or password field contains one or more whitespace!";
 	
 	
 	private UserService userService;
