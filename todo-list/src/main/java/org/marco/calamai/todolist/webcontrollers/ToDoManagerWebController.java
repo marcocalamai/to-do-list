@@ -1,5 +1,6 @@
 package org.marco.calamai.todolist.webcontrollers;
 
+import java.math.BigInteger;
 import java.time.DateTimeException;
 import java.util.List;
 
@@ -12,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -74,7 +76,15 @@ public class ToDoManagerWebController {
 		addMessageToModel(mav, allToDoByDeadline);
 		return mav;
 	}
-
+	
+	@GetMapping("/toDoManager/editToDo/{id}")
+	public ModelAndView editToDo(@PathVariable BigInteger id, ModelAndView mav) {
+		ToDo toDoById = toDoService.getToDoById(id);
+		mav.setViewName("editToDoPage");
+		mav.addObject("toDo", toDoById);
+		return mav;
+		
+	}
 	private void addMessageToModel(ModelAndView mav, List<ToDo> allToDo) {
 		if (allToDo.isEmpty()){
 			mav.addObject(MESSAGE_ATTRIBUTE, NO_TO_DO_MESSAGE);

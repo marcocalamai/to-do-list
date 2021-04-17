@@ -124,155 +124,175 @@ class ToDoManagerWebControllerTest {
 			
 			verify(toDoService, times(1)).getToDoByUserOrderByDoneAscDeadlineAsc("AuthenticatedUser");
 		}
-	}
+		
 	
 
-	@Test @DisplayName("Test search toDo by title")
-	@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
-	void testSerachToDoByTitle() throws Exception {
-		ToDo toDo1 = new ToDo("user_1", "title_1", "description_1", LocalDate.now());
-		toDo1.setId(new BigInteger("0"));
-		List<ToDo> allToDoByTitle = new ArrayList<>();
-		allToDoByTitle.add(toDo1);
+		@Test @DisplayName("Test search toDo by title")
+		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
+		void testSerachToDoByTitle() throws Exception {
+			ToDo toDo1 = new ToDo("user_1", "title_1", "description_1", LocalDate.now());
+			toDo1.setId(new BigInteger("0"));
+			List<ToDo> allToDoByTitle = new ArrayList<>();
+			allToDoByTitle.add(toDo1);
+			
+			when(toDoService.getAllToDoByTitleOrderByDoneAscDeadlineAsc("title_1")).thenReturn(allToDoByTitle);
+			
+			mvc.perform(get("/toDoManager/toDoByTitle")
+					.param("title", "title_1"))
+					.andExpect(status().isOk())
+					.andExpect(view().name(TO_DO_MANAGER_PAGE))
+					.andExpect(model().attribute(ALL_TO_DO_ATTRIBUTE, allToDoByTitle))
+					.andExpect(model().attribute(MESSAGE_ATTRIBUTE, ""));
+			
+			verify(toDoService, times(1)).getAllToDoByTitleOrderByDoneAscDeadlineAsc("title_1");
+		}
 		
-		when(toDoService.getAllToDoByTitleOrderByDoneAscDeadlineAsc("title_1")).thenReturn(allToDoByTitle);
+		@Test @DisplayName("Test search ToDo by title when there are not, show message")
+		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
+		void testSerachToDoByTitleWhenThereAreNot() throws Exception {
+			when(toDoService.getAllToDoByTitleOrderByDoneAscDeadlineAsc("title_1")).thenReturn(Collections.emptyList());
+			
+			mvc.perform(get("/toDoManager/toDoByTitle")
+					.param("title", "title_1"))
+					.andExpect(status().isOk())
+					.andExpect(view().name(TO_DO_MANAGER_PAGE))
+					.andExpect(model().attribute(ALL_TO_DO_ATTRIBUTE, Collections.emptyList()))
+					.andExpect(model().attribute(MESSAGE_ATTRIBUTE, NO_TO_DO_MESSAGE));
+			
+			verify(toDoService, times(1)).getAllToDoByTitleOrderByDoneAscDeadlineAsc("title_1");
+		}
 		
-		mvc.perform(get("/toDoManager/toDoByTitle")
-				.param("title", "title_1"))
-				.andExpect(status().isOk())
-				.andExpect(view().name(TO_DO_MANAGER_PAGE))
-				.andExpect(model().attribute(ALL_TO_DO_ATTRIBUTE, allToDoByTitle))
-				.andExpect(model().attribute(MESSAGE_ATTRIBUTE, ""));
+		@Test @DisplayName("Test search ToDo by title when title attribute is empty")
+		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
+		void testSerachToDoByTitleWhenItIsEmpty() throws Exception {		
+			mvc.perform(get("/toDoManager/toDoByTitle"))
+					.andExpect(status().is4xxClientError());
+				}
 		
-		verify(toDoService, times(1)).getAllToDoByTitleOrderByDoneAscDeadlineAsc("title_1");
+		@Test @DisplayName("Test search toDo by deadline")
+		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
+		void testSerachToDoByDeadline() throws Exception {
+			ToDo toDo1 = new ToDo("user_1", "title_1", "description_1", LocalDate.of(2040, 12, 31));
+			toDo1.setId(new BigInteger("0"));
+			List<ToDo> allToDoByDeadline = new ArrayList<>();
+			allToDoByDeadline.add(toDo1);
+			
+			when(toDoService.getAllToDoByDeadlineOrderByDoneAsc(2040, 12, 31)).thenReturn(allToDoByDeadline);
+			
+			mvc.perform(get("/toDoManager/toDoByDeadline")
+					.param("year", "2040")
+					.param("month", "12")
+					.param("day", "31" ))
+					.andExpect(status().isOk())
+					.andExpect(view().name(TO_DO_MANAGER_PAGE))
+					.andExpect(model().attribute(ALL_TO_DO_ATTRIBUTE, allToDoByDeadline))
+					.andExpect(model().attribute(MESSAGE_ATTRIBUTE, ""));
+			
+			verify(toDoService, times(1)).getAllToDoByDeadlineOrderByDoneAsc(2040, 12, 31);
+		}
+		
+		@Test @DisplayName("Test search toDo by deadline when there are not, show message")
+		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
+		void testSerachToDoByDeadlineWhenThereAreNot() throws Exception {
+			when(toDoService.getAllToDoByDeadlineOrderByDoneAsc(2040, 12, 31)).thenReturn(Collections.emptyList());
+			
+			mvc.perform(get("/toDoManager/toDoByDeadline")
+					.param("year", "2040")
+					.param("month", "12")
+					.param("day", "31" ))
+					.andExpect(status().isOk())
+					.andExpect(view().name(TO_DO_MANAGER_PAGE))
+					.andExpect(model().attribute(ALL_TO_DO_ATTRIBUTE, Collections.emptyList()))
+					.andExpect(model().attribute(MESSAGE_ATTRIBUTE, NO_TO_DO_MESSAGE));
+			
+			verify(toDoService, times(1)).getAllToDoByDeadlineOrderByDoneAsc(2040, 12, 31);
+		}
+		
+		
+		@Test @DisplayName("Test search toDo by deadline when year attribute is empty")
+		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
+		void testSerachToDoByDeadlineWhenYearAttributeIsEmpty() throws Exception {
+			mvc.perform(get("/toDoManager/toDoByDeadline")
+					.param("month", "12")
+					.param("day", "31" ))
+					.andExpect(status().is4xxClientError());
+			
+			verifyNoInteractions(toDoService);
+		}
+		
+		@Test @DisplayName("Test search toDo by deadline when month attribute is empty")
+		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
+		void testSerachToDoByDeadlineWhenMonthAttributeIsEmpty() throws Exception {
+			mvc.perform(get("/toDoManager/toDoByDeadline")
+					.param("year", "2040")
+					.param("day", "31" ))
+					.andExpect(status().is4xxClientError());
+			
+			verifyNoInteractions(toDoService);
+		}
+		
+		@Test @DisplayName("Test search toDo by deadline when day attribute is empty")
+		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
+		void testSerachToDoByDeadlineWhenDayAttributeIsEmpty() throws Exception {
+			mvc.perform(get("/toDoManager/toDoByDeadline")
+					.param("year", "2040")
+					.param("month", "12"))
+					.andExpect(status().is4xxClientError());
+			
+			verifyNoInteractions(toDoService);
+		}
+		
+		@Test @DisplayName("Test search toDo by deadline when it is not a valid date")
+		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
+		void testSerachToDoByDeadlineWhenItIsNotValid() throws Exception {
+			when(toDoService.getAllToDoByDeadlineOrderByDoneAsc(2040, 122, 311)).thenThrow(DateTimeException.class);
+			
+			mvc.perform(get("/toDoManager/toDoByDeadline")
+					.param("year", "2040")
+					.param("month", "122")
+					.param("day", "311" ))
+					.andExpect(status().is4xxClientError())
+					.andExpect(view().name(TO_DO_MANAGER_PAGE))
+					.andExpect(model().attribute("info_message", "The date inserted is not a valid date!"));
+			
+			verify(toDoService, times(1)).getAllToDoByDeadlineOrderByDoneAsc(2040, 122, 311);
+		}
+		
+		@Test @DisplayName("Test search toDo by deadline when year, day or month are wrong number format")
+		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
+		void testSerachToDoByDeadlineWhenYearMonthOrDayAreWrongNumberFormat() throws Exception {
+			mvc.perform(get("/toDoManager/toDoByDeadline")
+					.param("year", "duemilaquaranta")
+					.param("month", "dodici")
+					.param("day", "trentuno" ))
+					.andExpect(status().is4xxClientError())
+					.andExpect(view().name(TO_DO_MANAGER_PAGE))
+					.andExpect(model().attribute("info_message", "The date inserted is not a valid date!"));
+			
+			verifyNoInteractions(toDoService);
+		}
 	}
 	
-	@Test @DisplayName("Test search ToDo by title when there are not, show message")
-	@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
-	void testSerachToDoByTitleWhenThereAreNot() throws Exception {
-		when(toDoService.getAllToDoByTitleOrderByDoneAscDeadlineAsc("title_1")).thenReturn(Collections.emptyList());
+	@Nested @DisplayName("Test for edit toDo")
+	class insertToDo {
 		
-		mvc.perform(get("/toDoManager/toDoByTitle")
-				.param("title", "title_1"))
-				.andExpect(status().isOk())
-				.andExpect(view().name(TO_DO_MANAGER_PAGE))
-				.andExpect(model().attribute(ALL_TO_DO_ATTRIBUTE, Collections.emptyList()))
-				.andExpect(model().attribute(MESSAGE_ATTRIBUTE, NO_TO_DO_MESSAGE));
+		@Test @DisplayName("Test edit toDo")
+		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
+		void testEditToDo() throws Exception {
+			ToDo toDo1 = new ToDo("username_1", "title_1", "description_1", LocalDate.now());
+			toDo1.setId(new BigInteger("0"));
+				
+			when(toDoService.getToDoById(new BigInteger("0"))).thenReturn(toDo1);
+			
+			mvc.perform(get("/toDoManager/editToDo/0"))
+					.andExpect(status().isOk())
+					.andExpect(view().name("editToDoPage"))
+					.andExpect(model().attribute("toDo", toDo1));
+			
+			verify(toDoService, times(1)).getToDoById(new BigInteger("0"));
+		}
 		
-		verify(toDoService, times(1)).getAllToDoByTitleOrderByDoneAscDeadlineAsc("title_1");
-	}
-	
-	@Test @DisplayName("Test search ToDo by title when title attribute is empty")
-	@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
-	void testSerachToDoByTitleWhenItIsEmpty() throws Exception {		
-		mvc.perform(get("/toDoManager/toDoByTitle"))
-				.andExpect(status().is4xxClientError());
-			}
-	
-	@Test @DisplayName("Test search toDo by deadline")
-	@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
-	void testSerachToDoByDeadline() throws Exception {
-		ToDo toDo1 = new ToDo("user_1", "title_1", "description_1", LocalDate.of(2040, 12, 31));
-		toDo1.setId(new BigInteger("0"));
-		List<ToDo> allToDoByDeadline = new ArrayList<>();
-		allToDoByDeadline.add(toDo1);
-		
-		when(toDoService.getAllToDoByDeadlineOrderByDoneAsc(2040, 12, 31)).thenReturn(allToDoByDeadline);
-		
-		mvc.perform(get("/toDoManager/toDoByDeadline")
-				.param("year", "2040")
-				.param("month", "12")
-				.param("day", "31" ))
-				.andExpect(status().isOk())
-				.andExpect(view().name(TO_DO_MANAGER_PAGE))
-				.andExpect(model().attribute(ALL_TO_DO_ATTRIBUTE, allToDoByDeadline))
-				.andExpect(model().attribute(MESSAGE_ATTRIBUTE, ""));
-		
-		verify(toDoService, times(1)).getAllToDoByDeadlineOrderByDoneAsc(2040, 12, 31);
-	}
-	
-	@Test @DisplayName("Test search toDo by deadline when there are not, show message")
-	@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
-	void testSerachToDoByDeadlineWhenThereAreNot() throws Exception {
-		when(toDoService.getAllToDoByDeadlineOrderByDoneAsc(2040, 12, 31)).thenReturn(Collections.emptyList());
-		
-		mvc.perform(get("/toDoManager/toDoByDeadline")
-				.param("year", "2040")
-				.param("month", "12")
-				.param("day", "31" ))
-				.andExpect(status().isOk())
-				.andExpect(view().name(TO_DO_MANAGER_PAGE))
-				.andExpect(model().attribute(ALL_TO_DO_ATTRIBUTE, Collections.emptyList()))
-				.andExpect(model().attribute(MESSAGE_ATTRIBUTE, NO_TO_DO_MESSAGE));
-		
-		verify(toDoService, times(1)).getAllToDoByDeadlineOrderByDoneAsc(2040, 12, 31);
-	}
-	
-	
-	@Test @DisplayName("Test search toDo by deadline when year attribute is empty")
-	@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
-	void testSerachToDoByDeadlineWhenYearAttributeIsEmpty() throws Exception {
-		mvc.perform(get("/toDoManager/toDoByDeadline")
-				.param("month", "12")
-				.param("day", "31" ))
-				.andExpect(status().is4xxClientError());
-		
-		verifyNoInteractions(toDoService);
-	}
-	
-	@Test @DisplayName("Test search toDo by deadline when month attribute is empty")
-	@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
-	void testSerachToDoByDeadlineWhenMonthAttributeIsEmpty() throws Exception {
-		mvc.perform(get("/toDoManager/toDoByDeadline")
-				.param("year", "2040")
-				.param("day", "31" ))
-				.andExpect(status().is4xxClientError());
-		
-		verifyNoInteractions(toDoService);
-	}
-	
-	@Test @DisplayName("Test search toDo by deadline when day attribute is empty")
-	@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
-	void testSerachToDoByDeadlineWhenDayAttributeIsEmpty() throws Exception {
-		mvc.perform(get("/toDoManager/toDoByDeadline")
-				.param("year", "2040")
-				.param("month", "12"))
-				.andExpect(status().is4xxClientError());
-		
-		verifyNoInteractions(toDoService);
-	}
-	
-	@Test @DisplayName("Test search toDo by deadline when it is not a valid date")
-	@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
-	void testSerachToDoByDeadlineWhenItIsNotValid() throws Exception {
-		when(toDoService.getAllToDoByDeadlineOrderByDoneAsc(2040, 122, 311)).thenThrow(DateTimeException.class);
-		
-		mvc.perform(get("/toDoManager/toDoByDeadline")
-				.param("year", "2040")
-				.param("month", "122")
-				.param("day", "311" ))
-				.andExpect(status().is4xxClientError())
-				.andExpect(view().name(TO_DO_MANAGER_PAGE))
-				.andExpect(model().attribute("info_message", "The date inserted is not a valid date!"));
-		
-		verify(toDoService, times(1)).getAllToDoByDeadlineOrderByDoneAsc(2040, 122, 311);
-	}
-	
-	@Test @DisplayName("Test search toDo by deadline when year, day or month are wrong number format")
-	@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
-	void testSerachToDoByDeadlineWhenYearMonthOrDayAreWrongNumberFormat() throws Exception {
-		mvc.perform(get("/toDoManager/toDoByDeadline")
-				.param("year", "duemilaquaranta")
-				.param("month", "dodici")
-				.param("day", "trentuno" ))
-				.andExpect(status().is4xxClientError())
-				.andExpect(view().name(TO_DO_MANAGER_PAGE))
-				.andExpect(model().attribute("info_message", "The date inserted is not a valid date!"));
-		
-		verifyNoInteractions(toDoService);
 	}
 
-
 	
-
 }
