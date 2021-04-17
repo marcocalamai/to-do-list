@@ -160,6 +160,13 @@ class ToDoManagerWebControllerTest {
 		verify(toDoService, times(1)).getAllToDoByTitleOrderByDoneAscDeadlineAsc("title_1");
 	}
 	
+	@Test @DisplayName("Test search ToDo by title when title attribute is empty")
+	@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
+	void testSerachToDoByTitleWhenItIsEmpty() throws Exception {		
+		mvc.perform(get("/toDoManager/toDoByTitle"))
+				.andExpect(status().is4xxClientError());
+			}
+	
 	@Test @DisplayName("Test search toDo by deadline")
 	@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
 	void testSerachToDoByDeadline() throws Exception {
