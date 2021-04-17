@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.time.DateTimeException;
 import java.util.List;
 
+import org.marco.calamai.todolist.exceptions.ToDoNotFoundException;
 import org.marco.calamai.todolist.model.ToDo;
 import org.marco.calamai.todolist.services.ToDoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class ToDoManagerWebController {
 
+	private static final String EDIT_TO_DO_PAGE = "editToDoPage";
 	private static final String TO_DO_MANAGER_PAGE = "toDoManagerPage";
 	
 	private static final String ALL_TO_DO_ATTRIBUTE = "allToDo";
@@ -27,6 +29,8 @@ public class ToDoManagerWebController {
 	private static final String MESSAGE_ATTRIBUTE = "message";
 	
 	private static final String NO_TO_DO_MESSAGE = "There are no to do";
+	private static final String NOT_VALID_DATE = "The date inserted is not a valid date!";
+	private static final String USER_NOT_FOUND = "User not found!";
 	
 	
 	private ToDoService toDoService;
@@ -80,7 +84,7 @@ public class ToDoManagerWebController {
 	@GetMapping("/toDoManager/editToDo/{id}")
 	public ModelAndView editToDo(@PathVariable BigInteger id, ModelAndView mav) {
 		ToDo toDoById = toDoService.getToDoById(id);
-		mav.setViewName("editToDoPage");
+		mav.setViewName(EDIT_TO_DO_PAGE);
 		mav.addObject("toDo", toDoById);
 		return mav;
 		
@@ -97,10 +101,19 @@ public class ToDoManagerWebController {
 	@ExceptionHandler({DateTimeException.class, NumberFormatException.class})
 	private ModelAndView handleDateInputError() {
 		ModelAndView mav = new ModelAndView(TO_DO_MANAGER_PAGE);
-		mav.addObject("info_message", "The date inserted is not a valid date!");
+		mav.addObject(MESSAGE_ATTRIBUTE, NOT_VALID_DATE);
 		mav.setStatus(HttpStatus.BAD_REQUEST);
 		return mav;
 	}
+
+	@ExceptionHandler(ToDoNotFoundException.class)
+	private ModelAndView handleToDoNotFound() {
+		ModelAndView mav = new ModelAndView(TO_DO_MANAGER_PAGE);
+		mav.addObject(MESSAGE_ATTRIBUTE, USER_NOT_FOUND);
+		mav.setStatus(HttpStatus.BAD_REQUEST);
+		return mav;
+	}
+	
 }
 			
 	

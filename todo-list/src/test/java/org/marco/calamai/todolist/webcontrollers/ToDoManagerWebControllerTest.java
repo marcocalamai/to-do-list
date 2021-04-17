@@ -20,6 +20,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.marco.calamai.todolist.exceptions.ToDoNotFoundException;
 import org.marco.calamai.todolist.model.ToDo;
 import org.marco.calamai.todolist.services.ToDoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -253,7 +254,7 @@ class ToDoManagerWebControllerTest {
 					.param("day", "311" ))
 					.andExpect(status().is4xxClientError())
 					.andExpect(view().name(TO_DO_MANAGER_PAGE))
-					.andExpect(model().attribute("info_message", "The date inserted is not a valid date!"));
+					.andExpect(model().attribute(MESSAGE_ATTRIBUTE, "The date inserted is not a valid date!"));
 			
 			verify(toDoService, times(1)).getAllToDoByDeadlineOrderByDoneAsc(2040, 122, 311);
 		}
@@ -267,7 +268,7 @@ class ToDoManagerWebControllerTest {
 					.param("day", "trentuno" ))
 					.andExpect(status().is4xxClientError())
 					.andExpect(view().name(TO_DO_MANAGER_PAGE))
-					.andExpect(model().attribute("info_message", "The date inserted is not a valid date!"));
+					.andExpect(model().attribute(MESSAGE_ATTRIBUTE, "The date inserted is not a valid date!"));
 			
 			verifyNoInteractions(toDoService);
 		}
@@ -288,6 +289,19 @@ class ToDoManagerWebControllerTest {
 					.andExpect(status().isOk())
 					.andExpect(view().name("editToDoPage"))
 					.andExpect(model().attribute("toDo", toDo1));
+			
+			verify(toDoService, times(1)).getToDoById(new BigInteger("0"));
+		}
+		
+		@Test @DisplayName("Test edit toDo when it is not found")
+		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
+		void testEditToDoWhenNotFound() throws Exception {
+			when(toDoService.getToDoById(new BigInteger("0"))).thenThrow(ToDoNotFoundException.class);
+			
+			mvc.perform(get("/toDoManager/editToDo/0"))
+					.andExpect(status().is4xxClientError())
+					.andExpect(view().name(TO_DO_MANAGER_PAGE))
+					.andExpect(model().attribute(MESSAGE_ATTRIBUTE, "User not found!"));
 			
 			verify(toDoService, times(1)).getToDoById(new BigInteger("0"));
 		}
