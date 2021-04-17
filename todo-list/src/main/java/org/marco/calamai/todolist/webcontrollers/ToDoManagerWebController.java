@@ -45,6 +45,15 @@ public class ToDoManagerWebController {
 		return mav;
 	}
 	
+	@GetMapping("/toDoManager/toDoByTitle")
+	public ModelAndView getAllToDoByTitle( String title, ModelAndView mav) {
+		List<ToDo> allToDoByTitle = toDoService.getAllToDoByTitleOrderByDoneAscDeadlineAsc(title);
+		mav.setViewName("toDoManagerPage");
+		mav.addObject("allToDo", allToDoByTitle);
+		addMessageToModel(mav, allToDoByTitle);
+		return mav;
+	}
+
 	private void addMessageToModel(ModelAndView mav, List<ToDo> allToDo) {
 		if (allToDo.isEmpty()){
 			mav.addObject(MESSAGE_ATTRIBUTE, NO_TO_DO_MESSAGE);
