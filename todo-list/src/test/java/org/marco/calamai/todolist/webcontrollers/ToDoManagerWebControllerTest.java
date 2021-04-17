@@ -84,7 +84,7 @@ class ToDoManagerWebControllerTest {
 			verify(toDoService, times(1)).getAllToDoOrderByDoneAscDeadlineAsc();
 		}
 		
-		@Test @DisplayName("Test /toDoManager/AllMyToDo show all my todo")
+		@Test @DisplayName("Test show all my todo")
 		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
 		void testShowAllMyToDo() throws Exception {
 			ToDo toDo1 = new ToDo("AuthenticatedUser", "title_1", "description_1", LocalDate.now());
@@ -102,9 +102,9 @@ class ToDoManagerWebControllerTest {
 			verify(toDoService, times(1)).getToDoByUserOrderByDoneAscDeadlineAsc("AuthenticatedUser");
 		}
 		
-		@Test @DisplayName("Test /toDoManager/AllMyToDo show message when there are not my todo")
+		@Test @DisplayName("Test show all my todo when there are not show message")
 		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
-		void testShowAllMyToDoWhenThereAreNotMyToDo() throws Exception {
+		void testShowAllMyToDoWhenThereAreNot() throws Exception {
 			when(toDoService.getToDoByUserOrderByDoneAscDeadlineAsc("AuthenticatedUser")).thenReturn(Collections.emptyList());
 			
 			mvc.perform(get("/toDoManager/AllMyToDo"))
@@ -134,6 +134,21 @@ class ToDoManagerWebControllerTest {
 				.andExpect(view().name("toDoManagerPage"))
 				.andExpect(model().attribute("allToDo", allToDoByTitle))
 				.andExpect(model().attribute(MESSAGE_ATTRIBUTE, ""));
+		
+		verify(toDoService, times(1)).getAllToDoByTitleOrderByDoneAscDeadlineAsc("title_1");
+	}
+	
+	@Test @DisplayName("Test search ToDo by title when there are not show message")
+	@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
+	void testSerachToDoByTitleWhenThereAreNot() throws Exception {
+		when(toDoService.getAllToDoByTitleOrderByDoneAscDeadlineAsc("title_1")).thenReturn(Collections.emptyList());
+		
+		mvc.perform(get("/toDoManager/toDoByTitle")
+				.param("title", "title_1"))
+				.andExpect(status().isOk())
+				.andExpect(view().name("toDoManagerPage"))
+				.andExpect(model().attribute("allToDo", Collections.emptyList()))
+				.andExpect(model().attribute(MESSAGE_ATTRIBUTE, NO_TO_DO_MESSAGE));
 		
 		verify(toDoService, times(1)).getAllToDoByTitleOrderByDoneAscDeadlineAsc("title_1");
 	}
