@@ -1,7 +1,9 @@
 package org.marco.calamai.todolist.webcontrollers;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -20,7 +22,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.marco.calamai.todolist.exceptions.InvalidTimeException;
 import org.marco.calamai.todolist.exceptions.ToDoNotFoundException;
+import org.marco.calamai.todolist.exceptions.WrongUsernameException;
 import org.marco.calamai.todolist.model.ToDo;
 import org.marco.calamai.todolist.services.ToDoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +55,7 @@ class ToDoManagerWebControllerTest {
 	
 	@MockBean
 	private ToDoService toDoService;
-	
+		
 
 	
 	@Test @DisplayName("Test ToDoManager status code is 200 and view name")
@@ -218,6 +222,8 @@ class ToDoManagerWebControllerTest {
 					.andExpect(status().is4xxClientError())
 					.andExpect(view().name(TO_DO_MANAGER_PAGE))
 					.andExpect(model().attribute(MESSAGE_ATTRIBUTE, "The date inserted is not a valid date!"));
+			
+			verifyNoInteractions(toDoService);
 		}
 		
 		@Test @DisplayName("Test search ToDo by deadline when deadline attribute is empty")
@@ -225,6 +231,8 @@ class ToDoManagerWebControllerTest {
 		void testSerachToDoByDeadlineWhenItIsEmpty() throws Exception {		
 			mvc.perform(get("/toDoManager/toDoByDeadline"))
 					.andExpect(status().is4xxClientError());
+			
+			verifyNoInteractions(toDoService);
 				}
 	}
 	
@@ -267,6 +275,8 @@ class ToDoManagerWebControllerTest {
 					.andExpect(status().isOk())
 					.andExpect(view().name("editToDoPage"))
 					.andExpect(model().attribute("toDo", new ToDo()));
+			
+			verifyNoInteractions(toDoService);
 		}
 	}
 	
@@ -277,20 +287,35 @@ class ToDoManagerWebControllerTest {
 		
 		@Test @DisplayName("Test post ToDo without id should insert toDo")
 		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
-		void testPostWithoutIdShouldInsertToDo() throws Exception {
+		void testPostToDoWithoutIdShouldInsertToDo() throws Exception {
 			mvc.perform(post("/toDoManager/saveToDo")
 					.param("title", "title_1")
 					.param("description", "description_1")
 					.param("deadline", "2040-12-31")
 					.with(csrf()))
+					.andExpect(status().is3xxRedirection())
 					.andExpect(view().name("redirect:/toDoManager"));
 			
 			verify(toDoService, times(1)).insertToDo(new ToDo("AuthenticatedUser", "title_1", "description_1", LocalDate.of(2040, 12, 31)));
 			}
 		
+		@Test @DisplayName("Test post ToDo without id when deadline has passed, show message")
+		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
+		void testPostToDoWithoutIdWhenDeadlineIsPassed() throws Exception {
+			when(toDoService.insertToDo(any(ToDo.class))).thenThrow(InvalidTimeException.class);
+			
+			mvc.perform(post("/toDoManager/saveToDo")
+					.param("title", "title_1")
+					.param("description", "description_1")
+					.param("deadline", "1999-12-31")
+					.with(csrf()))
+					.andExpect(status().is4xxClientError())
+					.andExpect(view().name(TO_DO_MANAGER_PAGE));
+			}
+		
 		@Test @DisplayName("Test post ToDo with id should update toDo")
 		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
-		void testPostWithIdShouldUpdateToDo() throws Exception {
+		void testPostToDoWithIdShouldUpdateToDo() throws Exception {
 			mvc.perform(post("/toDoManager/saveToDo")
 					.param("id", "0")
 					.param("username", "AuthenticatedUser")
@@ -299,12 +324,49 @@ class ToDoManagerWebControllerTest {
 					.param("done", "true")
 					.param("deadline", "2040-12-31")
 					.with(csrf()))
+					.andExpect(status().is3xxRedirection())
 					.andExpect(view().name("redirect:/toDoManager"));
 			
 			ToDo todo = new ToDo("AuthenticatedUser", "title_1", "description_1", LocalDate.of(2040, 12, 31));
 			todo.setDone(true);
 			
 			verify(toDoService, times(1)).updateToDo(new BigInteger("0"), "AuthenticatedUser", todo);
+			}
+		
+		@Test @DisplayName("Test post ToDo with id when deadline has passed, show message")
+		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
+		void testPostToDoWithIdWhenDeadlineIsPassed() throws Exception {
+			when(toDoService.updateToDo(any(BigInteger.class), any(String.class), any(ToDo.class))).thenThrow(InvalidTimeException.class);
+			
+			mvc.perform(post("/toDoManager/saveToDo")
+					.param("id", "0")
+					.param("username", "AuthenticatedUser")
+					.param("title", "title_1")
+					.param("description", "description_1")
+					.param("done", "true")
+					.param("deadline", "1999-12-31")
+					.with(csrf()))
+					.andExpect(status().is4xxClientError())
+					.andExpect(view().name(TO_DO_MANAGER_PAGE))
+					.andExpect(model().attribute(MESSAGE_ATTRIBUTE, "The deadline inserted has passed!"));
+			}
+		
+		@Test @DisplayName("Test post ToDo with id when the username is different from the authenticated one, show message")
+		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
+		void testPostToDoWithIdWhenUsernameIsDifferentFromAuthenticatedOne() throws Exception {
+			when(toDoService.updateToDo(any(BigInteger.class), any(String.class), any(ToDo.class))).thenThrow(WrongUsernameException.class);
+			
+			mvc.perform(post("/toDoManager/saveToDo")
+					.param("id", "0")
+					.param("username", "AnotherUser")
+					.param("title", "title_1")
+					.param("description", "description_1")
+					.param("done", "true")
+					.param("deadline", "1999-12-31")
+					.with(csrf()))
+					.andExpect(status().is4xxClientError())
+					.andExpect(view().name(TO_DO_MANAGER_PAGE))
+					.andExpect(model().attribute(MESSAGE_ATTRIBUTE, "Can't edit or delete other users' ToDo"));
 			}
 		
 			

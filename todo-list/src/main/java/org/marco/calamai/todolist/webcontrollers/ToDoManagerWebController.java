@@ -5,7 +5,9 @@ import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.marco.calamai.todolist.exceptions.InvalidTimeException;
 import org.marco.calamai.todolist.exceptions.ToDoNotFoundException;
+import org.marco.calamai.todolist.exceptions.WrongUsernameException;
 import org.marco.calamai.todolist.model.ToDo;
 import org.marco.calamai.todolist.services.ToDoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +36,9 @@ public class ToDoManagerWebController {
 	private static final String NO_TO_DO_MESSAGE = "There are no to do";
 	private static final String NOT_VALID_DATE = "The date inserted is not a valid date!";
 	private static final String USER_NOT_FOUND = "User not found!";
+	private static final String DEADLINE_HAS_PASSED = "The deadline inserted has passed!";
+	private static final String DIFFERENT_USER = "Can't edit or delete other users' ToDo";
+
 	
 	
 	private ToDoService toDoService;
@@ -127,7 +132,7 @@ public class ToDoManagerWebController {
 		}
 	}
 	
-	@ExceptionHandler({DateTimeException.class})
+	@ExceptionHandler(DateTimeException.class)
 	private ModelAndView handleDateInputError() {
 		return setupModel(NOT_VALID_DATE);
 	}
@@ -137,6 +142,17 @@ public class ToDoManagerWebController {
 		return setupModel(USER_NOT_FOUND);
 	}
 	
+	@ExceptionHandler(InvalidTimeException.class)
+	private ModelAndView handleInvalidDeadline() {
+		return setupModel(DEADLINE_HAS_PASSED);
+	}
+	
+	@ExceptionHandler(WrongUsernameException.class)
+	private ModelAndView handleDifferentUsername() {
+		return setupModel(DIFFERENT_USER);
+		
+	}
+
 	private ModelAndView setupModel(String errorMessage) {
 		ModelAndView mav = new ModelAndView(TO_DO_MANAGER_PAGE);
 		mav.addObject(MESSAGE_ATTRIBUTE, errorMessage);
