@@ -13,7 +13,11 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class ToDoManagerWebController {
+
+	private static final String TO_DO_MANAGER_PAGE = "toDoManagerPage";
 	
+	private static final String ALL_TO_DO_ATTRIBUTE = "allToDo";
+	private static final String ALL_MY_TO_DO_ATTRIBUTE = "allMyToDo";
 	private static final String MESSAGE_ATTRIBUTE = "message";
 	
 	private static final String NO_TO_DO_MESSAGE = "There are no to do";
@@ -29,8 +33,8 @@ public class ToDoManagerWebController {
 	@GetMapping("/toDoManager")
 	public ModelAndView getAllToDo(ModelAndView mav) {
 		List<ToDo> allToDo = toDoService.getAllToDoOrderByDoneAscDeadlineAsc();
-		mav.setViewName("toDoManagerPage");
-		mav.addObject("allToDo", allToDo);
+		mav.setViewName(TO_DO_MANAGER_PAGE);
+		mav.addObject(ALL_TO_DO_ATTRIBUTE, allToDo);
 		addMessageToModel(mav, allToDo);
 		return mav;
 	}
@@ -39,8 +43,8 @@ public class ToDoManagerWebController {
 	@GetMapping("/toDoManager/AllMyToDo")
 	public ModelAndView getAllMyToDo(@AuthenticationPrincipal UserDetails principal, ModelAndView mav) {
 		List<ToDo> allMyToDo = toDoService.getToDoByUserOrderByDoneAscDeadlineAsc(principal.getUsername());
-		mav.setViewName("toDoManagerPage");
-		mav.addObject("allMyToDo", allMyToDo);
+		mav.setViewName(TO_DO_MANAGER_PAGE);
+		mav.addObject(ALL_MY_TO_DO_ATTRIBUTE, allMyToDo);
 		addMessageToModel(mav, allMyToDo);
 		return mav;
 	}
@@ -48,8 +52,8 @@ public class ToDoManagerWebController {
 	@GetMapping("/toDoManager/toDoByTitle")
 	public ModelAndView getAllToDoByTitle( String title, ModelAndView mav) {
 		List<ToDo> allToDoByTitle = toDoService.getAllToDoByTitleOrderByDoneAscDeadlineAsc(title);
-		mav.setViewName("toDoManagerPage");
-		mav.addObject("allToDo", allToDoByTitle);
+		mav.setViewName(TO_DO_MANAGER_PAGE);
+		mav.addObject(ALL_TO_DO_ATTRIBUTE, allToDoByTitle);
 		addMessageToModel(mav, allToDoByTitle);
 		return mav;
 	}

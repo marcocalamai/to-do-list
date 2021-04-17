@@ -32,11 +32,15 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @DisplayName("Test ToDoManager web controller")
 class ToDoManagerWebControllerTest {
+	private static final String TO_DO_MANAGER_PAGE = "toDoManagerPage";
 	
+	private static final String ALL_TO_DO_ATTRIBUTE = "allToDo";
+	private static final String ALL_MY_TO_DO_ATTRIBUTE = "allMyToDo";
 	private static final String MESSAGE_ATTRIBUTE = "message";
 	
 	private static final String NO_TO_DO_MESSAGE = "There are no to do";
 	
+
 	@Autowired
 	private MockMvc mvc;
 	
@@ -53,7 +57,8 @@ class ToDoManagerWebControllerTest {
 	
 	@Nested @DisplayName("Test for search and show toDo")
 	class showToDo {
-		
+
+
 		@Test @DisplayName("Test ToDoManager show all todo and empty message")
 		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
 		void testToDoManagerViewShowAllToDo() throws Exception {
@@ -64,9 +69,9 @@ class ToDoManagerWebControllerTest {
 			
 			when(toDoService.getAllToDoOrderByDoneAscDeadlineAsc()).thenReturn(allToDo);
 			mvc.perform(get("/toDoManager"))
-					.andExpect(view().name("toDoManagerPage"))
-					.andExpect(model().attribute("allToDo", allToDo))
-					.andExpect(model().attribute("message", ""));
+					.andExpect(view().name(TO_DO_MANAGER_PAGE))
+					.andExpect(model().attribute(ALL_TO_DO_ATTRIBUTE, allToDo))
+					.andExpect(model().attribute(MESSAGE_ATTRIBUTE, ""));
 			
 			verify(toDoService, times(1)).getAllToDoOrderByDoneAscDeadlineAsc();
 		}
@@ -77,8 +82,8 @@ class ToDoManagerWebControllerTest {
 			when(toDoService.getAllToDoOrderByDoneAscDeadlineAsc()).thenReturn(Collections.emptyList());
 			
 			mvc.perform(get("/toDoManager"))
-					.andExpect(view().name("toDoManagerPage"))
-					.andExpect(model().attribute("allToDo", Collections.emptyList()))
+					.andExpect(view().name(TO_DO_MANAGER_PAGE))
+					.andExpect(model().attribute(ALL_TO_DO_ATTRIBUTE, Collections.emptyList()))
 					.andExpect(model().attribute(MESSAGE_ATTRIBUTE, NO_TO_DO_MESSAGE));
 			
 			verify(toDoService, times(1)).getAllToDoOrderByDoneAscDeadlineAsc();
@@ -95,8 +100,8 @@ class ToDoManagerWebControllerTest {
 			when(toDoService.getToDoByUserOrderByDoneAscDeadlineAsc("AuthenticatedUser")).thenReturn(allMyToDo);
 			mvc.perform(get("/toDoManager/AllMyToDo"))
 					.andExpect(status().isOk())
-					.andExpect(view().name("toDoManagerPage"))
-					.andExpect(model().attribute("allMyToDo", allMyToDo))
+					.andExpect(view().name(TO_DO_MANAGER_PAGE))
+					.andExpect(model().attribute(ALL_MY_TO_DO_ATTRIBUTE, allMyToDo))
 					.andExpect(model().attribute(MESSAGE_ATTRIBUTE, ""));
 			
 			verify(toDoService, times(1)).getToDoByUserOrderByDoneAscDeadlineAsc("AuthenticatedUser");
@@ -109,8 +114,8 @@ class ToDoManagerWebControllerTest {
 			
 			mvc.perform(get("/toDoManager/AllMyToDo"))
 					.andExpect(status().isOk())
-					.andExpect(view().name("toDoManagerPage"))
-					.andExpect(model().attribute("allMyToDo", Collections.emptyList()))
+					.andExpect(view().name(TO_DO_MANAGER_PAGE))
+					.andExpect(model().attribute(ALL_MY_TO_DO_ATTRIBUTE, Collections.emptyList()))
 					.andExpect(model().attribute(MESSAGE_ATTRIBUTE, NO_TO_DO_MESSAGE));
 			
 			verify(toDoService, times(1)).getToDoByUserOrderByDoneAscDeadlineAsc("AuthenticatedUser");
