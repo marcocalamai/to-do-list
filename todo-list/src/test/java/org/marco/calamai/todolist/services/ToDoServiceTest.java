@@ -150,7 +150,7 @@ class ToDoServiceTest {
 			ToDo toDo3 = new ToDo("a_username_3", "title_3", "description_3", today);
 			toDo2.setDone(true);
 			when(toDoMongoRepository.findByDeadlineOrderByDoneAsc(any(LocalDate.class))).thenReturn(asList(toDo3, toDo1, toDo2));
-			List<ToDo> result = toDoService.getAllToDoByDeadlineOrderByDoneAsc(today.getYear(), today.getMonthValue(), today.getDayOfMonth());
+			List<ToDo> result = toDoService.getAllToDoByDeadlineOrderByDoneAsc(LocalDate.now());
 			assertThat(result).containsExactly(toDo3, toDo1, toDo2);
 			verify(toDoMongoRepository, times(1)).findByDeadlineOrderByDoneAsc(today);
 		}

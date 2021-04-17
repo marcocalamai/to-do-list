@@ -51,8 +51,7 @@ public class ToDoService {
 		return toDoMongoRepository.findByOrderByDoneAscDeadlineAsc();
 	}
 	
-	public List<ToDo> getAllToDoByDeadlineOrderByDoneAsc(int year, int month, int day) {
-		LocalDate deadline = LocalDate.of(year, month, day);
+	public List<ToDo> getAllToDoByDeadlineOrderByDoneAsc(LocalDate deadline) {
 		return toDoMongoRepository.findByDeadlineOrderByDoneAsc(deadline);
 	}
 	

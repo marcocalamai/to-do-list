@@ -2,12 +2,14 @@ package org.marco.calamai.todolist.webcontrollers;
 
 import java.math.BigInteger;
 import java.time.DateTimeException;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.marco.calamai.todolist.exceptions.ToDoNotFoundException;
 import org.marco.calamai.todolist.model.ToDo;
 import org.marco.calamai.todolist.services.ToDoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -70,11 +72,9 @@ public class ToDoManagerWebController {
 	
 	@GetMapping("/toDoManager/toDoByDeadline")
 	public ModelAndView getAllToDoByDeadline(
-			@RequestParam int year,
-			@RequestParam int month,
-			@RequestParam int day,
+			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate deadline,
 			ModelAndView mav) {
-		List<ToDo> allToDoByDeadline = toDoService.getAllToDoByDeadlineOrderByDoneAsc(year, month, day);
+		List<ToDo> allToDoByDeadline = toDoService.getAllToDoByDeadlineOrderByDoneAsc(deadline);
 		mav.setViewName(TO_DO_MANAGER_PAGE);
 		mav.addObject(ALL_TO_DO_ATTRIBUTE, allToDoByDeadline);
 		addMessageToModel(mav, allToDoByDeadline);
@@ -106,7 +106,7 @@ public class ToDoManagerWebController {
 		}
 	}
 	
-	@ExceptionHandler({DateTimeException.class, NumberFormatException.class})
+	@ExceptionHandler({DateTimeException.class})
 	private ModelAndView handleDateInputError() {
 		return setupModel(NOT_VALID_DATE);
 	}
