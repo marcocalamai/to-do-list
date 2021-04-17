@@ -234,7 +234,6 @@ class ToDoManagerWebControllerTest {
 	@Test @DisplayName("Test search toDo by deadline when day attribute is empty")
 	@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
 	void testSerachToDoByDeadlineWhenDayAttributeIsEmpty() throws Exception {
-		//LocalDate date = LocalDate.of(0, 12, 1111);
 		mvc.perform(get("/toDoManager/toDoByDeadline")
 				.param("year", "2040")
 				.param("month", "12"))
@@ -254,9 +253,23 @@ class ToDoManagerWebControllerTest {
 				.param("day", "311" ))
 				.andExpect(status().is4xxClientError())
 				.andExpect(view().name(TO_DO_MANAGER_PAGE))
-				.andExpect(model().attribute("error_message", "The date inserted is not a valid date!"));
+				.andExpect(model().attribute("info_message", "The date inserted is not a valid date!"));
 		
 		verify(toDoService, times(1)).getAllToDoByDeadlineOrderByDoneAsc(2040, 122, 311);
+	}
+	
+	@Test @DisplayName("Test search toDo by deadline when year, day or month are wrong number format")
+	@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
+	void testSerachToDoByDeadlineWhenYearMonthOrDayAreWrongNumberFormat() throws Exception {
+		mvc.perform(get("/toDoManager/toDoByDeadline")
+				.param("year", "duemilaquaranta")
+				.param("month", "dodici")
+				.param("day", "trentuno" ))
+				.andExpect(status().is4xxClientError())
+				.andExpect(view().name(TO_DO_MANAGER_PAGE))
+				.andExpect(model().attribute("info_message", "The date inserted is not a valid date!"));
+		
+		verifyNoInteractions(toDoService);
 	}
 
 

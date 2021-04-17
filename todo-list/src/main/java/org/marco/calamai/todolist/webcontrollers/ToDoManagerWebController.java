@@ -84,7 +84,7 @@ public class ToDoManagerWebController {
 		}
 	}
 	
-	@ExceptionHandler(DateTimeException.class)
+	@ExceptionHandler({DateTimeException.class, NumberFormatException.class})
 	private ModelAndView handleDateInputError() {
 		ModelAndView mav = new ModelAndView(TO_DO_MANAGER_PAGE);
 		mav.addObject("info_message", "The date inserted is not a valid date!");
