@@ -3,7 +3,9 @@ package org.marco.calamai.todolist.webcontrollers;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
@@ -267,6 +269,44 @@ class ToDoManagerWebControllerTest {
 					.andExpect(model().attribute("toDo", new ToDo()));
 		}
 	}
-
 	
+	
+
+	@Nested @DisplayName("Test for save toDo")
+	class saveToDo{
+		
+		@Test @DisplayName("Test post ToDo without id should insert toDo")
+		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
+		void testPostWithoutIdShouldInsertToDo() throws Exception {
+			mvc.perform(post("/toDoManager/saveToDo")
+					.param("title", "title_1")
+					.param("description", "description_1")
+					.param("deadline", "2040-12-31")
+					.with(csrf()))
+					.andExpect(view().name("redirect:/toDoManager"));
+			
+			verify(toDoService, times(1)).insertToDo(new ToDo("AuthenticatedUser", "title_1", "description_1", LocalDate.of(2040, 12, 31)));
+			}
+		
+		@Test @DisplayName("Test post ToDo with id should update toDo")
+		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
+		void testPostWithIdShouldUpdateToDo() throws Exception {
+			mvc.perform(post("/toDoManager/saveToDo")
+					.param("id", "0")
+					.param("username", "AuthenticatedUser")
+					.param("title", "title_1")
+					.param("description", "description_1")
+					.param("done", "true")
+					.param("deadline", "2040-12-31")
+					.with(csrf()))
+					.andExpect(view().name("redirect:/toDoManager"));
+			
+			ToDo todo = new ToDo("AuthenticatedUser", "title_1", "description_1", LocalDate.of(2040, 12, 31));
+			todo.setDone(true);
+			
+			verify(toDoService, times(1)).updateToDo(new BigInteger("0"), "AuthenticatedUser", todo);
+			}
+		
+			
+		}
 }

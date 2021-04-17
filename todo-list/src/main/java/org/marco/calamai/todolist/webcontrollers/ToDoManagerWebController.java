@@ -17,6 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -94,6 +95,26 @@ public class ToDoManagerWebController {
 		mav.setViewName(EDIT_TO_DO_PAGE);
 		mav.addObject("toDo", new ToDo());
 		return mav;
+	}
+	
+	@PostMapping("/toDoManager/saveToDo")
+	public String saveTodo(@AuthenticationPrincipal UserDetails principal,
+			BigInteger id,
+			String username,
+			@RequestParam  String title,
+			@RequestParam String description,
+			boolean done,
+			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate deadline) {
+		
+		if(id == null) {
+			toDoService.insertToDo(new ToDo(principal.getUsername(), title, description, deadline));
+		}
+		else {
+			ToDo todo = new ToDo(username, title, description, deadline);
+			todo.setDone(done);
+			toDoService.updateToDo(id, principal.getUsername(), todo);
+		}
+		return "redirect:/toDoManager";
 	}
 	
 	
