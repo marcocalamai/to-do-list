@@ -46,16 +46,16 @@ class ToDoManagerWebControllerTest {
 
 	
 	@Test @DisplayName("Test ToDoManager status code is 200 and view name")
-	@WithMockUser(username = "userTest", password = "passwordTest", roles = "USER")
+	@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
 	void testStatus200AndReturnToDoManagerView() throws Exception{
 		mvc.perform(get("/toDoManager")).andExpect(status().isOk()).andExpect(view().name("toDoManagerPage"));
 	}
 	
-	@Nested @DisplayName("Test for show toDo")
+	@Nested @DisplayName("Test for search and show toDo")
 	class showToDo {
 		
 		@Test @DisplayName("Test ToDoManager show all todo and empty message")
-		@WithMockUser(username = "userTest", password = "passwordTest", roles = "USER")
+		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
 		void testToDoManagerViewShowAllToDo() throws Exception {
 			ToDo toDo1 = new ToDo("username_1", "title_1", "description_1", LocalDate.now());
 			toDo1.setId(new BigInteger("0"));
@@ -72,7 +72,7 @@ class ToDoManagerWebControllerTest {
 		}
 		
 		@Test @DisplayName("Test ToDoManager show message when there are not to do")
-		@WithMockUser(username = "userTest", password = "passwordTest", roles = "USER")
+		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
 		void testToDoManagerViewWhenThereAreNotToDo() throws Exception {
 			when(toDoService.getAllToDoOrderByDoneAscDeadlineAsc()).thenReturn(Collections.emptyList());
 			
@@ -112,8 +112,32 @@ class ToDoManagerWebControllerTest {
 					.andExpect(view().name("toDoManagerPage"))
 					.andExpect(model().attribute("allMyToDo", Collections.emptyList()))
 					.andExpect(model().attribute(MESSAGE_ATTRIBUTE, NO_TO_DO_MESSAGE));
+			
+			verify(toDoService, times(1)).getToDoByUserOrderByDoneAscDeadlineAsc("AuthenticatedUser");
 		}
 	}
+	
+
+	@Test @DisplayName("Test search toDo by title")
+	@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
+	void testSerachToDoByTitle() throws Exception {
+		ToDo toDo1 = new ToDo("user_1", "title_1", "description_1", LocalDate.now());
+		toDo1.setId(new BigInteger("0"));
+		List<ToDo> allToDoByTitle = new ArrayList<>();
+		allToDoByTitle.add(toDo1);
+		
+		when(toDoService.getAllToDoByTitleOrderByDoneAscDeadlineAsc("title_1")).thenReturn(allToDoByTitle);
+		
+		mvc.perform(get("/toDoManager/toDoByTitle")
+				.param("title", "title_1"))
+				.andExpect(status().isOk())
+				.andExpect(view().name("toDoManagerPage"))
+				.andExpect(model().attribute("allToDo", allToDoByTitle))
+				.andExpect(model().attribute(MESSAGE_ATTRIBUTE, ""));
+		
+		verify(toDoService, times(1)).getAllToDoByTitleOrderByDoneAscDeadlineAsc("title_1");
+	}
+
 	
 
 }
