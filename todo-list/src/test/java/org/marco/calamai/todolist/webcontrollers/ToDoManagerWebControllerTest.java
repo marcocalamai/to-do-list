@@ -2,6 +2,7 @@ package org.marco.calamai.todolist.webcontrollers;
 
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
@@ -205,6 +206,41 @@ class ToDoManagerWebControllerTest {
 		
 		verify(toDoService, times(1)).getAllToDoByDeadlineOrderByDoneAsc(2040, 12, 31);
 	}
+	
+	
+	@Test @DisplayName("Test search toDo by deadline when year attribute is empty")
+	@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
+	void testSerachToDoByDeadlineWhenYearAttributeIsEmpty() throws Exception {
+		mvc.perform(get("/toDoManager/toDoByDeadline")
+				.param("month", "12")
+				.param("day", "31" ))
+				.andExpect(status().is4xxClientError());
+		
+		verifyNoInteractions(toDoService);
+	}
+	
+	@Test @DisplayName("Test search toDo by deadline when month attribute is empty")
+	@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
+	void testSerachToDoByDeadlineWhenMonthAttributeIsEmpty() throws Exception {
+		mvc.perform(get("/toDoManager/toDoByDeadline")
+				.param("year", "2040")
+				.param("day", "31" ))
+				.andExpect(status().is4xxClientError());
+		
+		verifyNoInteractions(toDoService);
+	}
+	
+	@Test @DisplayName("Test search toDo by deadline when day attribute is empty")
+	@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
+	void testSerachToDoByDeadlineWhenDayAttributeIsEmpty() throws Exception {
+		mvc.perform(get("/toDoManager/toDoByDeadline")
+				.param("year", "2040")
+				.param("month", "12"))
+				.andExpect(status().is4xxClientError());
+		
+		verifyNoInteractions(toDoService);
+	}
+
 
 	
 

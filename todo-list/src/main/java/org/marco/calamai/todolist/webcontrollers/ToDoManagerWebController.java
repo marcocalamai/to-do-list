@@ -60,7 +60,11 @@ public class ToDoManagerWebController {
 	}
 	
 	@GetMapping("/toDoManager/toDoByDeadline")
-	public ModelAndView getAllToDoByDeadline(int year, int month, int day, ModelAndView mav) {
+	public ModelAndView getAllToDoByDeadline(
+			@RequestParam int year,
+			@RequestParam int month,
+			@RequestParam int day,
+			ModelAndView mav) {
 		List<ToDo> allToDoByDeadline = toDoService.getAllToDoByDeadlineOrderByDoneAsc(year, month, day);
 		mav.setViewName(TO_DO_MANAGER_PAGE);
 		mav.addObject(ALL_TO_DO_ATTRIBUTE, allToDoByDeadline);
