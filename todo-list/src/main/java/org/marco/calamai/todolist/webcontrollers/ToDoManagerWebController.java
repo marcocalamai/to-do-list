@@ -50,11 +50,20 @@ public class ToDoManagerWebController {
 	}
 	
 	@GetMapping("/toDoManager/toDoByTitle")
-	public ModelAndView getAllToDoByTitle( String title, ModelAndView mav) {
+	public ModelAndView getAllToDoByTitle(String title, ModelAndView mav) {
 		List<ToDo> allToDoByTitle = toDoService.getAllToDoByTitleOrderByDoneAscDeadlineAsc(title);
 		mav.setViewName(TO_DO_MANAGER_PAGE);
 		mav.addObject(ALL_TO_DO_ATTRIBUTE, allToDoByTitle);
 		addMessageToModel(mav, allToDoByTitle);
+		return mav;
+	}
+	
+	@GetMapping("/toDoManager/toDoByDeadline")
+	public ModelAndView getAllToDoByDeadline(int year, int month, int day, ModelAndView mav) {
+		List<ToDo> allToDoByDeadline = toDoService.getAllToDoByDeadlineOrderByDoneAsc(year, month, day);
+		mav.setViewName(TO_DO_MANAGER_PAGE);
+		mav.addObject(ALL_TO_DO_ATTRIBUTE, allToDoByDeadline);
+		addMessageToModel(mav, allToDoByDeadline);
 		return mav;
 	}
 

@@ -32,8 +32,10 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @DisplayName("Test ToDoManager web controller")
 class ToDoManagerWebControllerTest {
-	private static final String TO_DO_MANAGER_PAGE = "toDoManagerPage";
 	
+	
+	private static final String TO_DO_MANAGER_PAGE = "toDoManagerPage";
+
 	private static final String ALL_TO_DO_ATTRIBUTE = "allToDo";
 	private static final String ALL_MY_TO_DO_ATTRIBUTE = "allMyToDo";
 	private static final String MESSAGE_ATTRIBUTE = "message";
@@ -52,7 +54,7 @@ class ToDoManagerWebControllerTest {
 	@Test @DisplayName("Test ToDoManager status code is 200 and view name")
 	@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
 	void testStatus200AndReturnToDoManagerView() throws Exception{
-		mvc.perform(get("/toDoManager")).andExpect(status().isOk()).andExpect(view().name("toDoManagerPage"));
+		mvc.perform(get("/toDoManager")).andExpect(status().isOk()).andExpect(view().name(TO_DO_MANAGER_PAGE));
 	}
 	
 	@Nested @DisplayName("Test for search and show toDo")
@@ -136,8 +138,8 @@ class ToDoManagerWebControllerTest {
 		mvc.perform(get("/toDoManager/toDoByTitle")
 				.param("title", "title_1"))
 				.andExpect(status().isOk())
-				.andExpect(view().name("toDoManagerPage"))
-				.andExpect(model().attribute("allToDo", allToDoByTitle))
+				.andExpect(view().name(TO_DO_MANAGER_PAGE))
+				.andExpect(model().attribute(ALL_TO_DO_ATTRIBUTE, allToDoByTitle))
 				.andExpect(model().attribute(MESSAGE_ATTRIBUTE, ""));
 		
 		verify(toDoService, times(1)).getAllToDoByTitleOrderByDoneAscDeadlineAsc("title_1");
@@ -151,11 +153,33 @@ class ToDoManagerWebControllerTest {
 		mvc.perform(get("/toDoManager/toDoByTitle")
 				.param("title", "title_1"))
 				.andExpect(status().isOk())
-				.andExpect(view().name("toDoManagerPage"))
-				.andExpect(model().attribute("allToDo", Collections.emptyList()))
+				.andExpect(view().name(TO_DO_MANAGER_PAGE))
+				.andExpect(model().attribute(ALL_TO_DO_ATTRIBUTE, Collections.emptyList()))
 				.andExpect(model().attribute(MESSAGE_ATTRIBUTE, NO_TO_DO_MESSAGE));
 		
 		verify(toDoService, times(1)).getAllToDoByTitleOrderByDoneAscDeadlineAsc("title_1");
+	}
+	
+	@Test @DisplayName("Test search toDo by deadline")
+	@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
+	void testSerachToDoByDeadline() throws Exception {
+		ToDo toDo1 = new ToDo("user_1", "title_1", "description_1", LocalDate.of(2040, 12, 31));
+		toDo1.setId(new BigInteger("0"));
+		List<ToDo> allToDoByDeadline = new ArrayList<>();
+		allToDoByDeadline.add(toDo1);
+		
+		when(toDoService.getAllToDoByDeadlineOrderByDoneAsc(2040, 12, 31)).thenReturn(allToDoByDeadline);
+		
+		mvc.perform(get("/toDoManager/toDoByDeadline")
+				.param("year", "2040")
+				.param("month", "12")
+				.param("day", "31" ))
+				.andExpect(status().isOk())
+				.andExpect(view().name(TO_DO_MANAGER_PAGE))
+				.andExpect(model().attribute(ALL_TO_DO_ATTRIBUTE, allToDoByDeadline))
+				.andExpect(model().attribute(MESSAGE_ATTRIBUTE, ""));
+		
+		verify(toDoService, times(1)).getAllToDoByDeadlineOrderByDoneAsc(2040, 12, 31);
 	}
 
 	
