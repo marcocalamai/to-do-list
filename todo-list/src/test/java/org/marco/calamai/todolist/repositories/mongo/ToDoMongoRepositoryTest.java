@@ -50,7 +50,7 @@ class ToDoMongoRepositoryTest {
 	    	assertNotNull(toDoList.get(0).getId()); 
 	    }
 	    
-	    @Test @DisplayName("Save inserted ToDo")
+	    @Test @DisplayName("Save ToDo with already inserted id should update")
 	   void testSaveWithSameIdShouldUpdate() {
 	   	ToDo toDo1 = new ToDo("username_1", "title_1", "description_1", LocalDate.now());
 	   	ToDo saved = repository.save(toDo1);

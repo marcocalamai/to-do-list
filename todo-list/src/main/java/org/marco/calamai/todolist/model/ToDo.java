@@ -26,6 +26,10 @@ public class ToDo {
 		this.deadline = deadline;
 	}
 	
+	public ToDo() {
+		this.done = false;
+	}
+
 	public BigInteger getId() {
 		return id;
 	}

@@ -87,8 +87,16 @@ public class ToDoManagerWebController {
 		mav.setViewName(EDIT_TO_DO_PAGE);
 		mav.addObject("toDo", toDoById);
 		return mav;
-		
 	}
+	
+	@GetMapping("/toDoManager/newToDo")
+	public ModelAndView newToDo(ModelAndView mav) {
+		mav.setViewName(EDIT_TO_DO_PAGE);
+		mav.addObject("toDo", new ToDo());
+		return mav;
+	}
+	
+	
 	private void addMessageToModel(ModelAndView mav, List<ToDo> allToDo) {
 		if (allToDo.isEmpty()){
 			mav.addObject(MESSAGE_ATTRIBUTE, NO_TO_DO_MESSAGE);

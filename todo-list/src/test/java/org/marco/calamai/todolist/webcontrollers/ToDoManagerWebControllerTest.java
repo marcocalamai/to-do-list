@@ -274,8 +274,8 @@ class ToDoManagerWebControllerTest {
 		}
 	}
 	
-	@Nested @DisplayName("Test for edit toDo")
-	class insertToDo {
+	@Nested @DisplayName("Test for edit and insert toDo")
+	class insertEditToDo {
 		
 		@Test @DisplayName("Test edit toDo")
 		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
@@ -303,7 +303,16 @@ class ToDoManagerWebControllerTest {
 					.andExpect(view().name(TO_DO_MANAGER_PAGE))
 					.andExpect(model().attribute(MESSAGE_ATTRIBUTE, "User not found!"));
 			
-			verify(toDoService, times(1)).getToDoById(new BigInteger("0"));
+			verify(toDoService, times(1)).getToDoById(new BigInteger("0"));			
+		}
+		
+		@Test @DisplayName("Test insert new toDo")
+		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
+		void testInsertNewToDo() throws Exception {
+			mvc.perform(get("/toDoManager/newToDo"))
+					.andExpect(status().isOk())
+					.andExpect(view().name("editToDoPage"))
+					.andExpect(model().attribute("toDo", new ToDo()));
 		}
 		
 	}
