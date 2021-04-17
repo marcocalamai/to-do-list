@@ -40,7 +40,7 @@ public class ToDoManagerWebController {
 	public ModelAndView getAllMyToDo(@AuthenticationPrincipal UserDetails principal, ModelAndView mav) {
 		List<ToDo> allMyToDo = toDoService.getToDoByUserOrderByDoneAscDeadlineAsc(principal.getUsername());
 		mav.setViewName("toDoManagerPage");
-		mav.addObject("allToDo", allMyToDo);
+		mav.addObject("allMyToDo", allMyToDo);
 		addMessageToModel(mav, allMyToDo);
 		return mav;
 	}
