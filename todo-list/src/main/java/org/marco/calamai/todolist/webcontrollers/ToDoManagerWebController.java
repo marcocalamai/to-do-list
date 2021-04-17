@@ -108,16 +108,17 @@ public class ToDoManagerWebController {
 	
 	@ExceptionHandler({DateTimeException.class, NumberFormatException.class})
 	private ModelAndView handleDateInputError() {
-		ModelAndView mav = new ModelAndView(TO_DO_MANAGER_PAGE);
-		mav.addObject(MESSAGE_ATTRIBUTE, NOT_VALID_DATE);
-		mav.setStatus(HttpStatus.BAD_REQUEST);
-		return mav;
+		return setupModel(NOT_VALID_DATE);
 	}
 
 	@ExceptionHandler(ToDoNotFoundException.class)
 	private ModelAndView handleToDoNotFound() {
+		return setupModel(USER_NOT_FOUND);
+	}
+	
+	private ModelAndView setupModel(String errorMessage) {
 		ModelAndView mav = new ModelAndView(TO_DO_MANAGER_PAGE);
-		mav.addObject(MESSAGE_ATTRIBUTE, USER_NOT_FOUND);
+		mav.addObject(MESSAGE_ATTRIBUTE, errorMessage);
 		mav.setStatus(HttpStatus.BAD_REQUEST);
 		return mav;
 	}
