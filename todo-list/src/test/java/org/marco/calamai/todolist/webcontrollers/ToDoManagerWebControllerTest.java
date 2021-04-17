@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 import java.math.BigInteger;
+import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -233,12 +234,29 @@ class ToDoManagerWebControllerTest {
 	@Test @DisplayName("Test search toDo by deadline when day attribute is empty")
 	@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
 	void testSerachToDoByDeadlineWhenDayAttributeIsEmpty() throws Exception {
+		//LocalDate date = LocalDate.of(0, 12, 1111);
 		mvc.perform(get("/toDoManager/toDoByDeadline")
 				.param("year", "2040")
 				.param("month", "12"))
 				.andExpect(status().is4xxClientError());
 		
 		verifyNoInteractions(toDoService);
+	}
+	
+	@Test @DisplayName("Test search toDo by deadline when it is not a valid date")
+	@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
+	void testSerachToDoByDeadlineWhenItIsNotValid() throws Exception {
+		when(toDoService.getAllToDoByDeadlineOrderByDoneAsc(2040, 122, 311)).thenThrow(DateTimeException.class);
+		
+		mvc.perform(get("/toDoManager/toDoByDeadline")
+				.param("year", "2040")
+				.param("month", "122")
+				.param("day", "311" ))
+				.andExpect(status().is4xxClientError())
+				.andExpect(view().name(TO_DO_MANAGER_PAGE))
+				.andExpect(model().attribute("error_message", "The date inserted is not a valid date!"));
+		
+		verify(toDoService, times(1)).getAllToDoByDeadlineOrderByDoneAsc(2040, 122, 311);
 	}
 
 
