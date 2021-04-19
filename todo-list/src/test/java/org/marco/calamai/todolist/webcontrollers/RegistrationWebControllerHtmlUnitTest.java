@@ -10,6 +10,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.marco.calamai.todolist.exceptions.UsernameAlreadyPresent;
+import org.marco.calamai.todolist.exceptions.WhitespaceInRegistrationFieldsException;
 import org.marco.calamai.todolist.model.User;
 import org.marco.calamai.todolist.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,6 +72,21 @@ class RegistrationWebControllerHtmlUnitTest {
 	
 	assertThat(page.getBody().getTextContent()).contains("A user with that username already exists!");
 	verify(userService, times(1)).register("username_1", "password_1");	
+	}
+	
+	
+	@Test @DisplayName("Test register user when username or password contains one or more whitespace")
+	void testRegisterUserWhenUsernameOrPasswordContainsWhitespaces() throws Exception {
+	webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);	
+	when(userService.register("u s e r n a m e", "password_1")).thenThrow(WhitespaceInRegistrationFieldsException.class);
+	HtmlPage page = this.webClient.getPage("/registration");
+	HtmlForm form = page.getFormByName("registrationForm");
+	form.getInputByName("username").setValueAttribute("u s e r n a m e");
+	form.getInputByName("password").setValueAttribute("password_1");
+	page = form.getButtonByName("btn_submit").click();
+	
+	assertThat(page.getBody().getTextContent()).contains("The username or password field contains one or more whitespace!");
+	verify(userService, times(1)).register("u s e r n a m e", "password_1");	
 	}
 
 }
