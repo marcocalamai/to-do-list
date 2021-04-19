@@ -116,9 +116,7 @@ public class ToDoManagerWebController {
 			toDoService.insertToDo(new ToDo(principal.getUsername(), title, description, deadline));
 		}
 		else {
-			ToDo todo = new ToDo(username, title, description, deadline);
-			todo.setDone(done);
-			toDoService.updateToDo(id, principal.getUsername(), todo);
+			toDoService.updateToDo(id, principal.getUsername(), new ToDo(username, title, description, done, deadline));
 		}
 		return "redirect:/toDoManager";
 	}

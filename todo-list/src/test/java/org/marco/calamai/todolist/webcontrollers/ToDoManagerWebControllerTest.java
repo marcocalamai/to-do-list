@@ -178,7 +178,8 @@ class ToDoManagerWebControllerTest {
 		@Test @DisplayName("Test search toDo by deadline")
 		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
 		void testSerachToDoByDeadline() throws Exception {
-			LocalDate deadline = LocalDate.of(2040, 12, 31);
+			LocalDate deadline = LocalDate.now();
+			String deadlineInput = deadline.toString();
 			ToDo toDo1 = new ToDo("user_1", "title_1", "description_1", deadline);
 			toDo1.setId(new BigInteger("0"));
 			List<ToDo> allToDoByDeadline = new ArrayList<>();
@@ -187,7 +188,7 @@ class ToDoManagerWebControllerTest {
 			when(toDoService.getAllToDoByDeadlineOrderByDoneAsc(deadline)).thenReturn(allToDoByDeadline);
 			
 			mvc.perform(get("/toDoManager/toDoByDeadline")
-					.param("deadline", "2040-12-31"))
+					.param("deadline", deadlineInput))
 					.andExpect(status().isOk())
 					.andExpect(view().name(TO_DO_MANAGER_PAGE))
 					.andExpect(model().attribute(ALL_TO_DO_ATTRIBUTE, allToDoByDeadline))
@@ -200,11 +201,12 @@ class ToDoManagerWebControllerTest {
 		@Test @DisplayName("Test search toDo by deadline when there are not, show message")
 		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
 		void testSerachToDoByDeadlineWhenThereAreNot() throws Exception {
-			LocalDate deadline = LocalDate.of(2040, 12, 31);
+			LocalDate deadline = LocalDate.now();
+			String deadlineInput = deadline.toString();
 			when(toDoService.getAllToDoByDeadlineOrderByDoneAsc(deadline)).thenReturn(Collections.emptyList());
 			
 			mvc.perform(get("/toDoManager/toDoByDeadline")
-					.param("deadline", "2040-12-31"))
+					.param("deadline", deadlineInput))
 					.andExpect(status().isOk())
 					.andExpect(view().name(TO_DO_MANAGER_PAGE))
 					.andExpect(model().attribute(ALL_TO_DO_ATTRIBUTE, Collections.emptyList()))
@@ -232,8 +234,8 @@ class ToDoManagerWebControllerTest {
 			mvc.perform(get("/toDoManager/toDoByDeadline"))
 					.andExpect(status().is4xxClientError());
 			
-			verifyNoInteractions(toDoService);
-				}
+			verifyNoInteractions(toDoService);	
+		}
 	}
 	
 	@Nested @DisplayName("Test for edit and insert toDo")
@@ -288,15 +290,18 @@ class ToDoManagerWebControllerTest {
 		@Test @DisplayName("Test post ToDo without id should insert toDo")
 		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
 		void testPostToDoWithoutIdShouldInsertToDo() throws Exception {
+			LocalDate deadline = LocalDate.now();
+			String deadlineInput = deadline.toString();
+			
 			mvc.perform(post("/toDoManager/saveToDo")
 					.param("title", "title_1")
 					.param("description", "description_1")
-					.param("deadline", "2040-12-31")
+					.param("deadline", deadlineInput)
 					.with(csrf()))
 					.andExpect(status().is3xxRedirection())
 					.andExpect(view().name("redirect:/toDoManager"));
 			
-			verify(toDoService, times(1)).insertToDo(new ToDo("AuthenticatedUser", "title_1", "description_1", LocalDate.of(2040, 12, 31)));
+			verify(toDoService, times(1)).insertToDo(new ToDo("AuthenticatedUser", "title_1", "description_1", deadline));
 			}
 		
 		@Test @DisplayName("Test post ToDo without id when deadline has passed, show message")
@@ -331,21 +336,22 @@ class ToDoManagerWebControllerTest {
 		@Test @DisplayName("Test post ToDo with id should update toDo")
 		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
 		void testPostToDoWithIdShouldUpdateToDo() throws Exception {
+			LocalDate deadline = LocalDate.now();
+			String deadlineInput = deadline.toString();
+			
 			mvc.perform(post("/toDoManager/saveToDo")
 					.param("id", "0")
 					.param("username", "AuthenticatedUser")
 					.param("title", "title_1")
 					.param("description", "description_1")
 					.param("done", "true")
-					.param("deadline", "2040-12-31")
+					.param("deadline", deadlineInput)
 					.with(csrf()))
 					.andExpect(status().is3xxRedirection())
 					.andExpect(view().name("redirect:/toDoManager"));
 			
-			ToDo todo = new ToDo("AuthenticatedUser", "title_1", "description_1", LocalDate.of(2040, 12, 31));
-			todo.setDone(true);
-			
-			verify(toDoService, times(1)).updateToDo(new BigInteger("0"), "AuthenticatedUser", todo);
+			verify(toDoService, times(1)).updateToDo(new BigInteger("0"), "AuthenticatedUser", 
+					new ToDo("AuthenticatedUser", "title_1", "description_1", true, deadline));
 			}
 		
 		@Test @DisplayName("Test post ToDo with id when deadline has passed, show message")
@@ -387,6 +393,7 @@ class ToDoManagerWebControllerTest {
 		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
 		void testPostToDoWithIdWhenUsernameIsDifferentFromAuthenticatedOne() throws Exception {
 			when(toDoService.updateToDo(any(BigInteger.class), any(String.class), any(ToDo.class))).thenThrow(WrongUsernameException.class);
+			String deadlineInput = LocalDate.now().toString();
 			
 			mvc.perform(post("/toDoManager/saveToDo")
 					.param("id", "0")
@@ -394,13 +401,11 @@ class ToDoManagerWebControllerTest {
 					.param("title", "title_1")
 					.param("description", "description_1")
 					.param("done", "true")
-					.param("deadline", "1999-12-31")
+					.param("deadline", deadlineInput)
 					.with(csrf()))
 					.andExpect(status().is4xxClientError())
 					.andExpect(view().name(TO_DO_MANAGER_PAGE))
 					.andExpect(model().attribute(MESSAGE_ATTRIBUTE, "Can't edit or delete other users' ToDo"));
 			}
-		
-			
 		}
 }
