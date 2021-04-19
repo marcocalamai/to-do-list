@@ -31,6 +31,10 @@ import org.springframework.test.web.servlet.MockMvc;
 @DisplayName("Test registration web controller")
 class RegistrationWebControllerTest {
 	
+	private static final String USERNAME_ALREADY_PRESENT = "A user with that username already exists!";
+	private static final String EMPTY_FIELD = "The username or password fields are empty!";
+	private static final String WHITESPACE_IN_FIELD = "The username or password field contains one or more whitespace!";
+	
 	@Autowired
 	private MockMvc mvc;
 
@@ -67,7 +71,7 @@ class RegistrationWebControllerTest {
 				.with(csrf()))
 				.andExpect(status().is4xxClientError())
 				.andExpect(view().name("/registrationPage"))
-				.andExpect(model().attribute("error_message", RegistrationWebController.USERNAME_ALREADY_PRESENT));
+				.andExpect(model().attribute("error_message", USERNAME_ALREADY_PRESENT));
 		verify(userService, times(1)).register("a_username", "a_password");
 	}
 	
@@ -80,7 +84,7 @@ class RegistrationWebControllerTest {
 				.with(csrf()))
 				.andExpect(status().is4xxClientError())
 				.andExpect(view().name("/registrationPage"))
-				.andExpect(model().attribute("error_message", RegistrationWebController.EMPTY_FIELD));
+				.andExpect(model().attribute("error_message", EMPTY_FIELD));
 		verify(userService, times(1)).register("", "a_password");
 	}
 	
@@ -94,7 +98,7 @@ class RegistrationWebControllerTest {
 				.with(csrf()))
 				.andExpect(status().is4xxClientError())
 				.andExpect(view().name("/registrationPage"))
-				.andExpect(model().attribute("error_message", RegistrationWebController.EMPTY_FIELD));
+				.andExpect(model().attribute("error_message", EMPTY_FIELD));
 		verify(userService, times(1)).register("a_username", "");
 	}
 	
@@ -107,7 +111,7 @@ class RegistrationWebControllerTest {
 				.with(csrf()))
 				.andExpect(status().is4xxClientError())
 				.andExpect(view().name("/registrationPage"))
-				.andExpect(model().attribute("error_message", RegistrationWebController.WHITESPACE_IN_FIELD));
+				.andExpect(model().attribute("error_message", WHITESPACE_IN_FIELD));
 		verify(userService, times(1)).register(" a_username", "a_password");
 	}
 	
@@ -120,7 +124,7 @@ class RegistrationWebControllerTest {
 				.with(csrf()))
 				.andExpect(status().is4xxClientError())
 				.andExpect(view().name("/registrationPage"))
-				.andExpect(model().attribute("error_message", RegistrationWebController.WHITESPACE_IN_FIELD));
+				.andExpect(model().attribute("error_message", WHITESPACE_IN_FIELD));
 		verify(userService, times(1)).register("a_username", " a_password");
 	}
 }

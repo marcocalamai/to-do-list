@@ -31,6 +31,8 @@ import org.springframework.test.web.servlet.MockMvc;
 @DisplayName("Test login web controller")
 class LoginWebControllerTest {
 	
+	private static final String WRONG_USERNAME_OR_PASSWORD = "Wrong username or password!";
+	
 	@Autowired
 	private MockMvc mvc;
 	
@@ -84,7 +86,7 @@ class LoginWebControllerTest {
 				.andExpect(view().name("loginPage"))
 				.andExpect(status().is4xxClientError())
 				.andExpect(model().attribute("error", "true"))
-				.andExpect(model().attribute("error_message", LoginWebController.WRONG_USERNAME_OR_PASSWORD));
+				.andExpect(model().attribute("error_message", WRONG_USERNAME_OR_PASSWORD));
 	}
 	
 }

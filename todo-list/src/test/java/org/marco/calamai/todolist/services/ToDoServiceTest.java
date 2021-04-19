@@ -30,6 +30,10 @@ import org.marco.calamai.todolist.repositories.mongo.ToDoMongoRepository;
 @DisplayName("Tests for ToDoService")
 class ToDoServiceTest {
 	
+	private static final String DATE_IS_BEFORE_TODAY = "Date not valid. It has passed!";
+	private static final String TO_DO_NOT_FOUND = "ToDo not found!";
+	private static final String WRONG_USERNAME = "Logged username do not match!";
+	
 	@Mock
 	private ToDoMongoRepository toDoMongoRepository;
 	
@@ -62,7 +66,7 @@ class ToDoServiceTest {
 			ToDo toSave = new ToDo(user1, "to_save", "to_save_description", deadline);
 			assertThatThrownBy(() -> toDoService.insertToDo(toSave))
 			.isInstanceOf(InvalidTimeException.class)
-			.hasMessage(ToDoService.DATE_IS_BEFORE_TODAY);
+			.hasMessage(DATE_IS_BEFORE_TODAY);
 		}	
 	}	
 	
@@ -94,7 +98,7 @@ class ToDoServiceTest {
 			BigInteger id = new BigInteger("0");
 			assertThatThrownBy(() -> toDoService.updateToDo(id, user1, toSave))
 			.isInstanceOf(InvalidTimeException.class)
-			.hasMessage(ToDoService.DATE_IS_BEFORE_TODAY);
+			.hasMessage(DATE_IS_BEFORE_TODAY);
 		}
 		
 		@Test @DisplayName("Update ToDo when username is wrong")
@@ -105,7 +109,7 @@ class ToDoServiceTest {
 			BigInteger id = new BigInteger("0");
 			assertThatThrownBy(() -> toDoService.updateToDo(id, "username_2", toSave))
 			.isInstanceOf(WrongUsernameException.class)
-			.hasMessage(ToDoService.WRONG_USERNAME);
+			.hasMessage(WRONG_USERNAME);
 		}
 	}
 	
@@ -146,7 +150,7 @@ class ToDoServiceTest {
 			ToDo toDo3 = new ToDo("a_username_3", "title_3", "description_3", today);
 			toDo2.setDone(true);
 			when(toDoMongoRepository.findByDeadlineOrderByDoneAsc(any(LocalDate.class))).thenReturn(asList(toDo3, toDo1, toDo2));
-			List<ToDo> result = toDoService.getAllToDoByDeadlineOrderByDoneAsc(today.getYear(), today.getMonthValue(), today.getDayOfMonth());
+			List<ToDo> result = toDoService.getAllToDoByDeadlineOrderByDoneAsc(LocalDate.now());
 			assertThat(result).containsExactly(toDo3, toDo1, toDo2);
 			verify(toDoMongoRepository, times(1)).findByDeadlineOrderByDoneAsc(today);
 		}
@@ -182,7 +186,7 @@ class ToDoServiceTest {
 			when(toDoMongoRepository.findById(id)).thenReturn(Optional.empty());
 			assertThatThrownBy(() -> toDoService.getToDoById(id))
 			.isInstanceOf(ToDoNotFoundException.class)
-			.hasMessage(ToDoService.TO_DO_NOT_FOUND);
+			.hasMessage(TO_DO_NOT_FOUND);
 			verify(toDoMongoRepository, times(1)).findById(id);
 		}
 		
@@ -212,7 +216,7 @@ class ToDoServiceTest {
 			when(toDoMongoRepository.findById(id)).thenReturn(Optional.empty());
 			assertThatThrownBy(() -> toDoService.deleteToDoById(id, user1))
 			.isInstanceOf(ToDoNotFoundException.class)
-			.hasMessage(ToDoService.TO_DO_NOT_FOUND);	
+			.hasMessage(TO_DO_NOT_FOUND);	
 			verify(toDoMongoRepository).findById(id);	
 		}
 		
@@ -226,7 +230,7 @@ class ToDoServiceTest {
 			when(toDoMongoRepository.findById(id)).thenReturn(Optional.of(toDo1));
 			assertThatThrownBy(() -> toDoService.deleteToDoById(id, userToFind))
 			.isInstanceOf(WrongUsernameException.class)
-			.hasMessage(ToDoService.WRONG_USERNAME);
+			.hasMessage(WRONG_USERNAME);
 			verify(toDoMongoRepository, times(1)).findById(id);
 			verifyNoMoreInteractions(toDoMongoRepository);
 		}

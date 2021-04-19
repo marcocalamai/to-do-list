@@ -8,7 +8,7 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class LoginWebController {
 	
-	public static final String WRONG_USERNAME_OR_PASSWORD = "Wrong username or password!";
+	private static final String WRONG_USERNAME_OR_PASSWORD = "Wrong username or password!";
 	
 	@GetMapping("/login")
 	public ModelAndView getLoginIndex(String error) {

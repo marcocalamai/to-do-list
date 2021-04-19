@@ -16,7 +16,10 @@ public class ToDo {
 	private String description;
 	private boolean done;
 	private LocalDate deadline;
-
+	
+	public ToDo() {
+		this.done = false;
+	}
 	
 	public ToDo(String user, String title, String description, LocalDate deadline) {
 		this.user = user;
@@ -26,6 +29,14 @@ public class ToDo {
 		this.deadline = deadline;
 	}
 	
+	public ToDo(String user, String title, String description, boolean done, LocalDate deadline) {
+		this.user = user;
+		this.title = title;
+		this.description = description;
+		this.done = done;
+		this.deadline = deadline;
+	}
+
 	public BigInteger getId() {
 		return id;
 	}

@@ -16,9 +16,9 @@ import org.springframework.stereotype.Service;
 @Service("toDoService")
 public class ToDoService {
 	
-	public static final String DATE_IS_BEFORE_TODAY = "Date not valid. It has passed!";
-	public static final String TO_DO_NOT_FOUND = "ToDo not found!";
-	public static final String WRONG_USERNAME = "Logged username do not match!";
+	private static final String DATE_IS_BEFORE_TODAY = "Date not valid. It has passed!";
+	private static final String TO_DO_NOT_FOUND = "ToDo not found!";
+	private static final String WRONG_USERNAME = "Logged username do not match!";
 
 	
 	private ToDoMongoRepository toDoMongoRepository;
@@ -41,7 +41,16 @@ public class ToDoService {
 		toDo.setId(id);
 		return toDoMongoRepository.save(toDo);
 	}
-
+	
+	public ToDo deleteToDoById(BigInteger id, String username) {
+		Optional<ToDo> toDo = toDoMongoRepository.findById(id);
+		if (toDo.isPresent()){
+			usernameCheck(username, toDo.get());
+			toDoMongoRepository.deleteById(id);
+			return toDo.get();
+		}
+		throw new ToDoNotFoundException(TO_DO_NOT_FOUND);	
+	}
 
 	public List<ToDo> getToDoByUserOrderByDoneAscDeadlineAsc(String username) {
 		return  toDoMongoRepository.findByUserOrderByDoneAscDeadlineAsc(username);
@@ -51,8 +60,7 @@ public class ToDoService {
 		return toDoMongoRepository.findByOrderByDoneAscDeadlineAsc();
 	}
 	
-	public List<ToDo> getAllToDoByDeadlineOrderByDoneAsc(int year, int month, int day) {
-		LocalDate deadline = LocalDate.of(year, month, day);
+	public List<ToDo> getAllToDoByDeadlineOrderByDoneAsc(LocalDate deadline) {
 		return toDoMongoRepository.findByDeadlineOrderByDoneAsc(deadline);
 	}
 	
@@ -66,16 +74,6 @@ public class ToDoService {
 			return toDo.get();
 			}
 		throw new ToDoNotFoundException(TO_DO_NOT_FOUND);
-	}
-
-	public ToDo deleteToDoById(BigInteger id, String username) {
-		Optional<ToDo> toDo = toDoMongoRepository.findById(id);
-		if (toDo.isPresent()){
-			usernameCheck(username, toDo.get());
-			toDoMongoRepository.deleteById(id);
-			return toDo.get();
-		}
-		throw new ToDoNotFoundException(TO_DO_NOT_FOUND);	
 	}
 	
 	
