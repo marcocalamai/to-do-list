@@ -15,7 +15,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(controllers = IndexWebController.class)
-
 class IndexWebControllerHtmlUnitTest {
 	
 	@Autowired
