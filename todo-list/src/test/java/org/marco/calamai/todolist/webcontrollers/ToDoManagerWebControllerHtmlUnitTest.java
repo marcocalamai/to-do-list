@@ -20,13 +20,12 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 @WebMvcTest(controllers = ToDoManagerWebController.class)
 @Import(WebSecurityConfig.class)
 class ToDoManagerWebControllerHtmlUnitTest {
-
-	@MockBean
-	private ToDoService toDoService;
 	
 	@Autowired 
 	private WebClient webClient;
 
+	@MockBean
+	private ToDoService toDoService;
 	
 
 	@Test @DisplayName("Test toDoManagerPage title")
