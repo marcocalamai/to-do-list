@@ -445,5 +445,19 @@ class ToDoManagerWebControllerTest {
 			verify(toDoService, times(1)).deleteToDoById(new BigInteger("0"), "AuthenticatedUser");
 		}
 		
+		@Test @DisplayName("Test delete ToDo when the username is different from the authenticated one")
+		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
+		void testDeleteToDoWhenUsernameIsDifferentFromAuthenticatedOne() throws Exception {
+			when(toDoService.deleteToDoById(new BigInteger("0"), "AuthenticatedUser")).thenThrow(WrongUsernameException.class);
+						
+			mvc.perform((post("/toDoManager/deleteToDo/0")
+						.param("id", "0"))
+						.with(csrf()))
+						.andExpect(status().is4xxClientError())
+						.andExpect(view().name(TO_DO_MANAGER_PAGE))
+						.andExpect(model().attribute(MESSAGE_ATTRIBUTE, "Can't edit or delete other users' ToDo"));
+			
+			verify(toDoService, times(1)).deleteToDoById(new BigInteger("0"), "AuthenticatedUser");
+		}
 	}
 }
