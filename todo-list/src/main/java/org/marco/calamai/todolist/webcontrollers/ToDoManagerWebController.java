@@ -121,6 +121,14 @@ public class ToDoManagerWebController {
 		return "redirect:/toDoManager";
 	}
 	
+	@PostMapping("/toDoManager/deleteToDo/{id}")
+	public ModelAndView deleteToDo(@PathVariable BigInteger id, @AuthenticationPrincipal UserDetails principal, ModelAndView mav) {
+		ToDo toDoDeleted = toDoService.deleteToDoById(id, principal.getUsername());
+		mav.setViewName(TO_DO_MANAGER_PAGE);
+		mav.addObject("toDoDeleted", toDoDeleted);
+		return mav;
+	}
+	
 	
 	private void addMessageToModel(ModelAndView mav, List<ToDo> allToDo) {
 		if (allToDo.isEmpty()){

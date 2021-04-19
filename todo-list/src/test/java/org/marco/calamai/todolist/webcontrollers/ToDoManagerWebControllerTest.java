@@ -408,4 +408,25 @@ class ToDoManagerWebControllerTest {
 					.andExpect(model().attribute(MESSAGE_ATTRIBUTE, "Can't edit or delete other users' ToDo"));
 			}
 		}
+	
+	@Nested @DisplayName("Test for delete toDo")
+	class deleteToDo{
+		
+		@Test @DisplayName("Test delete ToDo")
+		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
+		void testDeleteToDo() throws Exception {
+			ToDo toDoToDelete = new ToDo("AuthenticatedUser", "title_1", "description_1", LocalDate.now());
+			toDoToDelete.setId(new BigInteger("0"));
+			
+			when(toDoService.deleteToDoById(new BigInteger("0"), "AuthenticatedUser")).thenReturn(toDoToDelete);
+			
+			mvc.perform((post("/toDoManager/deleteToDo/0")
+						.param("id", "0"))
+						.with(csrf()))
+						.andExpect(status().isOk());
+			
+			verify(toDoService, times(1)).deleteToDoById(new BigInteger("0"), "AuthenticatedUser");
+		}
+		
+	}
 }
