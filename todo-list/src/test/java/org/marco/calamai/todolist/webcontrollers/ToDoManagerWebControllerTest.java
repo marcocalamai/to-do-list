@@ -116,7 +116,7 @@ class ToDoManagerWebControllerTest {
 			verify(toDoService, times(1)).getToDoByUserOrderByDoneAscDeadlineAsc("AuthenticatedUser");
 		}
 		
-		@Test @DisplayName("Test show all my todo when there are not, show message")
+		@Test @DisplayName("Test show all my todo when there are not")
 		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
 		void testShowAllMyToDoWhenThereAreNot() throws Exception {
 			when(toDoService.getToDoByUserOrderByDoneAscDeadlineAsc("AuthenticatedUser")).thenReturn(Collections.emptyList());
@@ -152,7 +152,7 @@ class ToDoManagerWebControllerTest {
 			verify(toDoService, times(1)).getAllToDoByTitleOrderByDoneAscDeadlineAsc("title_1");
 		}
 		
-		@Test @DisplayName("Test search ToDo by title when there are not, show message")
+		@Test @DisplayName("Test search ToDo by title when there are not")
 		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
 		void testSerachToDoByTitleWhenThereAreNot() throws Exception {
 			when(toDoService.getAllToDoByTitleOrderByDoneAscDeadlineAsc("title_1")).thenReturn(Collections.emptyList());
@@ -198,7 +198,7 @@ class ToDoManagerWebControllerTest {
 		}
 
 		
-		@Test @DisplayName("Test search toDo by deadline when there are not, show message")
+		@Test @DisplayName("Test search toDo by deadline when there are not")
 		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
 		void testSerachToDoByDeadlineWhenThereAreNot() throws Exception {
 			LocalDate deadline = LocalDate.now();
@@ -265,7 +265,7 @@ class ToDoManagerWebControllerTest {
 			mvc.perform(get("/toDoManager/editToDo/0"))
 					.andExpect(status().is4xxClientError())
 					.andExpect(view().name(TO_DO_MANAGER_PAGE))
-					.andExpect(model().attribute(MESSAGE_ATTRIBUTE, "User not found!"));
+					.andExpect(model().attribute(MESSAGE_ATTRIBUTE, "ToDo not found!"));
 			
 			verify(toDoService, times(1)).getToDoById(new BigInteger("0"));			
 		}
@@ -304,7 +304,7 @@ class ToDoManagerWebControllerTest {
 			verify(toDoService, times(1)).insertToDo(new ToDo("AuthenticatedUser", "title_1", "description_1", deadline));
 			}
 		
-		@Test @DisplayName("Test post ToDo without id when deadline has passed, show message")
+		@Test @DisplayName("Test post ToDo without id when deadline has passed")
 		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
 		void testPostToDoWithoutIdWhenDeadlineHasPassed() throws Exception {
 			when(toDoService.insertToDo(any(ToDo.class))).thenThrow(InvalidTimeException.class);
@@ -318,7 +318,7 @@ class ToDoManagerWebControllerTest {
 					.andExpect(view().name(TO_DO_MANAGER_PAGE));
 			}
 		
-		@Test @DisplayName("Test post ToDo without id when deadline is not a valid date, show message")
+		@Test @DisplayName("Test post ToDo without id when deadline is not a valid date")
 		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
 		void testPostToDoWithoutIdWhenDeadlineIsNotValid() throws Exception {			
 			mvc.perform(post("/toDoManager/saveToDo")
@@ -354,7 +354,7 @@ class ToDoManagerWebControllerTest {
 					new ToDo("AuthenticatedUser", "title_1", "description_1", true, deadline));
 			}
 		
-		@Test @DisplayName("Test post ToDo with id when deadline has passed, show message")
+		@Test @DisplayName("Test post ToDo with id when deadline has passed")
 		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
 		void testPostToDoWithIdWhenDeadlineHasPassed() throws Exception {
 			when(toDoService.updateToDo(any(BigInteger.class), any(String.class), any(ToDo.class))).thenThrow(InvalidTimeException.class);
@@ -372,7 +372,7 @@ class ToDoManagerWebControllerTest {
 					.andExpect(model().attribute(MESSAGE_ATTRIBUTE, "The deadline inserted has passed!"));
 			}
 		
-		@Test @DisplayName("Test post ToDo with id when deadline is not a valid date, show message")
+		@Test @DisplayName("Test post ToDo with id when deadline is not a valid date")
 		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
 		void testPostToDoWithIdWhenDeadlineIsNotValid() throws Exception {			
 			mvc.perform(post("/toDoManager/saveToDo")
@@ -389,7 +389,7 @@ class ToDoManagerWebControllerTest {
 					verifyNoInteractions(toDoService);
 			}
 		
-		@Test @DisplayName("Test post ToDo with id when the username is different from the authenticated one, show message")
+		@Test @DisplayName("Test post ToDo with id when the username is different from the authenticated one")
 		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
 		void testPostToDoWithIdWhenUsernameIsDifferentFromAuthenticatedOne() throws Exception {
 			when(toDoService.updateToDo(any(BigInteger.class), any(String.class), any(ToDo.class))).thenThrow(WrongUsernameException.class);
@@ -421,9 +421,26 @@ class ToDoManagerWebControllerTest {
 			when(toDoService.deleteToDoById(new BigInteger("0"), "AuthenticatedUser")).thenReturn(toDoToDelete);
 			
 			mvc.perform((post("/toDoManager/deleteToDo/0")
+						.with(csrf())))
+						.andExpect(status().isOk())
+						.andExpect(view().name(TO_DO_MANAGER_PAGE))
+						.andExpect(model().attribute(MESSAGE_ATTRIBUTE, "ToDo successfully deleted!"));
+			
+			verify(toDoService, times(1)).deleteToDoById(new BigInteger("0"), "AuthenticatedUser");
+		}
+
+		
+		@Test @DisplayName("Test delete ToDo when it is not found")
+		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
+		void testDeleteToDoWhenNotFound() throws Exception {
+			when(toDoService.deleteToDoById(new BigInteger("0"), "AuthenticatedUser")).thenThrow(ToDoNotFoundException.class);
+						
+			mvc.perform((post("/toDoManager/deleteToDo/0")
 						.param("id", "0"))
 						.with(csrf()))
-						.andExpect(status().isOk());
+						.andExpect(status().is4xxClientError())
+						.andExpect(view().name(TO_DO_MANAGER_PAGE))
+						.andExpect(model().attribute(MESSAGE_ATTRIBUTE, "ToDo not found!"));
 			
 			verify(toDoService, times(1)).deleteToDoById(new BigInteger("0"), "AuthenticatedUser");
 		}

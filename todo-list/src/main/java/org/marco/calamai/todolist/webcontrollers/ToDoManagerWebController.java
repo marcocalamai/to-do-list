@@ -35,9 +35,10 @@ public class ToDoManagerWebController {
 	
 	private static final String NO_TO_DO_MESSAGE = "There are no to do";
 	private static final String NOT_VALID_DATE = "The deadline inserted is not a valid date!";
-	private static final String USER_NOT_FOUND = "User not found!";
+	private static final String TODO_NOT_FOUND = "ToDo not found!";
 	private static final String DEADLINE_HAS_PASSED = "The deadline inserted has passed!";
 	private static final String DIFFERENT_USER = "Can't edit or delete other users' ToDo";
+	private static final String DELETE_SUCCESSFUL = "ToDo successfully deleted!";
 
 	
 	
@@ -126,6 +127,7 @@ public class ToDoManagerWebController {
 		ToDo toDoDeleted = toDoService.deleteToDoById(id, principal.getUsername());
 		mav.setViewName(TO_DO_MANAGER_PAGE);
 		mav.addObject("toDoDeleted", toDoDeleted);
+		mav.addObject(MESSAGE_ATTRIBUTE, DELETE_SUCCESSFUL);
 		return mav;
 	}
 	
@@ -146,7 +148,7 @@ public class ToDoManagerWebController {
 
 	@ExceptionHandler(ToDoNotFoundException.class)
 	private ModelAndView handleToDoNotFound() {
-		return setupModel(USER_NOT_FOUND);
+		return setupModel(TODO_NOT_FOUND);
 	}
 	
 	@ExceptionHandler(InvalidTimeException.class)

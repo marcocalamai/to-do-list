@@ -41,7 +41,16 @@ public class ToDoService {
 		toDo.setId(id);
 		return toDoMongoRepository.save(toDo);
 	}
-
+	
+	public ToDo deleteToDoById(BigInteger id, String username) {
+		Optional<ToDo> toDo = toDoMongoRepository.findById(id);
+		if (toDo.isPresent()){
+			usernameCheck(username, toDo.get());
+			toDoMongoRepository.deleteById(id);
+			return toDo.get();
+		}
+		throw new ToDoNotFoundException(TO_DO_NOT_FOUND);	
+	}
 
 	public List<ToDo> getToDoByUserOrderByDoneAscDeadlineAsc(String username) {
 		return  toDoMongoRepository.findByUserOrderByDoneAscDeadlineAsc(username);
@@ -65,16 +74,6 @@ public class ToDoService {
 			return toDo.get();
 			}
 		throw new ToDoNotFoundException(TO_DO_NOT_FOUND);
-	}
-
-	public ToDo deleteToDoById(BigInteger id, String username) {
-		Optional<ToDo> toDo = toDoMongoRepository.findById(id);
-		if (toDo.isPresent()){
-			usernameCheck(username, toDo.get());
-			toDoMongoRepository.deleteById(id);
-			return toDo.get();
-		}
-		throw new ToDoNotFoundException(TO_DO_NOT_FOUND);	
 	}
 	
 	
