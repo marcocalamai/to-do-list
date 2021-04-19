@@ -34,7 +34,7 @@ public class ToDoManagerWebController {
 	private static final String MESSAGE_ATTRIBUTE = "message";
 	
 	private static final String NO_TO_DO_MESSAGE = "There are no to do";
-	private static final String NOT_VALID_DATE = "The date inserted is not a valid date!";
+	private static final String NOT_VALID_DATE = "The deadline inserted is not a valid date!";
 	private static final String USER_NOT_FOUND = "User not found!";
 	private static final String DEADLINE_HAS_PASSED = "The deadline inserted has passed!";
 	private static final String DIFFERENT_USER = "Can't edit or delete other users' ToDo";
@@ -103,7 +103,8 @@ public class ToDoManagerWebController {
 	}
 	
 	@PostMapping("/toDoManager/saveToDo")
-	public String saveTodo(@AuthenticationPrincipal UserDetails principal,
+	public String saveTodo(
+			@AuthenticationPrincipal UserDetails principal,
 			BigInteger id,
 			String username,
 			@RequestParam  String title,

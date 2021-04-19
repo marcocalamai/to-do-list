@@ -221,7 +221,7 @@ class ToDoManagerWebControllerTest {
 					.param("deadline", "2040-122-311"))
 					.andExpect(status().is4xxClientError())
 					.andExpect(view().name(TO_DO_MANAGER_PAGE))
-					.andExpect(model().attribute(MESSAGE_ATTRIBUTE, "The date inserted is not a valid date!"));
+					.andExpect(model().attribute(MESSAGE_ATTRIBUTE, "The deadline inserted is not a valid date!"));
 			
 			verifyNoInteractions(toDoService);
 		}
@@ -301,7 +301,7 @@ class ToDoManagerWebControllerTest {
 		
 		@Test @DisplayName("Test post ToDo without id when deadline has passed, show message")
 		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
-		void testPostToDoWithoutIdWhenDeadlineIsPassed() throws Exception {
+		void testPostToDoWithoutIdWhenDeadlineHasPassed() throws Exception {
 			when(toDoService.insertToDo(any(ToDo.class))).thenThrow(InvalidTimeException.class);
 			
 			mvc.perform(post("/toDoManager/saveToDo")
@@ -311,6 +311,21 @@ class ToDoManagerWebControllerTest {
 					.with(csrf()))
 					.andExpect(status().is4xxClientError())
 					.andExpect(view().name(TO_DO_MANAGER_PAGE));
+			}
+		
+		@Test @DisplayName("Test post ToDo without id when deadline is not a valid date, show message")
+		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
+		void testPostToDoWithoutIdWhenDeadlineIsNotValid() throws Exception {			
+			mvc.perform(post("/toDoManager/saveToDo")
+					.param("title", "title_1")
+					.param("description", "description_1")
+					.param("deadline", "2040-122-311")
+					.with(csrf()))
+					.andExpect(status().is4xxClientError())
+					.andExpect(view().name(TO_DO_MANAGER_PAGE))
+					.andExpect(model().attribute(MESSAGE_ATTRIBUTE, "The deadline inserted is not a valid date!"));
+			
+					verifyNoInteractions(toDoService);
 			}
 		
 		@Test @DisplayName("Test post ToDo with id should update toDo")
@@ -335,7 +350,7 @@ class ToDoManagerWebControllerTest {
 		
 		@Test @DisplayName("Test post ToDo with id when deadline has passed, show message")
 		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
-		void testPostToDoWithIdWhenDeadlineIsPassed() throws Exception {
+		void testPostToDoWithIdWhenDeadlineHasPassed() throws Exception {
 			when(toDoService.updateToDo(any(BigInteger.class), any(String.class), any(ToDo.class))).thenThrow(InvalidTimeException.class);
 			
 			mvc.perform(post("/toDoManager/saveToDo")
@@ -349,6 +364,23 @@ class ToDoManagerWebControllerTest {
 					.andExpect(status().is4xxClientError())
 					.andExpect(view().name(TO_DO_MANAGER_PAGE))
 					.andExpect(model().attribute(MESSAGE_ATTRIBUTE, "The deadline inserted has passed!"));
+			}
+		
+		@Test @DisplayName("Test post ToDo with id when deadline is not a valid date, show message")
+		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
+		void testPostToDoWithIdWhenDeadlineIsNotValid() throws Exception {			
+			mvc.perform(post("/toDoManager/saveToDo")
+					.param("id", "0")
+					.param("username", "AuthenticatedUser")
+					.param("title", "title_1")
+					.param("description", "description_1")
+					.param("deadline", "2040-122-311")
+					.with(csrf()))
+					.andExpect(status().is4xxClientError())
+					.andExpect(view().name(TO_DO_MANAGER_PAGE))
+					.andExpect(model().attribute(MESSAGE_ATTRIBUTE, "The deadline inserted is not a valid date!"));
+			
+					verifyNoInteractions(toDoService);
 			}
 		
 		@Test @DisplayName("Test post ToDo with id when the username is different from the authenticated one, show message")
