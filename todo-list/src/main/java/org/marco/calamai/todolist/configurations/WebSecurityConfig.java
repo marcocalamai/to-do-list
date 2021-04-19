@@ -30,7 +30,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		.and()
 		.formLogin().loginPage("/login").defaultSuccessUrl("/toDoManager", true).failureUrl("/login?error=true")
 		.and()
-		.logout().logoutSuccessUrl("/index").permitAll();
+		.logout().logoutSuccessUrl("/").permitAll();
 	}
 	
 	@Override
