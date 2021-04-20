@@ -11,12 +11,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.marco.calamai.todolist.exceptions.UsernameAlreadyPresent;
 import org.marco.calamai.todolist.exceptions.WhitespaceInRegistrationFieldsException;
-import org.marco.calamai.todolist.model.User;
 import org.marco.calamai.todolist.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.gargoylesoftware.htmlunit.WebClient;
@@ -33,8 +31,6 @@ class RegistrationWebControllerHtmlUnitTest {
 	@MockBean
 	private UserService userService;
 	
-	private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-
 	
 	@Test @DisplayName("TestregistrationPage title")
 	void testRegistrationTitle() throws Exception {
@@ -51,9 +47,7 @@ class RegistrationWebControllerHtmlUnitTest {
 	
 	
 	@Test @DisplayName("Test register user")
-	void testRegisterUser() throws Exception {
-	when(userService.register("username_1", "password_1")).thenReturn(new User("username_1", encoder.encode("password_1")));
-	
+	void testRegisterUser() throws Exception {	
 	HtmlPage page = this.webClient.getPage("/registration");
 	HtmlForm form = page.getFormByName("registrationForm");
 	form.getInputByName("username").setValueAttribute("username_1");
