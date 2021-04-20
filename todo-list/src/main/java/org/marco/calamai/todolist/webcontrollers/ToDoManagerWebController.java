@@ -26,6 +26,7 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class ToDoManagerWebController {
 
+	private static final String NEW_TO_DO_PAGE = "newToDoPage";
 	private static final String EDIT_TO_DO_PAGE = "editToDoPage";
 	private static final String TO_DO_MANAGER_PAGE = "toDoManagerPage";
 	
@@ -98,27 +99,35 @@ public class ToDoManagerWebController {
 	
 	@GetMapping("/toDoManager/newToDo")
 	public ModelAndView newToDo(ModelAndView mav) {
-		mav.setViewName(EDIT_TO_DO_PAGE);
+		mav.setViewName(NEW_TO_DO_PAGE);
 		mav.addObject("toDo", new ToDo());
 		return mav;
 	}
 	
-	@PostMapping("/toDoManager/saveToDo")
+	@PostMapping("/toDoManager/saveNewToDo")
 	public String saveTodo(
 			@AuthenticationPrincipal UserDetails principal,
-			BigInteger id,
-			String username,
 			@RequestParam  String title,
 			@RequestParam String description,
-			boolean done,
 			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate deadline) {
 		
-		if(id == null) {
-			toDoService.insertToDo(new ToDo(principal.getUsername(), title, description, deadline));
-		}
-		else {
-			toDoService.updateToDo(id, principal.getUsername(), new ToDo(username, title, description, done, deadline));
-		}
+		toDoService.insertToDo(new ToDo(principal.getUsername(), title, description, deadline));
+		return "redirect:/toDoManager";
+	}
+	
+	@PostMapping("/toDoManager/updateToDo")
+	public String updateTodo(
+			@AuthenticationPrincipal UserDetails principal,
+			@RequestParam BigInteger id,
+			@RequestParam String username,
+			@RequestParam  String title,
+			@RequestParam String description,
+			@RequestParam boolean done,
+			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate deadline) {
+
+		ToDo todo = new ToDo(username, title, description, deadline);
+		todo.setDone(done);
+		toDoService.updateToDo(id, principal.getUsername(), todo);
 		return "redirect:/toDoManager";
 	}
 	
