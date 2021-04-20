@@ -12,6 +12,15 @@
 		<span th:text="${message}"></span>
 	</div>
 
+	<form name="searchByDeadlineForm"
+		th:action="@{/toDoManager/toDoByDeadline}" method="get">
+		<label>Deadline : </label> <input type="date" name="deadline" required>
+		<div>
+			<button type="submit" name="btn_searchByDeadline">Search by
+				deadline</button>
+		</div>
+	</form>
+
 	<div th:if="${allToDo}">
 		<table id="toDo_table">
 			<caption>All ToDo</caption>

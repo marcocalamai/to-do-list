@@ -42,15 +42,18 @@ class RegistrationWebControllerHtmlUnitTest {
 		assertEquals("Registration page", page.getTitleText());
 	}
 	
+	
 	@Test @DisplayName("Test registrationPage should provide a link for index page")
 	void testLoginPageShouldProvideALinkForIndexPage() throws Exception {
 	HtmlPage page = this.webClient.getPage("/registration");
 	assertEquals("/", page.getAnchorByText("Go Back").getHrefAttribute());
 	}
 	
+	
 	@Test @DisplayName("Test register user")
 	void testRegisterUser() throws Exception {
 	when(userService.register("username_1", "password_1")).thenReturn(new User("username_1", encoder.encode("password_1")));
+	
 	HtmlPage page = this.webClient.getPage("/registration");
 	HtmlForm form = page.getFormByName("registrationForm");
 	form.getInputByName("username").setValueAttribute("username_1");
@@ -60,10 +63,13 @@ class RegistrationWebControllerHtmlUnitTest {
 	verify(userService, times(1)).register("username_1", "password_1");	
 	}
 	
+	
 	@Test @DisplayName("Test register user when username already exist should show error")
 	void testRegisterUserWhenUsernameAlreadyExist() throws Exception {
 	webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);	
+	
 	when(userService.register("username_1", "password_1")).thenThrow(UsernameAlreadyPresent.class);
+	
 	HtmlPage page = this.webClient.getPage("/registration");
 	HtmlForm form = page.getFormByName("registrationForm");
 	form.getInputByName("username").setValueAttribute("username_1");
@@ -78,7 +84,9 @@ class RegistrationWebControllerHtmlUnitTest {
 	@Test @DisplayName("Test register user when username or password contains one or more whitespace")
 	void testRegisterUserWhenUsernameOrPasswordContainsWhitespaces() throws Exception {
 	webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);	
+	
 	when(userService.register("u s e r n a m e", "password_1")).thenThrow(WhitespaceInRegistrationFieldsException.class);
+	
 	HtmlPage page = this.webClient.getPage("/registration");
 	HtmlForm form = page.getFormByName("registrationForm");
 	form.getInputByName("username").setValueAttribute("u s e r n a m e");
@@ -88,5 +96,4 @@ class RegistrationWebControllerHtmlUnitTest {
 	assertThat(page.getBody().getTextContent()).contains("The username or password field contains one or more whitespace!");
 	verify(userService, times(1)).register("u s e r n a m e", "password_1");	
 	}
-
 }

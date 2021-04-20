@@ -23,6 +23,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
 
@@ -98,7 +99,7 @@ class ToDoManagerWebControllerHtmlUnitTest {
 		when(toDoService.getToDoByUserOrderByDoneAscDeadlineAsc("AuthenticatedUser")).thenReturn(Arrays.asList(todo1, todo2));
 		
 		HtmlPage page = webClient.getPage("/toDoManager/AllMyToDo");
-		//assertThat(page.getBody().getTextContent()).doesNotContain("There are no to do");
+		assertThat(page.getBody().getTextContent()).doesNotContain("There are no to do");
 		HtmlTable table = page.getHtmlElementById("myToDo_table");
 		String todayAsString = today.toString();
 		assertEquals(
@@ -112,6 +113,53 @@ class ToDoManagerWebControllerHtmlUnitTest {
 		page.getAnchorByHref("/editToDo/1");
 		page.getAnchorByHref("/deleteToDo/0");
 		page.getAnchorByHref("/deleteToDo/1");
+	}
+	
+	@Test @DisplayName("Test todoManagerPage toDo by deadline whith no todo")
+	@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
+	void testToDoManagerToDoByDeadlineWithNoToDo() throws Exception {
+		LocalDate today = LocalDate.now();
+	
+		when(toDoService.getAllToDoByDeadlineOrderByDoneAsc(today)).thenReturn(Collections.emptyList());
+		
+		HtmlPage page = webClient.getPage("/toDoManager");
+		HtmlForm form = page.getFormByName("searchByDeadlineForm");
+		String todayAsString = today.toString();
+		
+		form.getInputByName("deadline").setValueAttribute(todayAsString);
+		page = form.getButtonByName("btn_searchByDeadline").click();
+		
+		assertThat(page.getBody().getTextContent()).contains("There are no to do");
+	}
+	
+	
+	@Test @DisplayName("Test todoManagerPage toDo by deadline")
+	@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
+	void testToDoManagerToDoByDeadline() throws Exception {
+		LocalDate today = LocalDate.now();
+		ToDo todo1 = new ToDo("username_1", "title_1", "description_1", today);
+		todo1.setId(new BigInteger("0"));
+		ToDo todo2 = new ToDo("username_2", "title_2", "description_2", today);
+		todo2.setId(new BigInteger("1"));
+		
+		when(toDoService.getAllToDoByDeadlineOrderByDoneAsc(today)).thenReturn(Arrays.asList(todo1, todo2));
+		
+		HtmlPage page = webClient.getPage("/toDoManager");
+		HtmlForm form = page.getFormByName("searchByDeadlineForm");
+		String todayAsString = today.toString();
+		
+		form.getInputByName("deadline").setValueAttribute(todayAsString);
+		page = form.getButtonByName("btn_searchByDeadline").click();
+		
+		assertThat(page.getBody().getTextContent()).doesNotContain("There are no to do");
+		
+		HtmlTable table = page.getHtmlElementById("toDo_table");
+		assertEquals(
+				"All ToDo\n"+
+				"Username	Title	Description	Done	Deadline\n"+
+				"username_1	title_1	description_1	"+ todo1.isDone()+ "	" +  	todayAsString+"\n"+
+				"username_2	title_2	description_2	"+ todo2.isDone()+ "	" + 	todayAsString,
+				removeWindowsCR(table.asText()));
 	}
 	
 	

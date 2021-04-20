@@ -47,17 +47,22 @@ class LoginWebControllerHtmlUnitTest {
 		assertEquals("Login Page", page.getTitleText());	
 	}
 	
+	
 	@Test @DisplayName("Test loginPage should provide a link for index page")
 	void testLoginPageShouldProvideALinkForIndexPage() throws Exception {
 	HtmlPage page = this.webClient.getPage("/login");
+	
 	assertEquals("/", page.getAnchorByText("Go Back").getHrefAttribute());
 	assertThat(page.getBody().getTextContent()).doesNotContain("Wrong username or password!");
 	}
 	
+	
 	@Test @DisplayName("Test loginPage when user not found should show error")
 	void testLoginPageWhenItFailShouldShowError() throws Exception {
 	webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);	
+	
 	when(userService.loadUserByUsername("WrongUsername")).thenThrow(UsernameNotFoundException.class);
+	
 	HtmlPage page = this.webClient.getPage("/login");
 	HtmlForm form = page.getFormByName("loginForm");
 	form.getInputByName("username").setValueAttribute("WrongUsername");
@@ -68,10 +73,12 @@ class LoginWebControllerHtmlUnitTest {
 	verify(userService, times(1)).loadUserByUsername("WrongUsername");	
 	}
 	
+	
 	@Test @DisplayName("Test login successful")
 	void testDoLogin() throws Exception {
 	User user = new User("username_1", encoder.encode("password_1"));
 	user.setId(new BigInteger("0"));
+	
 	when(userService.loadUserByUsername("username_1")).thenReturn(user);
 
 	HtmlPage page = this.webClient.getPage("/login");
@@ -82,5 +89,4 @@ class LoginWebControllerHtmlUnitTest {
 
 	verify(userService, times(1)).loadUserByUsername("username_1");
 	}
-
 }
