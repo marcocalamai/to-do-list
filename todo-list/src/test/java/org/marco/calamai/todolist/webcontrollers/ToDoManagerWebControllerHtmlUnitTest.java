@@ -4,12 +4,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
+import java.math.BigInteger;
+import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Collections;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.marco.calamai.todolist.configurations.WebSecurityConfig;
+import org.marco.calamai.todolist.model.ToDo;
 import org.marco.calamai.todolist.services.ToDoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -20,6 +24,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.html.HtmlTable;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(controllers = ToDoManagerWebController.class)
@@ -44,8 +49,38 @@ class ToDoManagerWebControllerHtmlUnitTest {
 	@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
 	void testToDoManagerWithNoToDo() throws Exception {
 		when(toDoService.getAllToDoOrderByDoneAscDeadlineAsc()).thenReturn(Collections.emptyList());
+		
 		HtmlPage page = webClient.getPage("/toDoManager");
 		assertThat(page.getBody().getTextContent()).contains("There are no to do");
 	}
+	
+	@Test @DisplayName("Test todoManagerPage with ToDo should show them")
+	@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
+	void testToDoManagerWithToDoShouldShowThem() throws Exception{
+		LocalDate today = LocalDate.now();
+		ToDo todo1 = new ToDo("username_1", "title_1", "description_1", today);
+		todo1.setId(new BigInteger("0"));
+		ToDo todo2 = new ToDo("username_2", "title_2", "description_2", today);
+		todo2.setId(new BigInteger("1"));
+		
+		when(toDoService.getAllToDoOrderByDoneAscDeadlineAsc()).thenReturn(Arrays.asList(todo1, todo2));
+		
+		HtmlPage page = webClient.getPage("/toDoManager");
+		assertThat(page.getBody().getTextContent()).doesNotContain("There are no to do");
+		HtmlTable table = page.getHtmlElementById("toDo_table");
+		String todayAsString = today.toString();
+		assertEquals(
+				"All ToDo\n"+
+				"Username	Title	Description	Done	Deadline\n"+
+				"username_1	title_1	description_1	"+ todo1.isDone()+ "	" +  	todayAsString+"\n"+
+				"username_2	title_2	description_2	"+ todo2.isDone()+ "	" + 	todayAsString,
+				removeWindowsCR(table.asText()));
+	}
+	
+	
+	
+	private String removeWindowsCR(String s) {
+		return s.replaceAll("\r", "");
+		}
 	
 }

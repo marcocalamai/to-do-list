@@ -2,16 +2,43 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-<meta charset="UTF-8"/>
+<meta charset="UTF-8" />
 <title>ToDo Manager</title>
 </head>
 <body>
-<h1>Manage ToDo</h1>
+	<h1>Manage ToDo</h1>
 
 	<div id="error" th:if="${message}">
 		<span th:text="${message}"></span>
 	</div>
-			
+
+	<div th:unless="${allToDo.empty}">
+		<table id="toDo_table">
+			<caption>All ToDo</caption>
+			<thead>
+				<tr>
+					<th scope="col">Username</th>
+					<th scope="col">Title</th>
+					<th scope="col">Description</th>
+					<th scope="col">Done</th>
+					<th scope="col">Deadline</th>
+				</tr>
+			</thead>
+
+			<tbody>
+				<tr th:each="toDo : ${allToDo}">
+					<td th:text="${toDo.user}"></td>
+					<td th:text="${toDo.title}"></td>
+					<td th:text="${toDo.description}"></td>
+					<!-- <td><input type="checkbox" id="done" name="done" th:checked=${toDo.done} disabled></td> -->
+					<td th:text="${toDo.done}"></td>
+					<td th:text="${toDo.deadline}"></td>
+				</tr>
+			</tbody>
+		</table>
+
+	</div>
+
 
 </body>
 </html>
