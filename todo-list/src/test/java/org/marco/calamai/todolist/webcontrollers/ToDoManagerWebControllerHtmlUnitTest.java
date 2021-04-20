@@ -73,8 +73,8 @@ class ToDoManagerWebControllerHtmlUnitTest {
 		assertEquals(
 				"All ToDo\n"+
 				"Username	Title	Description	Done	Deadline\n"+
-				"username_1	title_1	description_1	"+ todo1.isDone()+ "	" +  	todayAsString+"\n"+
-				"username_2	title_2	description_2	"+ todo2.isDone()+ "	" + 	todayAsString,
+				"username_1	title_1	description_1	"+ todo1.isDone()+ "	" + todayAsString+"\n"+
+				"username_2	title_2	description_2	"+ todo2.isDone()+ "	" + todayAsString,
 				removeWindowsCR(table.asText()));
 	}
 	
@@ -105,8 +105,8 @@ class ToDoManagerWebControllerHtmlUnitTest {
 		assertEquals(
 				"All my ToDo\n"+
 				"Username	Title	Description	Done	Deadline\n"+
-				"AuthenticatedUser	title_1	description_1	"+ todo1.isDone()+ "	" +  	todayAsString+"	Edit	Delete\n"+
-				"AuthenticatedUser	title_2	description_2	"+ todo2.isDone()+ "	" + 	todayAsString+"	Edit	Delete",
+				"AuthenticatedUser	title_1	description_1	"+ todo1.isDone()+ "	" + todayAsString+"	Edit	Delete\n"+
+				"AuthenticatedUser	title_2	description_2	"+ todo2.isDone()+ "	" + todayAsString+"	Edit	Delete",
 				removeWindowsCR(table.asText()));
 		
 		page.getAnchorByHref("/editToDo/0");
@@ -157,8 +157,50 @@ class ToDoManagerWebControllerHtmlUnitTest {
 		assertEquals(
 				"All ToDo\n"+
 				"Username	Title	Description	Done	Deadline\n"+
-				"username_1	title_1	description_1	"+ todo1.isDone()+ "	" +  	todayAsString+"\n"+
-				"username_2	title_2	description_2	"+ todo2.isDone()+ "	" + 	todayAsString,
+				"username_1	title_1	description_1	"+ todo1.isDone()+ "	" + todayAsString+"\n"+
+				"username_2	title_2	description_2	"+ todo2.isDone()+ "	" + todayAsString,
+				removeWindowsCR(table.asText()));
+	}
+	
+	@Test @DisplayName("Test todoManagerPage toDo by title whith no todo")
+	@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
+	void testToDoManagerToDoByTitleWithNoToDo() throws Exception {
+		when(toDoService.getAllToDoByTitleOrderByDoneAscDeadlineAsc("title_1")).thenReturn(Collections.emptyList());
+		
+		HtmlPage page = webClient.getPage("/toDoManager");
+		HtmlForm form = page.getFormByName("searchByTitleForm");
+		
+		form.getInputByName("title").setValueAttribute("title_1");
+		page = form.getButtonByName("btn_searchByTitle").click();
+		
+		assertThat(page.getBody().getTextContent()).contains("There are no to do");
+	}
+	
+	
+	@Test @DisplayName("Test todoManagerPage toDo by title")
+	@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
+	void testToDoManagerToDoByTitle() throws Exception {
+		ToDo todo1 = new ToDo("username_1", "title_1", "description_1", LocalDate.now());
+		todo1.setId(new BigInteger("0"));
+		ToDo todo2 = new ToDo("username_2", "title_1", "description_2", LocalDate.now());
+		todo2.setId(new BigInteger("1"));
+		
+		when(toDoService.getAllToDoByTitleOrderByDoneAscDeadlineAsc("title_1")).thenReturn(Arrays.asList(todo1, todo2));
+		
+		HtmlPage page = webClient.getPage("/toDoManager");
+		HtmlForm form = page.getFormByName("searchByTitleForm");
+		
+		form.getInputByName("title").setValueAttribute("title_1");
+		page = form.getButtonByName("btn_searchByTitle").click();
+		
+		assertThat(page.getBody().getTextContent()).doesNotContain("There are no to do");
+		
+		HtmlTable table = page.getHtmlElementById("toDo_table");
+		assertEquals(
+				"All ToDo\n"+
+				"Username	Title	Description	Done	Deadline\n"+
+				"username_1	title_1	description_1	"+ todo1.isDone()+ "	" + LocalDate.now().toString()+"\n"+
+				"username_2	title_1	description_2	"+ todo2.isDone()+ "	" + LocalDate.now().toString(),
 				removeWindowsCR(table.asText()));
 	}
 	
@@ -167,5 +209,4 @@ class ToDoManagerWebControllerHtmlUnitTest {
 	private String removeWindowsCR(String s) {
 		return s.replaceAll("\r", "");
 		}
-	
 }
