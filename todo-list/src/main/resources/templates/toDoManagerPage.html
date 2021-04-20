@@ -33,6 +33,8 @@
 					<!-- <td><input type="checkbox" id="done" name="done" th:checked=${toDo.done} disabled></td> -->
 					<td th:text="${toDo.done}"></td>
 					<td th:text="${toDo.deadline}"></td>
+					<td><a id=edit th:href="@{'/editToDo/' + ${toDo.id}}">Edit</a></td>
+					<td><a id=delete th:href="@{'/deleteToDo/' + ${toDo.id}}">Delete</a></td>
 				</tr>
 			</tbody>
 		</table>

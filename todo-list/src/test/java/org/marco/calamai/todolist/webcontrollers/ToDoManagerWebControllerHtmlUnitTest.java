@@ -72,9 +72,14 @@ class ToDoManagerWebControllerHtmlUnitTest {
 		assertEquals(
 				"All ToDo\n"+
 				"Username	Title	Description	Done	Deadline\n"+
-				"username_1	title_1	description_1	"+ todo1.isDone()+ "	" +  	todayAsString+"\n"+
-				"username_2	title_2	description_2	"+ todo2.isDone()+ "	" + 	todayAsString,
+				"username_1	title_1	description_1	"+ todo1.isDone()+ "	" +  	todayAsString+"	Edit	Delete\n"+
+				"username_2	title_2	description_2	"+ todo2.isDone()+ "	" + 	todayAsString+"	Edit	Delete",
 				removeWindowsCR(table.asText()));
+		
+		page.getAnchorByHref("/editToDo/0");
+		page.getAnchorByHref("/editToDo/1");
+		page.getAnchorByHref("/deleteToDo/0");
+		page.getAnchorByHref("/deleteToDo/1");
 	}
 	
 	
