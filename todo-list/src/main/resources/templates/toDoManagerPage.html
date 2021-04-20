@@ -12,7 +12,7 @@
 		<span th:text="${message}"></span>
 	</div>
 
-	<div th:unless="${allToDo.empty}">
+	<div th:if="${allToDo}">
 		<table id="toDo_table">
 			<caption>All ToDo</caption>
 			<thead>
@@ -33,12 +33,38 @@
 					<!-- <td><input type="checkbox" id="done" name="done" th:checked=${toDo.done} disabled></td> -->
 					<td th:text="${toDo.done}"></td>
 					<td th:text="${toDo.deadline}"></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
+
+	<div th:if="${allMyToDo}">
+		<table id="myToDo_table">
+			<caption>All my ToDo</caption>
+			<thead>
+				<tr>
+					<th scope="col">Username</th>
+					<th scope="col">Title</th>
+					<th scope="col">Description</th>
+					<th scope="col">Done</th>
+					<th scope="col">Deadline</th>
+				</tr>
+			</thead>
+
+			<tbody>
+				<tr th:each="toDo : ${allMyToDo}">
+					<td th:text="${toDo.user}"></td>
+					<td th:text="${toDo.title}"></td>
+					<td th:text="${toDo.description}"></td>
+					<!-- <td><input type="checkbox" id="done" name="done" th:checked=${toDo.done} disabled></td> -->
+					<td th:text="${toDo.done}"></td>
+					<td th:text="${toDo.deadline}"></td>
 					<td><a id=edit th:href="@{'/editToDo/' + ${toDo.id}}">Edit</a></td>
 					<td><a id=delete th:href="@{'/deleteToDo/' + ${toDo.id}}">Delete</a></td>
 				</tr>
 			</tbody>
 		</table>
-
 	</div>
 
 

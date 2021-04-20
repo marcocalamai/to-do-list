@@ -72,8 +72,40 @@ class ToDoManagerWebControllerHtmlUnitTest {
 		assertEquals(
 				"All ToDo\n"+
 				"Username	Title	Description	Done	Deadline\n"+
-				"username_1	title_1	description_1	"+ todo1.isDone()+ "	" +  	todayAsString+"	Edit	Delete\n"+
-				"username_2	title_2	description_2	"+ todo2.isDone()+ "	" + 	todayAsString+"	Edit	Delete",
+				"username_1	title_1	description_1	"+ todo1.isDone()+ "	" +  	todayAsString+"\n"+
+				"username_2	title_2	description_2	"+ todo2.isDone()+ "	" + 	todayAsString,
+				removeWindowsCR(table.asText()));
+	}
+	
+	@Test @DisplayName("Test todoManagerPage AllMyToDo with no toDo")
+	@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
+	void testToDoManagerAllMyToDoWithNoToDo() throws Exception {
+		when(toDoService.getToDoByUserOrderByDoneAscDeadlineAsc("AuthenticatedUser")).thenReturn(Collections.emptyList());
+		
+		HtmlPage page = webClient.getPage("/toDoManager/AllMyToDo");
+		assertThat(page.getBody().getTextContent()).contains("There are no to do");
+	}
+	
+	@Test @DisplayName("Test todoManagerPage AllMyToDo with ToDo should show them")
+	@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
+	void testToDoManagerAllMyToDoWithToDoShouldShowThem() throws Exception{
+		LocalDate today = LocalDate.now();
+		ToDo todo1 = new ToDo("AuthenticatedUser", "title_1", "description_1", today);
+		todo1.setId(new BigInteger("0"));
+		ToDo todo2 = new ToDo("AuthenticatedUser", "title_2", "description_2", today);
+		todo2.setId(new BigInteger("1"));
+		
+		when(toDoService.getToDoByUserOrderByDoneAscDeadlineAsc("AuthenticatedUser")).thenReturn(Arrays.asList(todo1, todo2));
+		
+		HtmlPage page = webClient.getPage("/toDoManager/AllMyToDo");
+		//assertThat(page.getBody().getTextContent()).doesNotContain("There are no to do");
+		HtmlTable table = page.getHtmlElementById("myToDo_table");
+		String todayAsString = today.toString();
+		assertEquals(
+				"All my ToDo\n"+
+				"Username	Title	Description	Done	Deadline\n"+
+				"AuthenticatedUser	title_1	description_1	"+ todo1.isDone()+ "	" +  	todayAsString+"	Edit	Delete\n"+
+				"AuthenticatedUser	title_2	description_2	"+ todo2.isDone()+ "	" + 	todayAsString+"	Edit	Delete",
 				removeWindowsCR(table.asText()));
 		
 		page.getAnchorByHref("/editToDo/0");
