@@ -63,6 +63,13 @@ class ToDoManagerWebControllerHtmlUnitTest {
 			HtmlPage page = webClient.getPage("/toDoManager");
 			assertThat(page.getAnchorByText("New ToDo").getHrefAttribute()).isEqualTo("/toDoManager/newToDo");
 		}
+		
+		@Test @DisplayName("Test toDoManagerPage should provide logout")
+		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
+		void testToDoManagerShouldProvideLogout() throws Exception {
+			HtmlPage page = webClient.getPage("/toDoManager");
+			assertThat(page.getByXPath("//form[@action='/logout']")).isNotEmpty();
+		}
 	
 		@Test @DisplayName("Test todoManagerPage with no toDo")
 		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
@@ -256,7 +263,21 @@ class ToDoManagerWebControllerHtmlUnitTest {
 			assertThat(page.getBody().getTextContent()).contains("ToDo not found!");
 		}
 		
-		@Test @DisplayName("Test edit toDo set done true when it was false")
+		@Test @DisplayName("Test editToDoPage title and should provide a link for ToDoManagerPage")
+		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
+		void testEditToDoPageShouldProvideALinkForToDoManagerPage() throws Exception {
+			ToDo toDo = new ToDo("AuthenticatedUser", "title_1", "description_1", LocalDate.now());
+			toDo.setId(new BigInteger("0"));
+
+			when(toDoService.getToDoById(new BigInteger("0"))).thenReturn(toDo);
+			
+			HtmlPage page = webClient.getPage("/toDoManager/editToDo/0");
+			
+			assertEquals("Edit ToDo", page.getTitleText());
+			assertThat(page.getAnchorByText("Manage ToDo").getHrefAttribute()).isEqualTo("/toDoManager");
+		}
+		
+		@Test @DisplayName("Test edit toDo, set done true when it was false")
 		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
 		void testEditExistentToDo() throws Exception {
 			ToDo toDo = new ToDo("AuthenticatedUser", "title_1", "description_1", LocalDate.now());
@@ -264,10 +285,7 @@ class ToDoManagerWebControllerHtmlUnitTest {
 			
 			when(toDoService.getToDoById(new BigInteger("0"))).thenReturn(toDo);
 			
-			HtmlPage page = webClient.getPage("/toDoManager/editToDo/0");
-			
-			assertEquals("Edit ToDo", page.getTitleText());
-			
+			HtmlPage page = webClient.getPage("/toDoManager/editToDo/0");			
 			HtmlForm form = page.getFormByName("EditToDoForm");
 			form.getInputByValue("title_1").setValueAttribute("modified_title");	
 			form.getInputByValue("description_1").setValueAttribute("modified_description");
@@ -288,7 +306,7 @@ class ToDoManagerWebControllerHtmlUnitTest {
 			assertEquals("ToDo Manager", page.getTitleText());
 		}
 		
-		@Test @DisplayName("Test edit toDo set done false when it was true")
+		@Test @DisplayName("Test edit toDo, set done false when it was true")
 		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
 		void testEditExistentToDoSetDoneFalse() throws Exception {
 			ToDo toDo = new ToDo("AuthenticatedUser", "title_1", "description_1", LocalDate.now());
@@ -297,10 +315,7 @@ class ToDoManagerWebControllerHtmlUnitTest {
 			
 			when(toDoService.getToDoById(new BigInteger("0"))).thenReturn(toDo);
 			
-			HtmlPage page = webClient.getPage("/toDoManager/editToDo/0");
-			
-			assertEquals("Edit ToDo", page.getTitleText());
-			
+			HtmlPage page = webClient.getPage("/toDoManager/editToDo/0");			
 			HtmlForm form = page.getFormByName("EditToDoForm");
 			form.getInputByValue("title_1").setValueAttribute("modified_title");
 			form.getInputByValue("description_1").setValueAttribute("modified_description");
