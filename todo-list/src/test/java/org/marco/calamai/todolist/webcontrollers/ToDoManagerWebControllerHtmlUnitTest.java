@@ -230,7 +230,6 @@ class ToDoManagerWebControllerHtmlUnitTest {
 			toDo.setId(new BigInteger("0"));
 			
 			when(toDoService.getToDoByUserOrderByDoneAscDeadlineAsc("AuthenticatedUser")).thenReturn(Arrays.asList(toDo));
-			//when(toDoService.deleteToDoById(new BigInteger("0"), "AuthenticatedUser")).thenReturn(toDo);
 						
 			HtmlPage page = webClient.getPage("/toDoManager/AllMyToDo");
 			HtmlForm form = page.getFormByName("DeleteToDoForm");
@@ -324,11 +323,19 @@ class ToDoManagerWebControllerHtmlUnitTest {
 	}
 	
 	
+	
 	@Nested
 	@DisplayName("Tests for newToDoPage")
 	class NewToDo{
 		
-		@Test @DisplayName("Test new toDo")
+		@Test @DisplayName("Test newToDoPage should provide a link for ToDoManagerPage")
+		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
+		void testToDoManagerPageShouldProvideALinkForToDoManagerPage() throws Exception {
+			HtmlPage page = webClient.getPage("/toDoManager/newToDo");
+			assertThat(page.getAnchorByText("Manage ToDo").getHrefAttribute()).isEqualTo("/toDoManager");
+		}
+		
+		@Test @DisplayName("Test create new toDo")
 		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
 		void testCreateNewToDo() throws Exception {
 						
@@ -341,7 +348,6 @@ class ToDoManagerWebControllerHtmlUnitTest {
 			form.getInputByName("deadline").setValueAttribute(LocalDate.now().toString());
 			
 			page = form.getButtonByName("btn_createToDo").click();
-	
 			
 			verify(toDoService, times(1)).insertToDo(new ToDo("AuthenticatedUser", "new_title", "new_description", LocalDate.now()));
 			assertEquals("ToDo Manager", page.getTitleText());

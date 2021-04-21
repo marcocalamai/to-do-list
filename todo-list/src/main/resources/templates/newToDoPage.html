@@ -8,6 +8,12 @@
 
 <body>
 	<h1>Create new ToDo</h1>
+	
+	<div>
+		<ul>
+			<li><a href="/toDoManager">Manage ToDo</a></li>
+		</ul>
+	</div>
 
 	<div>
 		<form name="NewToDoForm" th:action="@{/toDoManager/saveNewToDo}" method="post">
