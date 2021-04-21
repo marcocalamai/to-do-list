@@ -11,6 +11,10 @@
 	<div id="message" th:if="${message}">
 		<span th:text="${message}"></span>
 	</div>
+	
+	<div>
+		<a href="/toDoManager/newToDo">New ToDo</a>
+	</div>
 
 	<form name="searchByTitleForm" th:action="@{/toDoManager/toDoByTitle}"
 		method="get">
@@ -81,8 +85,13 @@
 					<!-- <td><input type="checkbox" id="done" name="done" th:checked=${toDo.done} disabled></td> -->
 					<td th:text="${toDo.done}"></td>
 					<td th:text="${toDo.deadline}"></td>
-					<td><a id=edit th:href="@{'/editToDo/' + ${toDo.id}}">Edit</a></td>
-					<td><a id=delete th:href="@{'/deleteToDo/' + ${toDo.id}}">Delete</a></td>
+					<td><a id=edit th:href="@{'/toDoManager/editToDo/' + ${toDo.id}}">Edit</a></td>
+					<!-- <td><a id=delete th:href="@{'/toDoManager/deleteToDo/' + ${toDo.id}}">Delete</a></td> -->
+					<td>
+					<form  method="POST" name="DeleteToDoForm" th:action="@{'/toDoManager/deleteToDo/' + ${toDo.id}}" style="display:inline">
+    					<button type="submit" name="btn_deleteToDo">Delete</button>
+					</form> 
+					</td>
 				</tr>
 			</tbody>
 		</table>

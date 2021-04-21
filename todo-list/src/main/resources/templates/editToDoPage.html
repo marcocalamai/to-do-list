@@ -10,8 +10,7 @@
 	<h1>Edit ToDo</h1>
 
 	<div>
-		<form name="EditToDoForm" th:action="@{/toDoManager/updateToDo}"
-			method="post">
+		<form name="EditToDoForm" th:action="@{/toDoManager/updateToDo}" method="post">
 			<input type="hidden" th:field="${toDo.id}" /> 
 			<label>Title : </label> <input type="text" th:field="${toDo.title}" required> 
 			<label>Description : </label> <input type="text" th:field="${toDo.description}" required>

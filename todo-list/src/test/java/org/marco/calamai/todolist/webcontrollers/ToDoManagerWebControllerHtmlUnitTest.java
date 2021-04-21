@@ -56,6 +56,13 @@ class ToDoManagerWebControllerHtmlUnitTest {
 			HtmlPage page = webClient.getPage("/toDoManager");
 			assertEquals("ToDo Manager", page.getTitleText());	
 		}
+		
+		@Test @DisplayName("Test toDoManagerPage should provide a link for creating new ToDo")
+		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
+		void testToDoManagerPageShouldProvideALinkForCreatingANewToDo() throws Exception {
+			HtmlPage page = webClient.getPage("/toDoManager");
+			assertThat(page.getAnchorByText("New ToDo").getHrefAttribute()).isEqualTo("/toDoManager/newToDo");
+		}
 	
 		@Test @DisplayName("Test todoManagerPage with no toDo")
 		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
@@ -113,17 +120,18 @@ class ToDoManagerWebControllerHtmlUnitTest {
 			assertThat(page.getBody().getTextContent()).doesNotContain("There are no to do");
 			HtmlTable table = page.getHtmlElementById("myToDo_table");
 			String todayAsString = today.toString();
+			
 			assertEquals(
 					"All my ToDo\n"+
 					"Username	Title	Description	Done	Deadline\n"+
-					"AuthenticatedUser	title_1	description_1	"+ todo1.isDone()+ "	" + todayAsString+"	Edit	Delete\n"+
-					"AuthenticatedUser	title_2	description_2	"+ todo2.isDone()+ "	" + todayAsString+"	Edit	Delete",
+					"AuthenticatedUser	title_1	description_1	"+ todo1.isDone()+ "	" + todayAsString+"	Edit	 Delete\n"+
+					"AuthenticatedUser	title_2	description_2	"+ todo2.isDone()+ "	" + todayAsString+"	Edit	 Delete",
 					removeWindowsCR(table.asText()));
 			
-			page.getAnchorByHref("/editToDo/0");
-			page.getAnchorByHref("/editToDo/1");
-			page.getAnchorByHref("/deleteToDo/0");
-			page.getAnchorByHref("/deleteToDo/1");
+			page.getAnchorByHref("/toDoManager/editToDo/0");
+			page.getAnchorByHref("/toDoManager/editToDo/1");
+			assertThat(page.getByXPath("//form[@action='/toDoManager/deleteToDo/0']")).isNotEmpty();
+			assertThat(page.getByXPath("//form[@action='/toDoManager/deleteToDo/1']")).isNotEmpty();
 		}
 		
 		@Test @DisplayName("Test todoManagerPage toDo by deadline whith no todo")
@@ -214,8 +222,24 @@ class ToDoManagerWebControllerHtmlUnitTest {
 					"username_2	title_1	description_2	"+ todo2.isDone()+ "	" + LocalDate.now().toString(),
 					removeWindowsCR(table.asText()));
 		}
+		
+		@Test @DisplayName("test todoManagerPage delete ToDo")
+		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
+		void testTodoManagerPageDeleteToDo() throws Exception {
+			ToDo toDo = new ToDo("AuthenticatedUser", "title_1", "description_1", LocalDate.now());
+			toDo.setId(new BigInteger("0"));
+			
+			when(toDoService.getToDoByUserOrderByDoneAscDeadlineAsc("AuthenticatedUser")).thenReturn(Arrays.asList(toDo));
+			//when(toDoService.deleteToDoById(new BigInteger("0"), "AuthenticatedUser")).thenReturn(toDo);
+						
+			HtmlPage page = webClient.getPage("/toDoManager/AllMyToDo");
+			HtmlForm form = page.getFormByName("DeleteToDoForm");
+			page = form.getButtonByName("btn_deleteToDo").click();
+			
+			verify(toDoService, times(1)).deleteToDoById(new BigInteger("0"), "AuthenticatedUser");
+		}
 	}
-	
+
 
 	
 	@Nested
