@@ -73,10 +73,11 @@ public class ToDo {
 		this.deadline = deadline;
 	}
 	
+	
 	@Override
 	public String toString() {
-		return "ToDo [title=" + title + ", description=" + description + ", done=" + done + ", deadline=" + deadline
-				+ "]";
+		return "ToDo [id=" + id + ", user=" + user + ", title=" + title + ", description=" + description + ", done="
+				+ done + ", deadline=" + deadline + "]";
 	}
 
 	@Override

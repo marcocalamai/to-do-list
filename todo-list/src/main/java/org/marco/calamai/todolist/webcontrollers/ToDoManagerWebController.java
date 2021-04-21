@@ -119,14 +119,15 @@ public class ToDoManagerWebController {
 	public String updateTodo(
 			@AuthenticationPrincipal UserDetails principal,
 			@RequestParam BigInteger id,
-			@RequestParam String username,
 			@RequestParam  String title,
 			@RequestParam String description,
-			@RequestParam boolean done,
+			String done,
 			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate deadline) {
-
+		
+		String username = toDoService.getToDoById(id).getUser();
+		
 		ToDo todo = new ToDo(username, title, description, deadline);
-		todo.setDone(done);
+		todo.setDone(done!=null);
 		toDoService.updateToDo(id, principal.getUsername(), todo);
 		return "redirect:/toDoManager";
 	}

@@ -23,6 +23,8 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(controllers = RegistrationWebController.class)
+
+@DisplayName("HtmlUnit test Registration")
 class RegistrationWebControllerHtmlUnitTest {
 	
 	@Autowired

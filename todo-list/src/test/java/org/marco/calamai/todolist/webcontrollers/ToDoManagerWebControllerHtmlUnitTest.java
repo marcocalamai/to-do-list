@@ -2,6 +2,8 @@ package org.marco.calamai.todolist.webcontrollers;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.math.BigInteger;
@@ -13,6 +15,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.marco.calamai.todolist.configurations.WebSecurityConfig;
+import org.marco.calamai.todolist.exceptions.ToDoNotFoundException;
 import org.marco.calamai.todolist.model.ToDo;
 import org.marco.calamai.todolist.services.ToDoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +33,8 @@ import com.gargoylesoftware.htmlunit.html.HtmlTable;
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(controllers = ToDoManagerWebController.class)
 @Import(WebSecurityConfig.class)
+
+@DisplayName("HtmlUnit test ToDoManager")
 class ToDoManagerWebControllerHtmlUnitTest {
 	
 	@Autowired 
@@ -37,7 +42,7 @@ class ToDoManagerWebControllerHtmlUnitTest {
 
 	@MockBean
 	private ToDoService toDoService;
-	
+		
 
 	@Test @DisplayName("Test toDoManagerPage title")
 	@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
@@ -204,9 +209,81 @@ class ToDoManagerWebControllerHtmlUnitTest {
 				removeWindowsCR(table.asText()));
 	}
 	
+
+	
+	
+	
+	@Test @DisplayName("Test edit non existent toDo")
+	@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
+	void testEditNonExistentToDo() throws Exception {
+		webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);	
+
+		when(toDoService.getToDoById(new BigInteger("0"))).thenThrow(ToDoNotFoundException.class);
+		
+		HtmlPage page = webClient.getPage("/toDoManager/editToDo/0");
+		assertThat(page.getBody().getTextContent()).contains("ToDo not found!");
+	}
+	
+	@Test @DisplayName("Test edit toDo set done true")
+	@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
+	void testEditExistentToDo() throws Exception {
+		ToDo toDo = new ToDo("AuthenticatedUser", "title_1", "description_1", LocalDate.now());
+		toDo.setId(new BigInteger("0"));
+		
+		when(toDoService.getToDoById(new BigInteger("0"))).thenReturn(toDo);
+		
+		HtmlPage page = webClient.getPage("/toDoManager/editToDo/0");
+		assertEquals("Edit ToDo", page.getTitleText());
+		
+		HtmlForm form = page.getFormByName("EditToDoForm");
+		form.getInputByValue("title_1").setValueAttribute("modified_title");	
+		form.getInputByValue("description_1").setValueAttribute("modified_description");
+		form.getInputByName("done").setChecked(true);
+		form.getInputByValue(LocalDate.now().toString()).setValueAttribute(LocalDate.now().plusDays(1).toString());
+		
+		page = form.getButtonByName("btn_updateToDo").click();
+		
+		ToDo todoUpdated = new ToDo("AuthenticatedUser", "modified_title", "modified_description", LocalDate.now().plusDays(1));
+		todoUpdated.setDone(true);
+		
+		verify(toDoService, times(1)).updateToDo(new BigInteger("0"), "AuthenticatedUser", todoUpdated);
+		verify(toDoService, times(2)).getToDoById(new BigInteger("0"));
+		assertEquals("ToDo Manager", page.getTitleText());
+	}
+	
+	@Test @DisplayName("Test edit toDo set done false")
+	@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
+	void testEditExistentToDoSetDoneFalse() throws Exception {
+		ToDo toDo = new ToDo("AuthenticatedUser", "title_1", "description_1", LocalDate.now());
+		toDo.setId(new BigInteger("0"));
+		
+		when(toDoService.getToDoById(new BigInteger("0"))).thenReturn(toDo);
+		
+		HtmlPage page = webClient.getPage("/toDoManager/editToDo/0");
+		assertEquals("Edit ToDo", page.getTitleText());
+		HtmlForm form = page.getFormByName("EditToDoForm");
+		form.getInputByValue("title_1").setValueAttribute("modified_title");
+		form.getInputByValue("description_1").setValueAttribute("modified_description");
+		form.getInputByName("done").setChecked(false);
+		form.getInputByValue(LocalDate.now().toString()).setValueAttribute(LocalDate.now().plusDays(1).toString());
+		
+		page = form.getButtonByName("btn_updateToDo").click();
+		
+		ToDo todoUpdated = new ToDo("AuthenticatedUser", "modified_title", "modified_description", LocalDate.now().plusDays(1));
+		todoUpdated.setDone(false);
+		
+		verify(toDoService, times(1)).updateToDo(new BigInteger("0"), "AuthenticatedUser", todoUpdated);
+		verify(toDoService, times(2)).getToDoById(new BigInteger("0"));
+		assertEquals("ToDo Manager", page.getTitleText());
+	}
+	
 	
 	
 	private String removeWindowsCR(String s) {
 		return s.replaceAll("\r", "");
 		}
+	
+			
+		
+
 }

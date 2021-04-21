@@ -27,6 +27,8 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(controllers = {LoginWebController.class, ToDoManagerWebController.class})
+
+@DisplayName("HtmlUnit test Login")
 class LoginWebControllerHtmlUnitTest {
 	
 	@Autowired 
