@@ -13,7 +13,11 @@
 	</div>
 	
 	<div>
-		<a href="/toDoManager/newToDo">New ToDo</a>
+		<ul>
+			<li><a href="/toDoManager/newToDo">New ToDo</a></li>
+			<li><a href="/toDoManager">All ToDo</a></li>
+			<li><a href="/toDoManager/AllMyToDo">All my ToDo</a></li>
+		</ul>
 	</div>
 
 	<form name="searchByTitleForm" th:action="@{/toDoManager/toDoByTitle}"
@@ -36,7 +40,7 @@
 			</div>
 		</form>
 	</div>
-
+	
 	<div th:if="${allToDo}">
 		<table id="toDo_table">
 			<caption>All ToDo</caption>

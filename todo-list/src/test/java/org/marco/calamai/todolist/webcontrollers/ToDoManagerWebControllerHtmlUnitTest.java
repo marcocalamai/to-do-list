@@ -64,6 +64,14 @@ class ToDoManagerWebControllerHtmlUnitTest {
 			assertThat(page.getAnchorByText("New ToDo").getHrefAttribute()).isEqualTo("/toDoManager/newToDo");
 		}
 		
+		@Test @DisplayName("Test toDoManagerPage should provide a link for show all my ToDo and for show all todo")
+		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
+		void testToDoManagerPageShouldProvideALinkForShowAllMyToDo() throws Exception {
+			HtmlPage page = webClient.getPage("/toDoManager");
+			assertThat(page.getAnchorByText("All my ToDo").getHrefAttribute()).isEqualTo("/toDoManager/AllMyToDo");
+			assertThat(page.getAnchorByText("All ToDo").getHrefAttribute()).isEqualTo("/toDoManager");
+		}
+		
 		@Test @DisplayName("Test toDoManagerPage should provide logout")
 		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
 		void testToDoManagerShouldProvideLogout() throws Exception {
