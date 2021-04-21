@@ -9,27 +9,20 @@
 <body>
 	<h1>Edit ToDo</h1>
 
-
-	<div id="message" th:if="${message}">
-		<span th:text="${message}"></span>
-	</div>
-
 	<div>
 		<form name="EditToDoForm" th:action="@{/toDoManager/updateToDo}"
 			method="post">
 			<input type="hidden" th:field="${toDo.id}" /> 
 			<label>Title : </label> <input type="text" th:field="${toDo.title}" required> 
 			<label>Description : </label> <input type="text" th:field="${toDo.description}" required>
-			<label>Description : </label><input type="checkbox" name="done" th:checked="${toDo.done}" value="true" />
-			<label>Deadline : </label> <input type="date"
-				name=deadline th:value="${toDo.deadline}" required>
-
+			<label>Done : </label><input type="checkbox" name="done" th:checked="${toDo.done}" value="true" />
+			<label>Deadline : </label> <input type="date" name=deadline th:value="${toDo.deadline}" required>
+			
 			<div>
 				<button type="submit" name="btn_updateToDo">Save</button>
 			</div>
+			
 		</form>
 	</div>
-
-
 </body>
 </html>
