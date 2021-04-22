@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.marco.calamai.todolist.exceptions.PasswordsDontMatchException;
 import org.marco.calamai.todolist.exceptions.UsernameAlreadyPresent;
 import org.marco.calamai.todolist.exceptions.WhitespaceInRegistrationFieldsException;
 import org.marco.calamai.todolist.services.UserService;
@@ -54,9 +55,10 @@ class RegistrationWebControllerHtmlUnitTest {
 	HtmlForm form = page.getFormByName("registrationForm");
 	form.getInputByName("username").setValueAttribute("username_1");
 	form.getInputByName("password").setValueAttribute("password_1");
+	form.getInputByName("passwordConfirmation").setValueAttribute("password_1");
 	page = form.getButtonByName("btn_submit").click();
 	
-	verify(userService, times(1)).register("username_1", "password_1");	
+	verify(userService, times(1)).register("username_1", "password_1", "password_1");	
 	assertEquals("ToDo List", page.getTitleText());
 	}
 	
@@ -65,16 +67,34 @@ class RegistrationWebControllerHtmlUnitTest {
 	void testRegisterUserWhenUsernameAlreadyExist() throws Exception {
 	webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);	
 	
-	when(userService.register("username_1", "password_1")).thenThrow(UsernameAlreadyPresent.class);
+	when(userService.register("username_1", "password_1", "password_1")).thenThrow(UsernameAlreadyPresent.class);
 	
 	HtmlPage page = this.webClient.getPage("/registration");
 	HtmlForm form = page.getFormByName("registrationForm");
 	form.getInputByName("username").setValueAttribute("username_1");
 	form.getInputByName("password").setValueAttribute("password_1");
+	form.getInputByName("passwordConfirmation").setValueAttribute("password_1");
 	page = form.getButtonByName("btn_submit").click();
 	
 	assertThat(page.getBody().getTextContent()).contains("A user with that username already exists!");
-	verify(userService, times(1)).register("username_1", "password_1");	
+	verify(userService, times(1)).register("username_1", "password_1", "password_1");	
+	}
+	
+	@Test @DisplayName("Test register user when passwords dont match should show error")
+	void testRegisterUserPasswordsDontMatch() throws Exception {
+	webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);	
+	
+	when(userService.register("username_1", "password_1", "passNotMatch")).thenThrow(PasswordsDontMatchException.class);
+	
+	HtmlPage page = this.webClient.getPage("/registration");
+	HtmlForm form = page.getFormByName("registrationForm");
+	form.getInputByName("username").setValueAttribute("username_1");
+	form.getInputByName("password").setValueAttribute("password_1");
+	form.getInputByName("passwordConfirmation").setValueAttribute("passNotMatch");
+	page = form.getButtonByName("btn_submit").click();
+	
+	assertThat(page.getBody().getTextContent()).contains("The two passwords do not match!");
+	verify(userService, times(1)).register("username_1", "password_1", "passNotMatch");	
 	}
 	
 	
@@ -82,15 +102,16 @@ class RegistrationWebControllerHtmlUnitTest {
 	void testRegisterUserWhenUsernameOrPasswordContainsWhitespaces() throws Exception {
 	webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);	
 	
-	when(userService.register("u s e r n a m e", "password_1")).thenThrow(WhitespaceInRegistrationFieldsException.class);
+	when(userService.register("u s e r n a m e", "password_1", "password_1")).thenThrow(WhitespaceInRegistrationFieldsException.class);
 	
 	HtmlPage page = this.webClient.getPage("/registration");
 	HtmlForm form = page.getFormByName("registrationForm");
 	form.getInputByName("username").setValueAttribute("u s e r n a m e");
 	form.getInputByName("password").setValueAttribute("password_1");
+	form.getInputByName("passwordConfirmation").setValueAttribute("password_1");
 	page = form.getButtonByName("btn_submit").click();
 	
 	assertThat(page.getBody().getTextContent()).contains("The username or password field contains one or more whitespace!");
-	verify(userService, times(1)).register("u s e r n a m e", "password_1");	
+	verify(userService, times(1)).register("u s e r n a m e", "password_1", "password_1");	
 	}
 }

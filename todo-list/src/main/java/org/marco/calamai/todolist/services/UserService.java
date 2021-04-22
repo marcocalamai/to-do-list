@@ -3,6 +3,7 @@ package org.marco.calamai.todolist.services;
 import java.util.Optional;
 
 import org.marco.calamai.todolist.exceptions.EmptyRegistrationFieldsException;
+import org.marco.calamai.todolist.exceptions.PasswordsDontMatchException;
 import org.marco.calamai.todolist.exceptions.UsernameAlreadyPresent;
 import org.marco.calamai.todolist.exceptions.WhitespaceInRegistrationFieldsException;
 import org.marco.calamai.todolist.model.User;
@@ -20,6 +21,7 @@ public class UserService implements UserDetailsService {
 	private static final String EMPTY_FIELD = "The username or password fields are empty!";
 	private static final String WHITESPACE_IN_FIELD = "The username or password field contains one or more whitespace!";
 	private static final String USER_NOT_FOUND = "User not found!";
+	private static final String PASSWORDS_DO_NOT_MATCH = "The two passwords do not match!";
 	
 
 	private UserMongoRepository userMongoRepository;
@@ -34,8 +36,11 @@ public class UserService implements UserDetailsService {
 	}
 	
 
-	public User register(String username, String password) {
+	public User register(String username, String password, String passwordConfirmation) {
 		checkOnFields(username, password);
+		if (!passwordConfirmation.equals(password)) {
+			throw new PasswordsDontMatchException(PASSWORDS_DO_NOT_MATCH);
+		}
 		Optional<User> result = userMongoRepository.findByUsername(username);
 		if (result.isPresent()){
 			throw new UsernameAlreadyPresent(USERNAME_ALREADY_PRESENT);

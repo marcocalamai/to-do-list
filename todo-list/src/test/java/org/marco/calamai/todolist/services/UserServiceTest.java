@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.marco.calamai.todolist.exceptions.EmptyRegistrationFieldsException;
+import org.marco.calamai.todolist.exceptions.PasswordsDontMatchException;
 import org.marco.calamai.todolist.exceptions.UsernameAlreadyPresent;
 import org.marco.calamai.todolist.exceptions.WhitespaceInRegistrationFieldsException;
 import org.marco.calamai.todolist.model.User;
@@ -31,6 +32,7 @@ class UserServiceTest {
 	private static final String EMPTY_FIELD = "The username or password fields are empty!";
 	private static final String WHITESPACE_IN_FIELD = "The username or password field contains one or more whitespace!";
 	private static final String USER_NOT_FOUND = "User not found!";
+	private static final String PASSWORDS_DO_NOT_MATCH = "The two passwords do not match!";
 	
 	@Mock
 	private PasswordEncoder passwordEncoder;
@@ -50,7 +52,7 @@ class UserServiceTest {
 		void testRegister() {
 			when(userMongoRepository.findByUsername(any(String.class))).thenReturn(Optional.empty());
 			when(passwordEncoder.encode(any(String.class))).thenReturn("password_encoded");
-			User result = userService.register("username_1", "password_1");
+			User result = userService.register("username_1", "password_1", "password_1");
 			assertEquals("username_1", result.getUsername());
 			assertEquals("password_encoded", result.getPassword());
 			InOrder inOrder = inOrder(userMongoRepository, passwordEncoder);
@@ -59,18 +61,26 @@ class UserServiceTest {
 			inOrder.verify(userMongoRepository).save(result);
 		}
 		
-		@Test @DisplayName("Fail registration")
-		void testFaildRegister() {
+		@Test @DisplayName("Fail registration username already exist")
+		void testFaildRegisterUsernameAlreadyExist() {
 			User userRegistered = new User("username_1","password_2");
 			when(userMongoRepository.findByUsername(any(String.class))).thenReturn(Optional.of(userRegistered));
-			assertThatThrownBy(() -> userService.register("username_1", "password_1"))
+			assertThatThrownBy(() -> userService.register("username_1", "password_1", "password_1"))
 			.isInstanceOf(UsernameAlreadyPresent.class)
 			.hasMessage(USERNAME_ALREADY_PRESENT);
 		}
 		
+		@Test @DisplayName("Fail registration password not match")
+		void testPasswordNotMatch() {
+			assertThatThrownBy(() -> userService.register("username", "password", "passNotMatch"))
+			.isInstanceOf(PasswordsDontMatchException.class)
+			.hasMessage(PASSWORDS_DO_NOT_MATCH);
+			verifyNoInteractions(userMongoRepository);
+		}
+		
 		@Test @DisplayName("Empty username")
 		void testUserEmpty() {
-			assertThatThrownBy(() -> userService.register("", "password"))
+			assertThatThrownBy(() -> userService.register("", "password", "password"))
 			.isInstanceOf(EmptyRegistrationFieldsException.class)
 			.hasMessage(EMPTY_FIELD);
 			verifyNoInteractions(userMongoRepository);
@@ -78,7 +88,7 @@ class UserServiceTest {
 		
 		@Test @DisplayName("Empty password")
 		void testPasswordEmpty() {
-			assertThatThrownBy(() -> userService.register("username", ""))
+			assertThatThrownBy(() -> userService.register("username", "", ""))
 			.isInstanceOf(EmptyRegistrationFieldsException.class)
 			.hasMessage(EMPTY_FIELD);
 			verifyNoInteractions(userMongoRepository);
@@ -86,7 +96,7 @@ class UserServiceTest {
 		
 		@Test @DisplayName("Whitespace character in username field")
 		void testUserContainsWhitespace() {
-			assertThatThrownBy(() -> userService.register(" username", "password"))
+			assertThatThrownBy(() -> userService.register(" username", "password", "password"))
 			.isInstanceOf(WhitespaceInRegistrationFieldsException.class)
 			.hasMessage(WHITESPACE_IN_FIELD);
 			verifyNoInteractions(userMongoRepository);
@@ -94,12 +104,11 @@ class UserServiceTest {
 		
 		@Test @DisplayName("Whitespace character in password field")
 		void testPasswordContainsWhitespace() {
-			assertThatThrownBy(() -> userService.register("username", " password"))
+			assertThatThrownBy(() -> userService.register("username", " password", " password"))
 			.isInstanceOf(WhitespaceInRegistrationFieldsException.class)
 			.hasMessage(WHITESPACE_IN_FIELD);
 			verifyNoInteractions(userMongoRepository);
 		}
-		
 	}
 	
 	
