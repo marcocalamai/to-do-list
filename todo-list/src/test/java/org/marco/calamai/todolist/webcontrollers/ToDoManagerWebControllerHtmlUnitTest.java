@@ -251,6 +251,8 @@ class ToDoManagerWebControllerHtmlUnitTest {
 			page = form.getButtonByName("btn_deleteToDo").click();
 			
 			verify(toDoService, times(1)).deleteToDoById(new BigInteger("0"), "AuthenticatedUser");
+			assertThat(page.getBody().getTextContent()).contains("ToDo successfully deleted!");
+			assertEquals("ToDo Manager", page.getTitleText());	
 		}
 	}
 
