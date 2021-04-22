@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8" />
+<title>ToDo Manager</title>
+</head>
+<body>
+	<h1>Manage ToDo</h1>
+
+	<div id="message" th:if="${message}">
+		<span th:text="${message}"></span>
+	</div>
+	
+	<div>
+		<ul>
+			<li><a href="/toDoManager/newToDo">New ToDo</a></li>
+			<li><a href="/toDoManager">All ToDo</a></li>
+			<li><a href="/toDoManager/AllMyToDo">All my ToDo</a></li>
+		</ul>
+	</div>
+
+	<form name="searchByTitleForm" th:action="@{/toDoManager/toDoByTitle}"
+		method="get">
+		<label>Title : </label> <input type="text" name="title" required>
+		<div>
+			<button type="submit" name="btn_searchByTitle">Search by
+				title</button>
+		</div>
+	</form>
+
+	<div>
+		<form name="searchByDeadlineForm"
+			th:action="@{/toDoManager/toDoByDeadline}" method="get">
+			<label>Deadline : </label> <input type="date" name="deadline"
+				required>
+			<div>
+				<button type="submit" name="btn_searchByDeadline">Search by
+					deadline</button>
+			</div>
+		</form>
+	</div>
+	
+	<div th:if="${allToDo}">
+		<table id="toDo_table">
+			<caption>All ToDo</caption>
+			<thead>
+				<tr>
+					<th scope="col">Username</th>
+					<th scope="col">Title</th>
+					<th scope="col">Description</th>
+					<th scope="col">Done</th>
+					<th scope="col">Deadline</th>
+				</tr>
+			</thead>
+
+			<tbody>
+				<tr th:each="toDo : ${allToDo}">
+					<td th:text="${toDo.user}"></td>
+					<td th:text="${toDo.title}"></td>
+					<td th:text="${toDo.description}"></td>
+					<td th:text="${toDo.done}"></td>
+					<td th:text="${toDo.deadline}"></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
+
+	<div th:if="${allMyToDo}">
+		<table id="myToDo_table">
+			<caption>All my ToDo</caption>
+			<thead>
+				<tr>
+					<th scope="col">Username</th>
+					<th scope="col">Title</th>
+					<th scope="col">Description</th>
+					<th scope="col">Done</th>
+					<th scope="col">Deadline</th>
+				</tr>
+			</thead>
+
+			<tbody>
+				<tr th:each="toDo : ${allMyToDo}">
+					<td th:text="${toDo.user}"></td>
+					<td th:text="${toDo.title}"></td>
+					<td th:text="${toDo.description}"></td>
+					<td th:text="${toDo.done}"></td>
+					<td th:text="${toDo.deadline}"></td>
+					<td><a id=edit th:href="@{'/toDoManager/editToDo/' + ${toDo.id}}">Edit</a></td>
+					<td>
+					<form name="DeleteToDoForm" th:action="@{'/toDoManager/deleteToDo/' + ${toDo.id}}" method="post" style="display:inline">
+    					<button type="submit" name="btn_deleteToDo">Delete</button>
+					</form> 
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	
+	<div>
+	<form name="logoutForm" th:action="@{/logout}" method="post">
+		<button type="submit" name="btn_logout" >Logout</button>
+	</form>
+</div>
+
+
+</body>
+</html>

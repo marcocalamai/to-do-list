@@ -70,7 +70,7 @@ class RegistrationWebControllerTest {
 				.param("password", "a_password")
 				.with(csrf()))
 				.andExpect(status().is4xxClientError())
-				.andExpect(view().name("/registrationPage"))
+				.andExpect(view().name("registrationPage"))
 				.andExpect(model().attribute("error_message", USERNAME_ALREADY_PRESENT));
 		verify(userService, times(1)).register("a_username", "a_password");
 	}
@@ -83,7 +83,7 @@ class RegistrationWebControllerTest {
 				.param("password", "a_password")
 				.with(csrf()))
 				.andExpect(status().is4xxClientError())
-				.andExpect(view().name("/registrationPage"))
+				.andExpect(view().name("registrationPage"))
 				.andExpect(model().attribute("error_message", EMPTY_FIELD));
 		verify(userService, times(1)).register("", "a_password");
 	}
@@ -97,7 +97,7 @@ class RegistrationWebControllerTest {
 				.param("password", "")
 				.with(csrf()))
 				.andExpect(status().is4xxClientError())
-				.andExpect(view().name("/registrationPage"))
+				.andExpect(view().name("registrationPage"))
 				.andExpect(model().attribute("error_message", EMPTY_FIELD));
 		verify(userService, times(1)).register("a_username", "");
 	}
@@ -110,7 +110,7 @@ class RegistrationWebControllerTest {
 				.param("password", "a_password")
 				.with(csrf()))
 				.andExpect(status().is4xxClientError())
-				.andExpect(view().name("/registrationPage"))
+				.andExpect(view().name("registrationPage"))
 				.andExpect(model().attribute("error_message", WHITESPACE_IN_FIELD));
 		verify(userService, times(1)).register(" a_username", "a_password");
 	}
@@ -123,7 +123,7 @@ class RegistrationWebControllerTest {
 				.param("password", " a_password")
 				.with(csrf()))
 				.andExpect(status().is4xxClientError())
-				.andExpect(view().name("/registrationPage"))
+				.andExpect(view().name("registrationPage"))
 				.andExpect(model().attribute("error_message", WHITESPACE_IN_FIELD));
 		verify(userService, times(1)).register("a_username", " a_password");
 	}

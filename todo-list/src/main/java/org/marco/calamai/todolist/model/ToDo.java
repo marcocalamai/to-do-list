@@ -28,14 +28,6 @@ public class ToDo {
 		this.done = false;
 		this.deadline = deadline;
 	}
-	
-	public ToDo(String user, String title, String description, boolean done, LocalDate deadline) {
-		this.user = user;
-		this.title = title;
-		this.description = description;
-		this.done = done;
-		this.deadline = deadline;
-	}
 
 	public BigInteger getId() {
 		return id;
@@ -81,10 +73,11 @@ public class ToDo {
 		this.deadline = deadline;
 	}
 	
+	
 	@Override
 	public String toString() {
-		return "ToDo [title=" + title + ", description=" + description + ", done=" + done + ", deadline=" + deadline
-				+ "]";
+		return "ToDo [id=" + id + ", user=" + user + ", title=" + title + ", description=" + description + ", done="
+				+ done + ", deadline=" + deadline + "]";
 	}
 
 	@Override

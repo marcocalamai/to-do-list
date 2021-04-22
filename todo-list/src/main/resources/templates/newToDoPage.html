@@ -3,11 +3,11 @@
 
 <head>
 <meta charset="UTF-8" />
-<title>Edit ToDo</title>
+<title>New ToDo</title>
 </head>
 
 <body>
-	<h1>Edit ToDo</h1>
+	<h1>Create new ToDo</h1>
 	
 	<div>
 		<ul>
@@ -16,18 +16,17 @@
 	</div>
 
 	<div>
-		<form name="EditToDoForm" th:action="@{/toDoManager/updateToDo}" method="post">
-			<input type="hidden" th:field="${toDo.id}" /> 
+		<form name="NewToDoForm" th:action="@{/toDoManager/saveNewToDo}" method="post">
 			<label>Title : </label> <input type="text" th:field="${toDo.title}" required> 
 			<label>Description : </label> <input type="text" th:field="${toDo.description}" required>
-			<label>Done : </label><input type="checkbox" name="done" th:checked="${toDo.done}" value="true" />
 			<label>Deadline : </label> <input type="date" name=deadline th:value="${toDo.deadline}" required>
-			
+
 			<div>
-				<button type="submit" name="btn_updateToDo">Save</button>
+				<button type="submit" name="btn_createToDo">Save</button>
 			</div>
-			
 		</form>
 	</div>
+
+
 </body>
 </html>
