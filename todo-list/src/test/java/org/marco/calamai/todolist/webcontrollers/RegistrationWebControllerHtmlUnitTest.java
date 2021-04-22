@@ -54,9 +54,10 @@ class RegistrationWebControllerHtmlUnitTest {
 	HtmlForm form = page.getFormByName("registrationForm");
 	form.getInputByName("username").setValueAttribute("username_1");
 	form.getInputByName("password").setValueAttribute("password_1");
-	form.getButtonByName("btn_submit").click();
+	page = form.getButtonByName("btn_submit").click();
 	
 	verify(userService, times(1)).register("username_1", "password_1");	
+	assertEquals("ToDo List", page.getTitleText());
 	}
 	
 	

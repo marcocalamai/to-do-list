@@ -72,7 +72,7 @@ class LoginWebControllerHtmlUnitTest {
 	page = form.getButtonByName("btn_submit").click();
 	
 	assertThat(page.getBody().getTextContent()).contains("Wrong username or password!");
-	verify(userService, times(1)).loadUserByUsername("WrongUsername");	
+	verify(userService, times(1)).loadUserByUsername("WrongUsername"); 
 	}
 	
 	
@@ -87,8 +87,9 @@ class LoginWebControllerHtmlUnitTest {
 	HtmlForm form = page.getFormByName("loginForm");
 	form.getInputByName("username").setValueAttribute("username_1");
 	form.getInputByName("password").setValueAttribute("password_1");
-	form.getButtonByName("btn_submit").click();
+	page = form.getButtonByName("btn_submit").click();
 
 	verify(userService, times(1)).loadUserByUsername("username_1");
+	assertEquals("ToDo Manager", page.getTitleText());
 	}
 }
