@@ -10,6 +10,8 @@ import org.marco.calamai.todolist.exceptions.ToDoNotFoundException;
 import org.marco.calamai.todolist.exceptions.WrongUsernameException;
 import org.marco.calamai.todolist.model.ToDo;
 import org.marco.calamai.todolist.repositories.mongo.ToDoMongoRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +21,8 @@ public class ToDoService {
 	private static final String DATE_IS_BEFORE_TODAY = "Date not valid. It has passed!";
 	private static final String TO_DO_NOT_FOUND = "ToDo not found!";
 	private static final String WRONG_USERNAME = "Logged username do not match!";
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(ToDoService.class);
 
 	
 	private ToDoMongoRepository toDoMongoRepository;
@@ -32,14 +36,18 @@ public class ToDoService {
 	public ToDo insertToDo(ToDo toDo) {
 		deadlineCheck(toDo);
 		toDo.setId(null);
-		return toDoMongoRepository.save(toDo);
+		ToDo toDoSaved = toDoMongoRepository.save(toDo);
+		LOGGER.info("ToDo inserted!");
+		return toDoSaved;
 	}
 
 	public ToDo updateToDo(BigInteger id, String username, ToDo toDo) {
 		deadlineCheck(toDo);
 		usernameCheck(username, toDo);
 		toDo.setId(id);
-		return toDoMongoRepository.save(toDo);
+		ToDo toDoSaved = toDoMongoRepository.save(toDo);
+		LOGGER.info("ToDo with ID {} updated!", id);
+		return toDoSaved;
 	}
 	
 	public ToDo deleteToDoById(BigInteger id, String username) {
@@ -47,8 +55,10 @@ public class ToDoService {
 		if (toDo.isPresent()){
 			usernameCheck(username, toDo.get());
 			toDoMongoRepository.deleteById(id);
+			LOGGER.info("ToDo with ID {} deleted!", id);
 			return toDo.get();
 		}
+		LOGGER.warn("ToDo with ID {} not found!", id);
 		throw new ToDoNotFoundException(TO_DO_NOT_FOUND);	
 	}
 
@@ -73,18 +83,21 @@ public class ToDoService {
 		if (toDo.isPresent()){
 			return toDo.get();
 			}
+		LOGGER.warn("ToDo with ID {} not found!", id);
 		throw new ToDoNotFoundException(TO_DO_NOT_FOUND);
 	}
 	
 	
 	private void deadlineCheck(ToDo toDo) {
 		if (toDo.getDeadline().isBefore(LocalDate.now())){
+			LOGGER.warn(DATE_IS_BEFORE_TODAY);
 			throw new InvalidTimeException(DATE_IS_BEFORE_TODAY);
 		}
 	}
 	
 	private void usernameCheck(String username, ToDo toDo) {
 		if (!toDo.getUser().equals(username) ) {
+			LOGGER.warn(WRONG_USERNAME);
 			throw new WrongUsernameException(WRONG_USERNAME);
 		}
 	}
