@@ -43,17 +43,17 @@ public class UserService implements UserDetailsService {
 	public User register(String username, String password, String passwordConfirmation) {
 		checkOnFields(username, password);
 		if (!passwordConfirmation.equals(password)) {
-			LOGGER.warn("Password: {} and Confirmation: {} do not match!", password, passwordConfirmation);
+			LOGGER.warn(PASSWORDS_DO_NOT_MATCH);
 			throw new PasswordsDontMatchException(PASSWORDS_DO_NOT_MATCH);
 		}
 		Optional<User> result = userMongoRepository.findByUsername(username);
 		if (result.isPresent()){
-			LOGGER.warn("Username: {} already exist!", username);
+			LOGGER.warn(USERNAME_ALREADY_PRESENT);
 			throw new UsernameAlreadyPresent(USERNAME_ALREADY_PRESENT);
 		}
 		User user = createUser(username, password);
 		userMongoRepository.save(user);
-		LOGGER.info("User: {} joined!", username);
+		LOGGER.info("User joined!");
 		return user;
 	}
 
@@ -61,7 +61,7 @@ public class UserService implements UserDetailsService {
 	public User loadUserByUsername(String username) {
 		Optional<User> user = userMongoRepository.findByUsername(username);
 		if (!user.isPresent()) {
-			LOGGER.warn("Username: {} not found!", username);
+			LOGGER.warn(USER_NOT_FOUND);
 			throw new UsernameNotFoundException(USER_NOT_FOUND);
 		}
 		return user.get();
@@ -69,11 +69,11 @@ public class UserService implements UserDetailsService {
 	
 	private void checkOnFields(String username, String password) {
 		if (username.isEmpty() || password.isEmpty()) {
-			LOGGER.warn("Username: {} or Password: {} are empty!", username, password);
+			LOGGER.warn(EMPTY_FIELD);
 			throw new EmptyRegistrationFieldsException(EMPTY_FIELD);
 		}
 		if (username.contains(" ") || password.contains(" ")) {
-			LOGGER.warn("Username: {} or Password: {} contains whitespace!", username, password);
+			LOGGER.warn(WHITESPACE_IN_FIELD);
 			throw new WhitespaceInRegistrationFieldsException(WHITESPACE_IN_FIELD);
 		}
 	}
