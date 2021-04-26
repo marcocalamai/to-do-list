@@ -21,7 +21,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @TestPropertySource(properties = "spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongoAutoConfiguration")
-class ToDoServiceMongoRepositoryIT {
+@DisplayName("IT for ToDoService")
+class ToDoServiceIT {
 	
 	@Autowired
 	private ToDoService toDoService;

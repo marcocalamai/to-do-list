@@ -18,7 +18,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @TestPropertySource(properties = "spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongoAutoConfiguration")
-class UserServiceMongoRepositoryIT {
+@DisplayName("IT for UserService")
+class UserServiceIT {
 	
 	@Autowired
 	private UserService userService;
