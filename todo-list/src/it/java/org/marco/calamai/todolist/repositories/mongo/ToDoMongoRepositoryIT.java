@@ -123,4 +123,18 @@ class ToDoMongoRepositoryIT {
 		assertThat(result).containsExactly(toDoSaved4, toDoSaved2, toDoSaved3);
 	}
 	
+	@Test @DisplayName("Delete ToDo by id")
+	void testDeleteById() {
+		ToDo toDo1 = new ToDo("username_1", "title_1", "description_1", LocalDate.now());
+		ToDo toDo2 = new ToDo("username_2", "title_2", "description_2", LocalDate.now().plusDays(1));
+		ToDo toDo3 = new ToDo("username_3", "title_3", "description_3", LocalDate.now().plusMonths(1));
+		ToDo toDoSaved1 = mongoOps.save(toDo1);
+		ToDo toDoSaved2 = mongoOps.save(toDo2);
+		ToDo toDoSaved3 = mongoOps.save(toDo3);
+		repository.deleteById(toDoSaved1.getId());
+		List<ToDo> result = mongoOps.findAll(ToDo.class);
+		assertEquals(2, result.size());
+		assertThat(result).containsExactly(toDoSaved2, toDoSaved3);	
+	}
+	
 }
