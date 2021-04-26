@@ -20,9 +20,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @TestPropertySource(properties = "spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongoAutoConfiguration")
-
 class ToDoServiceMongoRepositoryIT {
 	
+	@Autowired
 	private ToDoService toDoService;
 	
 	@Autowired
@@ -45,7 +45,6 @@ class ToDoServiceMongoRepositoryIT {
 		assertEquals(1, toDoMongoRepository.count());
 		
 		ToDo result = toDoMongoRepository.findAll().get(0);
-		assertThat(result.getId()).isNotNull();
 		assertEquals(toSave.getUser(), result.getUser());
 		assertEquals(toSave.getTitle(), result.getTitle());
 		assertEquals(toSave.getDescription(), result.getDescription());
