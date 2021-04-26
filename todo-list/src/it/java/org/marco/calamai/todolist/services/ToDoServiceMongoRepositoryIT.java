@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,9 +35,12 @@ class ToDoServiceMongoRepositoryIT {
 		toDoService = new ToDoService(toDoMongoRepository);
 	}
 	
+	@AfterEach
+	void tearDown() {
+		toDoMongoRepository.deleteAll();
+	}
 	
-
-		
+	
 	@Test @DisplayName("Tests for insert ToDo")
 	void testInsertToDo() {
 		ToDo toSave = new ToDo("username_1", "title", "description", LocalDate.now());
