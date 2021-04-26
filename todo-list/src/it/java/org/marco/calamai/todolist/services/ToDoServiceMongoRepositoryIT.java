@@ -73,4 +73,16 @@ class ToDoServiceMongoRepositoryIT {
 		List<ToDo> result = toDoService.getAllToDoOrderByDoneAscDeadlineAsc();
 		assertThat(result).containsExactly(toDo3, toDo1, toDo2);
 	}
+	
+	@Test  @DisplayName("Get all ToDo by user name sorted by done and deadline")
+	void testGetToDoByUserOrderByDoneAscDeadlineAsc(){
+		ToDo toDo1 = new ToDo("username_1", "title_1", "description_1", LocalDate.now().plusMonths(1));
+		ToDo toDo2 = new ToDo("username_1", "title_2", "description_2", LocalDate.now().plusDays(1));
+		ToDo toDo3 = new ToDo("username_2", "title_3", "description_3", LocalDate.now());
+		toDoMongoRepository.save(toDo1);
+		toDoMongoRepository.save(toDo2);
+		toDoMongoRepository.save(toDo3);
+		List<ToDo> result = toDoService.getToDoByUserOrderByDoneAscDeadlineAsc("username_1");
+		assertThat(result).containsExactly(toDo2, toDo1);
+	}
 }
