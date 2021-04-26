@@ -111,4 +111,12 @@ class ToDoServiceMongoRepositoryIT {
 		assertThat(result).containsExactly(toDo2, toDo1);
 	}
 	
+	@Test @DisplayName("Get ToDo by id")
+	void testGetToDoById(){
+		ToDo toDo1 = new ToDo("username1", "title_1", "description_1", LocalDate.now());
+		ToDo toDoSaved = toDoMongoRepository.save(toDo1);
+
+		ToDo result = toDoService.getToDoById(toDoSaved.getId());
+		assertEquals(toDoSaved, result); 
+	}
 }
