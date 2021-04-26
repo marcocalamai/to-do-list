@@ -40,16 +40,18 @@ class ToDoServiceMongoRepositoryIT {
 	@Test @DisplayName("Tests for insert ToDo")
 	void testInsertToDo() {
 		ToDo toSave = new ToDo("username_1", "title", "description", LocalDate.now());
-		toDoService.insertToDo(toSave);
+		ToDo toDoSaved = toDoService.insertToDo(toSave);
 		
 		assertEquals(1, toDoMongoRepository.count());
 		
-		ToDo toDoSaved = toDoMongoRepository.findAll().get(0);
-		assertThat(toDoSaved.getId()).isNotNull();
-		assertEquals(toSave.getUser(), toDoSaved.getUser());
-		assertEquals(toSave.getTitle(), toDoSaved.getTitle());
-		assertEquals(toSave.getDescription(), toDoSaved.getDescription());
-		assertEquals(toSave.getDeadline(), toDoSaved.getDeadline());
+		ToDo result = toDoMongoRepository.findAll().get(0);
+		assertThat(result.getId()).isNotNull();
+		assertEquals(toSave.getUser(), result.getUser());
+		assertEquals(toSave.getTitle(), result.getTitle());
+		assertEquals(toSave.getDescription(), result.getDescription());
+		assertEquals(toSave.getDeadline(), result.getDeadline());
+		
+		assertEquals(result, toDoSaved);
 	}
 	
 	@Test @DisplayName("Test update ToDo")
@@ -118,5 +120,18 @@ class ToDoServiceMongoRepositoryIT {
 
 		ToDo result = toDoService.getToDoById(toDoSaved.getId());
 		assertEquals(toDoSaved, result); 
+	}
+	
+	@Test @DisplayName("Delete ToDo by id")
+	void testDeleteToDoById() {
+		ToDo toDo = new ToDo("username_1", "title_1", "description_1", LocalDate.now());
+		ToDo toDoSaved = toDoMongoRepository.save(toDo);
+		
+		assertEquals(1, toDoMongoRepository.count());
+
+		ToDo result = toDoService.deleteToDoById(toDoSaved.getId(), "username_1");
+		
+		assertEquals(0, toDoMongoRepository.count());
+		assertEquals(toDoSaved, result);
 	}
 }
