@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -35,6 +36,11 @@ class ToDoMongoRepositoryTest {
 	
 	@BeforeEach
 	void setup(){
+		mongoOps.dropCollection(ToDo.class);
+	}
+	
+	@AfterEach
+	void tearDown(){
 		mongoOps.dropCollection(ToDo.class);
 	}
     
@@ -101,7 +107,7 @@ class ToDoMongoRepositoryTest {
 		@Test @DisplayName("Find all ToDo when repository is empty")
 		void testFindAllWhenRepositoryIsEmpty() {
 			List<ToDo> result = repository.findAll();
-			assertEquals(0, result.size());
+			assertThat(result).isEmpty();
 		}
 		
 		@Test @DisplayName("Find all ToDo sort by done and deadline ")
