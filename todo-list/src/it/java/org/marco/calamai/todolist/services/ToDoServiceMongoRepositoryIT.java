@@ -44,12 +44,12 @@ class ToDoServiceMongoRepositoryIT {
 		
 		assertEquals(1, toDoMongoRepository.count());
 		
-		ToDo saved = toDoMongoRepository.findAll().get(0);
-		assertThat(saved.getId()).isNotNull();
-		assertEquals(toSave.getUser(), saved.getUser());
-		assertEquals(toSave.getTitle(), saved.getTitle());
-		assertEquals(toSave.getDescription(), saved.getDescription());
-		assertEquals(toSave.getDeadline(), saved.getDeadline());
+		ToDo toDoSaved = toDoMongoRepository.findAll().get(0);
+		assertThat(toDoSaved.getId()).isNotNull();
+		assertEquals(toSave.getUser(), toDoSaved.getUser());
+		assertEquals(toSave.getTitle(), toDoSaved.getTitle());
+		assertEquals(toSave.getDescription(), toDoSaved.getDescription());
+		assertEquals(toSave.getDeadline(), toDoSaved.getDeadline());
 	}
 	
 	@Test @DisplayName("Test update ToDo")
@@ -98,4 +98,17 @@ class ToDoServiceMongoRepositoryIT {
 		List<ToDo> result = toDoService.getAllToDoByDeadlineOrderByDoneAsc(LocalDate.now());
 		assertThat(result).containsExactly(toDo3, toDo2);
 	}
+	
+	@Test  @DisplayName("Get all ToDo by title sorted by done and deadline")
+	void testGetAllToDoByTitleOrderByDoneAscDeadlineAsc(){
+		ToDo toDo1 = new ToDo("username_1", "title_1", "description_1", LocalDate.now().plusDays(1));
+		ToDo toDo2 = new ToDo("username_2", "title_1", "description_2", LocalDate.now());
+		ToDo toDo3 = new ToDo("username_3", "title_3", "description_3", LocalDate.now());
+		toDoMongoRepository.save(toDo1);
+		toDoMongoRepository.save(toDo2);
+		toDoMongoRepository.save(toDo3);
+		List<ToDo> result = toDoService.getAllToDoByTitleOrderByDoneAscDeadlineAsc("title_1");
+		assertThat(result).containsExactly(toDo2, toDo1);
+	}
+	
 }
