@@ -78,11 +78,24 @@ class ToDoServiceMongoRepositoryIT {
 	void testGetToDoByUserOrderByDoneAscDeadlineAsc(){
 		ToDo toDo1 = new ToDo("username_1", "title_1", "description_1", LocalDate.now().plusMonths(1));
 		ToDo toDo2 = new ToDo("username_1", "title_2", "description_2", LocalDate.now().plusDays(1));
-		ToDo toDo3 = new ToDo("username_2", "title_3", "description_3", LocalDate.now());
+		ToDo toDo3 = new ToDo("username_3", "title_3", "description_3", LocalDate.now());
 		toDoMongoRepository.save(toDo1);
 		toDoMongoRepository.save(toDo2);
 		toDoMongoRepository.save(toDo3);
 		List<ToDo> result = toDoService.getToDoByUserOrderByDoneAscDeadlineAsc("username_1");
 		assertThat(result).containsExactly(toDo2, toDo1);
+	}
+	
+	@Test  @DisplayName("Get all ToDo by deadline sorted by done")
+	void testGetAllToDoByDeadlineOrderByDoneAsc(){
+		ToDo toDo1 = new ToDo("username_1", "title_1", "description_1", LocalDate.now().plusDays(1));
+		ToDo toDo2 = new ToDo("username_2", "title_2", "description_2", LocalDate.now());
+		ToDo toDo3 = new ToDo("username_3", "title_3", "description_3", LocalDate.now());
+		toDo2.setDone(true);
+		toDoMongoRepository.save(toDo1);
+		toDoMongoRepository.save(toDo2);
+		toDoMongoRepository.save(toDo3);
+		List<ToDo> result = toDoService.getAllToDoByDeadlineOrderByDoneAsc(LocalDate.now());
+		assertThat(result).containsExactly(toDo3, toDo2);
 	}
 }
