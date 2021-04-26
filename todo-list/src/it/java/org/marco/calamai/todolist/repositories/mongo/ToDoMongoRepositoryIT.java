@@ -61,4 +61,17 @@ class ToDoMongoRepositoryIT {
 	assertEquals(toDoSaved, toDoFound.get());
 	}
 	
+	@Test @DisplayName("Find all ToDo sort by done and deadline ")
+	void testFindByOrderByDoneAscDeadlineAsc() {
+		ToDo toDo1 = new ToDo("username_1", "title_1", "description_1", LocalDate.now().plusMonths(1));
+		ToDo toDo2 = new ToDo("username_2", "title_2", "description_2", LocalDate.now().plusDays(1));
+		ToDo toDo3 = new ToDo("username_3", "title_3", "description_3", LocalDate.now());
+		toDo2.setDone(true);
+		ToDo toDoSaved1 = mongoOps.save(toDo1);
+		ToDo toDoSaved2 = mongoOps.save(toDo2);
+		ToDo toDoSaved3 = mongoOps.save(toDo3);
+		List<ToDo> result = repository.findByOrderByDoneAscDeadlineAsc();
+		assertThat(result).containsExactly(toDoSaved3, toDoSaved1, toDoSaved2);
+	}
+	
 }
