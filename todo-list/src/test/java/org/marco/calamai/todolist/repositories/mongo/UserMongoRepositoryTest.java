@@ -12,7 +12,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.marco.calamai.todolist.model.ToDo;
 import org.marco.calamai.todolist.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
@@ -37,7 +36,7 @@ class UserMongoRepositoryTest {
 	
 	@AfterEach
 	void tearDown(){
-		mongoOps.dropCollection(ToDo.class);
+		mongoOps.dropCollection(User.class);
 	}
 	
 	@Nested
