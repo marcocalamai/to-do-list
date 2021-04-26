@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -58,5 +59,18 @@ class ToDoServiceMongoRepositoryIT {
 		ToDo ToDoModified = toDoService.updateToDo(ToDoSaved.getId(), "username_1", 
 				new ToDo("username_1", "title_modified", "description_modified", LocalDate.now().plusDays(1)));
 		assertEquals(ToDoModified, toDoMongoRepository.findById(ToDoSaved.getId()).get());
+	}
+	
+	@Test  @DisplayName("Get all ToDo sorted by done and deadline")
+	void testGetAllToDoOrderByDoneAscDeadlineAsc(){
+		ToDo toDo1 = new ToDo("username_1", "title_1", "description_1", LocalDate.now().plusMonths(1));
+		ToDo toDo2 = new ToDo("username_2", "title_2", "description_2", LocalDate.now().plusDays(1));
+		ToDo toDo3 = new ToDo("username_3", "title_3", "description_3", LocalDate.now());
+		toDo2.setDone(true);
+		toDoMongoRepository.save(toDo1);
+		toDoMongoRepository.save(toDo2);
+		toDoMongoRepository.save(toDo3);
+		List<ToDo> result = toDoService.getAllToDoOrderByDoneAscDeadlineAsc();
+		assertThat(result).containsExactly(toDo3, toDo1, toDo2);
 	}
 }
