@@ -1,10 +1,12 @@
 package org.marco.calamai.todolist.repositories.mongo;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -50,4 +52,13 @@ class ToDoMongoRepositoryIT {
     	assertNotNull(toDoList.get(0).getId()); 
     }
     
+	@Test @DisplayName("Find ToDo by id")
+	void testFindById() {
+	ToDo toDo1 = new ToDo("username_1", "title_1", "description_1", LocalDate.now());
+	ToDo toDoSaved = mongoOps.save(toDo1);
+	Optional<ToDo> toDoFound = repository.findById(toDoSaved.getId());
+	assertThat(toDoFound).isPresent();
+	assertEquals(toDoSaved, toDoFound.get());
+	}
+	
 }
