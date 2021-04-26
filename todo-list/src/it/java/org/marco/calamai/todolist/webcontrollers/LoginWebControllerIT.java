@@ -51,6 +51,7 @@ class LoginWebControllerIT {
 	@AfterEach
 	void tearDown() {
 		userMongoRepository.deleteAll();
+		webDriver.quit();
 	}
 
 	
