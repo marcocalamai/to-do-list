@@ -23,6 +23,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @TestPropertySource(properties = "spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongoAutoConfiguration")
+@DisplayName("IT for ToDoMongoRepository")
 class ToDoMongoRepositoryIT {
 	
 	@Autowired 
@@ -104,6 +105,22 @@ class ToDoMongoRepositoryIT {
 		mongoOps.save(toDo4);
 		List<ToDo> result = repository.findByDeadlineOrderByDoneAsc(LocalDate.now());
 		assertThat(result).containsExactly(toDoSaved1, toDoSaved3, toDoSaved2);
+	}
+	
+	@Test @DisplayName("Find ToDo by title sort by done and deadline")
+	void testFindByTitleOrderByDoneAscDeadlineAsc() {
+		String titleToFind = "title_to_find";
+		ToDo toDo1 = new ToDo("username_1", "title_1", "description_1", LocalDate.now());
+		ToDo toDo2 = new ToDo("username_2", titleToFind, "description_2", LocalDate.now().plusMonths(1));
+		ToDo toDo3 = new ToDo("username_3", titleToFind, "description_3", LocalDate.now().plusDays(1));
+		ToDo toDo4 = new ToDo("username_4", titleToFind, "description_4", LocalDate.now());
+		toDo3.setDone(true);
+		mongoOps.save(toDo1);
+		ToDo toDoSaved2 = mongoOps.save(toDo2);
+		ToDo toDoSaved3 = mongoOps.save(toDo3);
+		ToDo toDoSaved4 = mongoOps.save(toDo4);
+		List<ToDo> result = repository.findByTitleOrderByDoneAscDeadlineAsc(titleToFind);
+		assertThat(result).containsExactly(toDoSaved4, toDoSaved2, toDoSaved3);
 	}
 	
 }
