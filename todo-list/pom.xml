@@ -338,6 +338,9 @@
 						</dependency>
 					</dependencies>
 					<configuration>
+						<excludedTestClasses>
+							<excludedTestClass>org.marco.calamai.todolist.**.*IT</excludedTestClass>
+						</excludedTestClasses>
 						<targetClasses>
 							<param>org.marco.calamai.todolist.services.*</param>
 							<param>org.marco.calamai.todolist.webcontrollers.*</param>
