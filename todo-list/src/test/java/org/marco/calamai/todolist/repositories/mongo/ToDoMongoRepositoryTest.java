@@ -110,7 +110,7 @@ class ToDoMongoRepositoryTest {
 			assertThat(result).isEmpty();
 		}
 		
-		@Test @DisplayName("Find all ToDo sort by done and deadline ")
+		@Test @DisplayName("Find all ToDo sort by done and deadline")
 		void testFindByOrderByDoneAscDeadlineAsc() {
 			ToDo toDo1 = new ToDo("username_1", "title_1", "description_1", LocalDate.now().plusMonths(1));
 			ToDo toDo2 = new ToDo("username_2", "title_2", "description_2", LocalDate.now().plusDays(1));
@@ -131,7 +131,7 @@ class ToDoMongoRepositoryTest {
 		}
 		
 		
-		@Test @DisplayName("Find ToDo by user name sort by done and deadline ")
+		@Test @DisplayName("Find ToDo by user name sort by done and deadline")
 		void testFindByUserOrderByDoneAscDeadlineAsc() {
 			String user1 = "a_username"; 
 			String userToFind = "usernameToFind";
