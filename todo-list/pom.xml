@@ -29,6 +29,7 @@
 		<sonar.tests>
 			${project.build.testSourceDirectory},
 			${basedir}/src/it/java
+			${basedir}/src/e2e/java
 		</sonar.tests>
 		<sonar.sources>
 			pom.xml,
@@ -109,6 +110,17 @@
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-support</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-java</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.github.bonigarcia</groupId>
+			<artifactId>webdrivermanager</artifactId>
+			<version>4.4.1</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -263,6 +275,7 @@
 						<configuration>
 							<sources>
 								<source>src/it/java</source>
+								<source>src/e2e/java</source>
 							</sources>
 						</configuration>
 					</execution>
@@ -350,6 +363,7 @@
 					<configuration>
 						<excludedTestClasses>
 							<excludedTestClass>org.marco.calamai.todolist.**.*IT</excludedTestClass>
+							<excludedTestClass>org.marco.calamai.todolist.**.*E2E</excludedTestClass>
 						</excludedTestClasses>
 						<targetClasses>
 							<param>org.marco.calamai.todolist.services.*</param>
