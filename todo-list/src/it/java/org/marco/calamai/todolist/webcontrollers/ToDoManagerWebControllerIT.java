@@ -63,7 +63,7 @@ class ToDoManagerWebControllerIT {
 	
 	@Test @DisplayName("Test ToDoManager show all todo")
 	void testToDoManagerViewShowAllToDo() throws Exception {
-		toDoMongoRepository.save(new ToDo("username_1", "title_1", "description_1", LocalDate.now()));
+		toDoMongoRepository.save(new ToDo("username_2", "title_1", "description_1", LocalDate.now()));
 		userMongoRepository.save(new User("username1", passwordEncoder.encode("password1"))) ;
 		webDriver.get(baseUrl + "/login");
 		webDriver.findElement(By.name("username")).sendKeys("username1");
@@ -71,6 +71,24 @@ class ToDoManagerWebControllerIT {
 		webDriver.findElement(By.name("btn_submit")).click();
 		
 		assertThat(webDriver.findElement(By.id("toDo_table")).getText())
+		.contains("username_2", "title_1",  "description_1", LocalDate.now().toString());
+	}
+	
+	@Test @DisplayName("Test ToDoManager show all my todo")
+	void testToDoManagerViewShowAllMyToDo() throws Exception {
+		ToDo toDoSaved = toDoMongoRepository.save(new ToDo("username_1", "title_1", "description_1", LocalDate.now()));
+		userMongoRepository.save(new User("username_1", passwordEncoder.encode("password1"))) ;
+		webDriver.get(baseUrl + "/login");
+		webDriver.findElement(By.name("username")).sendKeys("username_1");
+		webDriver.findElement(By.name("password")).sendKeys("password1");
+		webDriver.findElement(By.name("btn_submit")).click();
+		webDriver.get(baseUrl + "/toDoManager/AllMyToDo");
+		
+		assertThat(webDriver.findElement(By.id("myToDo_table")).getText())
 		.contains("username_1", "title_1",  "description_1", LocalDate.now().toString());
+		
+		webDriver.findElement(By.cssSelector("a[href='/toDoManager/editToDo/" + toDoSaved.getId() + "']"));
+		
+		webDriver.findElement(By.name("btn_deleteToDo"));
 	}
 }
