@@ -18,6 +18,7 @@ import org.marco.calamai.todolist.repositories.mongo.ToDoMongoRepository;
 import org.marco.calamai.todolist.repositories.mongo.UserMongoRepository;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -91,8 +92,7 @@ class ToDoManagerWebControllerIT {
 		.contains("username_1", "title_1",  "description_1", LocalDate.now().toString());
 		
 		webDriver.findElement(By.cssSelector("a[href='/toDoManager/editToDo/" + toDoSaved.getId() + "']"));
-		
-		webDriver.findElement(By.name("btn_deleteToDo"));
+		webDriver.findElement(By.xpath("//form[@action='/toDoManager/deleteToDo/" + toDoSaved.getId() + "']"));
 	}
 	
 	@Test @DisplayName("Test show toDo by title")
@@ -182,5 +182,21 @@ class ToDoManagerWebControllerIT {
 		assertEquals("editDescription", result.getDescription());
 		assertTrue(result.isDone());
 		assertEquals(LocalDate.now().plusDays(1), result.getDeadline());
+	}
+	
+	@Test @DisplayName("Test delete toDo")
+	void testDeleteToDo() throws Exception {
+		ToDo toDoSaved = toDoMongoRepository.save(new ToDo("username_1", "title_1", "description_1", LocalDate.now()));
+		userMongoRepository.save(new User("username_1", passwordEncoder.encode("password1"))) ;
+		webDriver.get(baseUrl + "/login");
+		webDriver.findElement(By.name("username")).sendKeys("username_1");
+		webDriver.findElement(By.name("password")).sendKeys("password1");
+		webDriver.findElement(By.name("btn_submit")).click();
+		
+		webDriver.get(baseUrl + "/toDoManager/AllMyToDo");
+		assertEquals(1, toDoMongoRepository.count()); 
+		WebElement form = webDriver.findElement(By.xpath("//form[@action='/toDoManager/deleteToDo/" + toDoSaved.getId() + "']"));
+		form.findElement(By.name("btn_deleteToDo")).click();
+		assertEquals(0, toDoMongoRepository.count()); 
 	}
 }
