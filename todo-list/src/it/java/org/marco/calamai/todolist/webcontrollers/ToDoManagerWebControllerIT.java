@@ -2,6 +2,8 @@ package org.marco.calamai.todolist.webcontrollers;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
 
@@ -146,6 +148,39 @@ class ToDoManagerWebControllerIT {
 		assertEquals("username_1", result.getUser());
 		assertEquals("newTitle", result.getTitle());
 		assertEquals("newDescription", result.getDescription());
+		assertFalse(result.isDone());
 		assertEquals(LocalDate.now(), result.getDeadline());
+	}
+	
+	@Test @DisplayName("Test editToDoPage edit toDo")
+	void testEditToDoPageEditToDo() throws Exception {
+		ToDo toDoSaved = toDoMongoRepository.save(new ToDo("username_1", "title_1", "description_1", LocalDate.now()));
+		userMongoRepository.save(new User("username_1", passwordEncoder.encode("password1"))) ;
+		webDriver.get(baseUrl + "/login");
+		webDriver.findElement(By.name("username")).sendKeys("username_1");
+		webDriver.findElement(By.name("password")).sendKeys("password1");
+		webDriver.findElement(By.name("btn_submit")).click();
+		
+		webDriver.get(baseUrl + "/toDoManager/AllMyToDo");
+		webDriver.get(baseUrl + "/toDoManager/editToDo/" + toDoSaved.getId());
+		
+		webDriver.findElement(By.name("title")).clear();
+		webDriver.findElement(By.name("title")).sendKeys("editTitle");
+		webDriver.findElement(By.name("description")).clear();
+		webDriver.findElement(By.name("description")).sendKeys("editDescription");
+		webDriver.findElement(By.name("done")).click();
+		webDriver.findElement(By.name("deadline")).clear();  
+		webDriver.findElement(By.name("deadline")).sendKeys(LocalDate.now().plusDays(1).toString());
+		webDriver.findElement(By.name("btn_updateToDo")).click();
+		
+		assertThat(webDriver.findElement(By.id("toDo_table")).getText())
+		.contains("username_1", "editTitle",  "editDescription", "true", LocalDate.now().plusDays(1).toString());
+		
+		ToDo result = toDoMongoRepository.findAll().get(0);
+		assertEquals("username_1", result.getUser());
+		assertEquals("editTitle", result.getTitle());
+		assertEquals("editDescription", result.getDescription());
+		assertTrue(result.isDone());
+		assertEquals(LocalDate.now().plusDays(1), result.getDeadline());
 	}
 }
