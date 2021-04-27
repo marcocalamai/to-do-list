@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.List;
 import java.util.Optional;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -30,6 +31,11 @@ class UserMongoRepositoryTest {
 	
 	@BeforeEach
 	void setup(){
+		mongoOps.dropCollection(User.class);
+	}
+	
+	@AfterEach
+	void tearDown(){
 		mongoOps.dropCollection(User.class);
 	}
 	

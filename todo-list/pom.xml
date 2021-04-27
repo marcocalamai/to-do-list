@@ -21,7 +21,7 @@
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 		<sonar.junit.reportPaths>
 			${project.build.directory}/surefire-reports,
-			${project.build.directory}/target/failsafe-reports
+			${project.build.directory}/failsafe-reports
 		</sonar.junit.reportPaths>
 		<sonar.coverage.jacoco.xmlReportPaths>
 			${project.reporting.outputDirectory}/jacoco/jacoco.xml
@@ -101,11 +101,36 @@
 			<artifactId>htmlunit</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>htmlunit-driver</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-support</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<profiles>
 		<profile>
 			<id>jacoco</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.jacoco</groupId>
+						<artifactId>jacoco-maven-plugin</artifactId>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>coveralls</id>
 			<activation>
 				<activeByDefault>false</activeByDefault>
 			</activation>
@@ -151,7 +176,72 @@
 				</plugins>
 			</build>
 		</profile>
+
+		<profile>
+			<id>integrationTests</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-failsafe-plugin</artifactId>
+						<executions>
+							<execution>
+								<configuration>
+									<includes>
+										<include>**/TodoListApplicationTests.java</include>
+										<include>**/*IT.java</include>
+									</includes>
+								</configuration>
+								<goals>
+									<goal>integration-test</goal>
+									<goal>verify</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>io.fabric8</groupId>
+						<artifactId>docker-maven-plugin</artifactId>
+						<version>0.35.0</version>
+						<configuration>
+							<images>
+								<image>
+									<name>mongo</name>
+									<run>
+										<ports>
+											<port>27017:27017</port>
+										</ports>
+									</run>
+								</image>
+							</images>
+							<showLogs>true</showLogs>
+						</configuration>
+						<executions>
+							<execution>
+								<id>docker:start</id>
+								<phase>pre-integration-test</phase>
+								<goals>
+									<goal>start</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>docker:stop</id>
+								<phase>post-integration-test</phase>
+								<goals>
+									<goal>stop</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 	</profiles>
+
+
 
 	<build>
 		<plugins>
@@ -178,6 +268,18 @@
 					</execution>
 				</executions>
 			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<!-- Code coverage for surefire tests -->
+					<argLine>${surefireArgLine}</argLine>
+					<includes>
+						<include>**/*Test.java</include>
+					</includes>
+				</configuration>
+			</plugin>
 		</plugins>
 
 		<pluginManagement>
@@ -187,8 +289,12 @@
 					<artifactId>jacoco-maven-plugin</artifactId>
 					<version>0.8.6</version>
 					<configuration>
+						<!-- Don't use the default property so that we'll do code coverage 
+							only for surefire tests (not for failsafe) -->
+						<propertyName>surefireArgLine</propertyName>
 						<excludes>
-							<exclude>**/TodoListApplication.class </exclude>
+							<exclude>**com.gargoylesoftware.htmlunit**</exclude>
+							<exclude>**/TodoListApplication.class</exclude>
 							<exclude>org/marco/calamai/todolist/model/*</exclude>
 							<exclude>org/marco/calamai/todolist/repositories/mongo/*</exclude>
 							<exclude>org/marco/calamai/todolist/exceptions/*</exclude>
@@ -242,6 +348,9 @@
 						</dependency>
 					</dependencies>
 					<configuration>
+						<excludedTestClasses>
+							<excludedTestClass>org.marco.calamai.todolist.**.*IT</excludedTestClass>
+						</excludedTestClasses>
 						<targetClasses>
 							<param>org.marco.calamai.todolist.services.*</param>
 							<param>org.marco.calamai.todolist.webcontrollers.*</param>

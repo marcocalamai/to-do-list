@@ -8,7 +8,8 @@ jobs:
       env:
          workdir: todo-list
          additional-maven-args: > 
-            -Pjacoco 
+            -Pcoveralls
+            -PintegrationTests
             -DrepoToken=$COVERALLS_TOKEN 
             -DpullRequest=${{ github.event.pull_request.number }}
             sonar:sonar

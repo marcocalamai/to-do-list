@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -35,6 +36,11 @@ class ToDoMongoRepositoryTest {
 	
 	@BeforeEach
 	void setup(){
+		mongoOps.dropCollection(ToDo.class);
+	}
+	
+	@AfterEach
+	void tearDown(){
 		mongoOps.dropCollection(ToDo.class);
 	}
     
@@ -101,10 +107,10 @@ class ToDoMongoRepositoryTest {
 		@Test @DisplayName("Find all ToDo when repository is empty")
 		void testFindAllWhenRepositoryIsEmpty() {
 			List<ToDo> result = repository.findAll();
-			assertEquals(0, result.size());
+			assertThat(result).isEmpty();
 		}
 		
-		@Test @DisplayName("Find all ToDo sort by done and deadline ")
+		@Test @DisplayName("Find all ToDo sort by done and deadline")
 		void testFindByOrderByDoneAscDeadlineAsc() {
 			ToDo toDo1 = new ToDo("username_1", "title_1", "description_1", LocalDate.now().plusMonths(1));
 			ToDo toDo2 = new ToDo("username_2", "title_2", "description_2", LocalDate.now().plusDays(1));
@@ -125,7 +131,7 @@ class ToDoMongoRepositoryTest {
 		}
 		
 		
-		@Test @DisplayName("Find ToDo by user name sort by done and deadline ")
+		@Test @DisplayName("Find ToDo by user name sort by done and deadline")
 		void testFindByUserOrderByDoneAscDeadlineAsc() {
 			String user1 = "a_username"; 
 			String userToFind = "usernameToFind";

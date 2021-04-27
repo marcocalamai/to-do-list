@@ -18,8 +18,8 @@
 	<div>
 		<form name="EditToDoForm" th:action="@{/toDoManager/updateToDo}" method="post">
 			<input type="hidden" th:field="${toDo.id}" /> 
-			<label>Title : </label> <input type="text" th:field="${toDo.title}" required> 
-			<label>Description : </label> <input type="text" th:field="${toDo.description}" required>
+			<label>Title : </label> <input type="text" name="title" th:field="${toDo.title}" required> 
+			<label>Description : </label> <input type="text" name="description" th:field="${toDo.description}" required>
 			<label>Done : </label><input type="checkbox" name="done" th:checked="${toDo.done}" value="true" />
 			<label>Deadline : </label> <input type="date" name=deadline th:value="${toDo.deadline}" required>
 			
