@@ -141,9 +141,9 @@ class ToDoManagerWebControllerTest {
 		
 		
 
-		@Test @DisplayName("Test search toDo by title")
+		@Test @DisplayName("Test show toDo by title")
 		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
-		void testSerachToDoByTitle() throws Exception {
+		void testShowToDoByTitle() throws Exception {
 			ToDo toDo1 = new ToDo("user_1", "title_1", "description_1", LocalDate.now());
 			toDo1.setId(new BigInteger("0"));
 			List<ToDo> allToDoByTitle = new ArrayList<>();
@@ -161,9 +161,9 @@ class ToDoManagerWebControllerTest {
 			verify(toDoService, times(1)).getAllToDoByTitleOrderByDoneAscDeadlineAsc("title_1");
 		}
 		
-		@Test @DisplayName("Test search ToDo by title when there are not")
+		@Test @DisplayName("Test show ToDo by title when there are not")
 		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
-		void testSerachToDoByTitleWhenThereAreNot() throws Exception {
+		void testShowToDoByTitleWhenThereAreNot() throws Exception {
 			when(toDoService.getAllToDoByTitleOrderByDoneAscDeadlineAsc("title_1")).thenReturn(Collections.emptyList());
 			
 			mvc.perform(get("/toDoManager/toDoByTitle")
@@ -176,17 +176,17 @@ class ToDoManagerWebControllerTest {
 			verify(toDoService, times(1)).getAllToDoByTitleOrderByDoneAscDeadlineAsc("title_1");
 		}
 		
-		@Test @DisplayName("Test search ToDo by title when title attribute is empty")
+		@Test @DisplayName("Test show ToDo by title when title attribute is empty")
 		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
-		void testSerachToDoByTitleWhenItIsEmpty() throws Exception {		
+		void testShowToDoByTitleWhenItIsEmpty() throws Exception {		
 			mvc.perform(get("/toDoManager/toDoByTitle"))
 					.andExpect(status().is4xxClientError());
 				}
 
 		
-		@Test @DisplayName("Test search toDo by deadline")
+		@Test @DisplayName("Test show toDo by deadline")
 		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
-		void testSerachToDoByDeadline() throws Exception {
+		void testShowToDoByDeadline() throws Exception {
 			LocalDate deadline = LocalDate.now();
 			String deadlineInput = deadline.toString();
 			ToDo toDo1 = new ToDo("user_1", "title_1", "description_1", deadline);
@@ -207,9 +207,9 @@ class ToDoManagerWebControllerTest {
 		}
 
 		
-		@Test @DisplayName("Test search toDo by deadline when there are not")
+		@Test @DisplayName("Test show toDo by deadline when there are not")
 		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
-		void testSerachToDoByDeadlineWhenThereAreNot() throws Exception {
+		void testShowToDoByDeadlineWhenThereAreNot() throws Exception {
 			LocalDate deadline = LocalDate.now();
 			String deadlineInput = deadline.toString();
 			when(toDoService.getAllToDoByDeadlineOrderByDoneAsc(deadline)).thenReturn(Collections.emptyList());
@@ -225,9 +225,9 @@ class ToDoManagerWebControllerTest {
 		}
 		
 		
-		@Test @DisplayName("Test search toDo by deadline when it is not a valid date")
+		@Test @DisplayName("Test show toDo by deadline when it is not a valid date")
 		@WithMockUser(username = "AuthenticatedUser", password = "passwordTest", roles = "USER")
-		void testSerachToDoByDeadlineWhenItIsNotValid() throws Exception {
+		void testShowToDoByDeadlineWhenItIsNotValid() throws Exception {
 			mvc.perform(get("/toDoManager/toDoByDeadline")
 					.param("deadline", "2040-122-311"))
 					.andExpect(status().is4xxClientError())
