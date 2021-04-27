@@ -17,8 +17,8 @@
 
 	<div>
 		<form name="NewToDoForm" th:action="@{/toDoManager/saveNewToDo}" method="post">
-			<label>Title : </label> <input type="text" th:field="${toDo.title}" required> 
-			<label>Description : </label> <input type="text" th:field="${toDo.description}" required>
+			<label>Title : </label> <input type="text" name="title" th:field="${toDo.title}" required> 
+			<label>Description : </label> <input type="text" name="description" th:field="${toDo.description}" required>
 			<label>Deadline : </label> <input type="date" name=deadline th:value="${toDo.deadline}" required>
 
 			<div>

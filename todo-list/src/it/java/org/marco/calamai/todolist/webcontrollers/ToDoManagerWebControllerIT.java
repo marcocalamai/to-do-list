@@ -1,6 +1,7 @@
 package org.marco.calamai.todolist.webcontrollers;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.time.LocalDate;
 
@@ -122,5 +123,29 @@ class ToDoManagerWebControllerIT {
 		
 		assertThat(webDriver.findElement(By.id("toDo_table")).getText())
 		.contains("username_1", "title_1",  "description_1", LocalDate.now().toString());
+	}
+	
+	@Test @DisplayName("Test newToDoPage insert new toDo")
+	void testNewToDoPageInsertNewToDo() throws Exception {
+		userMongoRepository.save(new User("username_1", passwordEncoder.encode("password1"))) ;
+		webDriver.get(baseUrl + "/login");
+		webDriver.findElement(By.name("username")).sendKeys("username_1");
+		webDriver.findElement(By.name("password")).sendKeys("password1");
+		webDriver.findElement(By.name("btn_submit")).click();
+		
+		webDriver.get(baseUrl + "/toDoManager/newToDo");
+		webDriver.findElement(By.name("title")).sendKeys("newTitle");
+		webDriver.findElement(By.name("description")).sendKeys("newDescription");
+		webDriver.findElement(By.name("deadline")).sendKeys(LocalDate.now().toString());
+		webDriver.findElement(By.name("btn_createToDo")).click();
+		
+		assertThat(webDriver.findElement(By.id("toDo_table")).getText())
+		.contains("username_1", "newTitle",  "newDescription", LocalDate.now().toString());
+		
+		ToDo result = toDoMongoRepository.findAll().get(0);
+		assertEquals("username_1", result.getUser());
+		assertEquals("newTitle", result.getTitle());
+		assertEquals("newDescription", result.getDescription());
+		assertEquals(LocalDate.now(), result.getDeadline());
 	}
 }
