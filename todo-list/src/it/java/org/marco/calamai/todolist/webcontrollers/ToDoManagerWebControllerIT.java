@@ -107,4 +107,20 @@ class ToDoManagerWebControllerIT {
 		assertThat(webDriver.findElement(By.id("toDo_table")).getText())
 		.contains("username_1", "title_1",  "description_1", LocalDate.now().toString());
 	}
+	
+	@Test @DisplayName("Test show toDo by deadline")
+	void testToDoManagerViewShowToDoByDeadline() throws Exception {
+		toDoMongoRepository.save(new ToDo("username_1", "title_1", "description_1", LocalDate.now()));
+		userMongoRepository.save(new User("username_1", passwordEncoder.encode("password1"))) ;
+		webDriver.get(baseUrl + "/login");
+		webDriver.findElement(By.name("username")).sendKeys("username_1");
+		webDriver.findElement(By.name("password")).sendKeys("password1");
+		webDriver.findElement(By.name("btn_submit")).click();
+		
+		webDriver.findElement(By.name("deadline")).sendKeys(LocalDate.now().toString());
+		webDriver.findElement(By.name("btn_searchByDeadline")).click();
+		
+		assertThat(webDriver.findElement(By.id("toDo_table")).getText())
+		.contains("username_1", "title_1",  "description_1", LocalDate.now().toString());
+	}
 }
