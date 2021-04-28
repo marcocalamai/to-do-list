@@ -70,5 +70,40 @@ class ToDoListE2E {
 		.contains("username1", "newTitle",  "newDescription", LocalDate.now().toString());
 	}
 	
-
+	@Test @DisplayName("Test insert then edit ToDo")
+	void testInsertThenEditToDo() {
+		webDriver.get(baseUrl);
+		
+		webDriver.findElement(By.linkText("Register")).click();;
+		webDriver.findElement(By.name("username")).sendKeys("username1");
+		webDriver.findElement(By.name("password")).sendKeys("password1");
+		webDriver.findElement(By.name("passwordConfirmation")).sendKeys("password1");
+		webDriver.findElement(By.name("btn_submit")).click();
+		
+		webDriver.findElement(By.linkText("Login")).click();;
+		webDriver.findElement(By.name("username")).sendKeys("username1");
+		webDriver.findElement(By.name("password")).sendKeys("password1");
+		webDriver.findElement(By.name("btn_submit")).click();
+		
+		webDriver.findElement(By.linkText("New ToDo")).click();
+		webDriver.findElement(By.name("title")).sendKeys("newTitle");
+		webDriver.findElement(By.name("description")).sendKeys("newDescription");
+		webDriver.findElement(By.name("deadline")).sendKeys(LocalDate.now().toString());
+		webDriver.findElement(By.name("btn_createToDo")).click();
+		
+		webDriver.findElement(By.linkText("All my ToDo")).click();
+		webDriver.findElement(By.linkText("Edit")).click();
+		
+		webDriver.findElement(By.name("title")).clear();
+		webDriver.findElement(By.name("title")).sendKeys("editTitle");
+		webDriver.findElement(By.name("description")).clear();
+		webDriver.findElement(By.name("description")).sendKeys("editDescription");
+		webDriver.findElement(By.name("done")).click();
+		webDriver.findElement(By.name("deadline")).clear();  
+		webDriver.findElement(By.name("deadline")).sendKeys(LocalDate.now().plusDays(1).toString());
+		webDriver.findElement(By.name("btn_updateToDo")).click();
+		
+		assertThat(webDriver.findElement(By.id("toDo_table")).getText())
+		.contains("username1", "editTitle",  "editDescription", "true", LocalDate.now().plusDays(1).toString());
+	}
 }
