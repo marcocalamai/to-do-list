@@ -191,6 +191,52 @@ class ToDoListE2E {
 		.doesNotContain("Title1", "Description1", LocalDate.now().toString());
 	}
 	
+	@Test @DisplayName("Test insert two ToDo then search ToDo by deadline")
+	void testInsertThenSearchToDoByDeadline() {
+		webDriver.get(baseUrl);
+		
+		webDriver.findElement(By.linkText("Register")).click();;
+		webDriver.findElement(By.name("username")).sendKeys("username1");
+		webDriver.findElement(By.name("password")).sendKeys("password1");
+		webDriver.findElement(By.name("passwordConfirmation")).sendKeys("password1");
+		webDriver.findElement(By.name("btn_submit")).click();
+		
+		webDriver.findElement(By.linkText("Login")).click();;
+		webDriver.findElement(By.name("username")).sendKeys("username1");
+		webDriver.findElement(By.name("password")).sendKeys("password1");
+		webDriver.findElement(By.name("btn_submit")).click();
+		
+		webDriver.findElement(By.linkText("New ToDo")).click();
+		webDriver.findElement(By.name("title")).sendKeys("Title1");
+		webDriver.findElement(By.name("description")).sendKeys("Description1");
+		webDriver.findElement(By.name("deadline")).sendKeys(LocalDate.now().toString());
+		webDriver.findElement(By.name("btn_createToDo")).click();
+		
+		webDriver.findElement(By.linkText("New ToDo")).click();
+		webDriver.findElement(By.name("title")).sendKeys("Title2");
+		webDriver.findElement(By.name("description")).sendKeys("Description2");
+		webDriver.findElement(By.name("deadline")).sendKeys(LocalDate.now().plusDays(1).toString());
+		webDriver.findElement(By.name("btn_createToDo")).click();
+		
+		webDriver.findElement(By.linkText("All ToDo")).click();
+		
+		//verify that there are two ToDo inserted
+		assertThat(webDriver.findElement(By.id("toDo_table")).getText())
+		.contains("username1", "Title1", "Description1", "false", LocalDate.now().toString(),
+				 "Title2", "Description2", LocalDate.now().plusDays(1).toString());
+		
+		webDriver.findElement(By.name("deadline")).sendKeys(LocalDate.now().toString());
+		webDriver.findElement(By.name("btn_searchByDeadline")).click();
+		
+		//verify that table contains ToDo with date of today as deadline but does not contains 
+		//ToDo with date of tomorrow as deadline
+		assertThat(webDriver.findElement(By.id("toDo_table")).getText())
+		.contains("username1", "Title1", "Description1", "false", LocalDate.now().toString());
+		
+		assertThat(webDriver.findElement(By.id("toDo_table")).getText())
+		.doesNotContain("Title2", "Description2", LocalDate.now().plusDays(1).toString());
+	}
+	
 	
 	
 	@Test @DisplayName("Test user insert ToDo then another user insert another ToDo then show All My ToDo")
