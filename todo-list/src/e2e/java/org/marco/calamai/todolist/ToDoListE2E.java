@@ -66,6 +66,8 @@ class ToDoListE2E {
 		webDriver.findElement(By.name("deadline")).sendKeys(LocalDate.now().toString());
 		webDriver.findElement(By.name("btn_createToDo")).click();
 		
+		webDriver.findElement(By.linkText("All ToDo")).click();
+		
 		assertThat(webDriver.findElement(By.id("toDo_table")).getText())
 		.contains("username1", "newTitle",  "newDescription", LocalDate.now().toString());
 	}
@@ -103,7 +105,44 @@ class ToDoListE2E {
 		webDriver.findElement(By.name("deadline")).sendKeys(LocalDate.now().plusDays(1).toString());
 		webDriver.findElement(By.name("btn_updateToDo")).click();
 		
+		webDriver.findElement(By.linkText("All ToDo")).click();
+		
 		assertThat(webDriver.findElement(By.id("toDo_table")).getText())
 		.contains("username1", "editTitle",  "editDescription", "true", LocalDate.now().plusDays(1).toString());
+		
+		assertThat(webDriver.findElement(By.id("toDo_table")).getText())
+		.doesNotContain("newTitle",  "newDescription", LocalDate.now().toString());
+	}
+	
+	@Test @DisplayName("Test insert then delete ToDo")
+	void testInsertThenDeleteToDo() {
+		webDriver.get(baseUrl);
+		
+		webDriver.findElement(By.linkText("Register")).click();;
+		webDriver.findElement(By.name("username")).sendKeys("username1");
+		webDriver.findElement(By.name("password")).sendKeys("password1");
+		webDriver.findElement(By.name("passwordConfirmation")).sendKeys("password1");
+		webDriver.findElement(By.name("btn_submit")).click();
+		
+		webDriver.findElement(By.linkText("Login")).click();;
+		webDriver.findElement(By.name("username")).sendKeys("username1");
+		webDriver.findElement(By.name("password")).sendKeys("password1");
+		webDriver.findElement(By.name("btn_submit")).click();
+		
+		webDriver.findElement(By.linkText("New ToDo")).click();
+		webDriver.findElement(By.name("title")).sendKeys("newTitle");
+		webDriver.findElement(By.name("description")).sendKeys("newDescription");
+		webDriver.findElement(By.name("deadline")).sendKeys(LocalDate.now().toString());
+		webDriver.findElement(By.name("btn_createToDo")).click();
+		
+		webDriver.findElement(By.linkText("All my ToDo")).click();
+		webDriver.findElement(By.name("btn_deleteToDo")).click();
+		
+		webDriver.findElement(By.linkText("All ToDo")).click();
+		
+		assertThat(webDriver.findElement(By.id("message")).getText()).contains("There are no to do");
+		
+		assertThat(webDriver.findElement(By.id("toDo_table")).getText())
+		.doesNotContain("username1", "newTitle",  "newDescription", LocalDate.now().toString());
 	}
 }
