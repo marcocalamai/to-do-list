@@ -145,4 +145,63 @@ class ToDoListE2E {
 		assertThat(webDriver.findElement(By.id("toDo_table")).getText())
 		.doesNotContain("username1", "newTitle",  "newDescription", LocalDate.now().toString());
 	}
+	
+	@Test @DisplayName("Test user insert ToDo then another user insert another ToDo then show All My ToDo")
+	void testUserInsertToDoThenAnotherUserInsertAnotherToDoThenShowAllMyToDo() throws InterruptedException {
+		//User1 register, login, insert new ToDo and logout
+		webDriver.get(baseUrl);
+		
+		webDriver.findElement(By.linkText("Register")).click();;
+		webDriver.findElement(By.name("username")).sendKeys("username1");
+		webDriver.findElement(By.name("password")).sendKeys("password1");
+		webDriver.findElement(By.name("passwordConfirmation")).sendKeys("password1");
+		webDriver.findElement(By.name("btn_submit")).click();
+		
+		webDriver.findElement(By.linkText("Login")).click();;
+		webDriver.findElement(By.name("username")).sendKeys("username1");
+		webDriver.findElement(By.name("password")).sendKeys("password1");
+		webDriver.findElement(By.name("btn_submit")).click();
+		
+		webDriver.findElement(By.linkText("New ToDo")).click();
+		webDriver.findElement(By.name("title")).sendKeys("User1Title");
+		webDriver.findElement(By.name("description")).sendKeys("User1Description");
+		webDriver.findElement(By.name("deadline")).sendKeys(LocalDate.now().toString());
+		webDriver.findElement(By.name("btn_createToDo")).click();
+		
+		webDriver.findElement(By.name("btn_logout")).click();;
+
+		//User2 register, login and insert new ToDo
+		webDriver.findElement(By.linkText("Register")).click();;
+		webDriver.findElement(By.name("username")).sendKeys("username2");
+		webDriver.findElement(By.name("password")).sendKeys("password2");
+		webDriver.findElement(By.name("passwordConfirmation")).sendKeys("password2");
+		webDriver.findElement(By.name("btn_submit")).click();
+		
+		webDriver.findElement(By.linkText("Login")).click();;
+		webDriver.findElement(By.name("username")).sendKeys("username2");
+		webDriver.findElement(By.name("password")).sendKeys("password2");
+		webDriver.findElement(By.name("btn_submit")).click();
+		
+		webDriver.findElement(By.linkText("New ToDo")).click();
+		webDriver.findElement(By.name("title")).sendKeys("User2Title");
+		webDriver.findElement(By.name("description")).sendKeys("User2Description");
+		webDriver.findElement(By.name("deadline")).sendKeys(LocalDate.now().plusDays(1).toString());
+		webDriver.findElement(By.name("btn_createToDo")).click();
+		
+		webDriver.findElement(By.linkText("All ToDo")).click();
+		
+		//verify that there are two ToDo inserted
+		assertThat(webDriver.findElement(By.id("toDo_table")).getText())
+		.contains("username1", "User1Title", "User1Description", "false", LocalDate.now().toString(),
+				"username2", "User2Title", "false", "User2Description", LocalDate.now().plusDays(1).toString());
+		
+		webDriver.findElement(By.linkText("All my ToDo")).click();
+		
+		//verify that All my ToDo show only one ToDo associated with User2
+		assertThat(webDriver.findElement(By.id("myToDo_table")).getText())
+		.contains("username2", "User2Title",  "User2Description", "false", LocalDate.now().plusDays(1).toString());
+		
+		assertThat(webDriver.findElement(By.id("myToDo_table")).getText())
+		.doesNotContain("username1", "User1Title", "User1Description", LocalDate.now().toString());
+	}
 }
