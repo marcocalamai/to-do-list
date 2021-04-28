@@ -28,7 +28,7 @@
 		</sonar.coverage.jacoco.xmlReportPaths>
 		<sonar.tests>
 			${project.build.testSourceDirectory},
-			${basedir}/src/it/java
+			${basedir}/src/it/java,
 			${basedir}/src/e2e/java
 		</sonar.tests>
 		<sonar.sources>
