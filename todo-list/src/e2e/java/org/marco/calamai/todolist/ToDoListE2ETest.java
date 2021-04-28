@@ -17,8 +17,8 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
-
-class ToDoListE2E {
+@DisplayName("E2E tests")
+class ToDoListE2ETest {
 	
 	private static int port = Integer.parseInt(System.getProperty("server.port", "8080"));
 	

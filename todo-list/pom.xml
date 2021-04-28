@@ -336,7 +336,7 @@
 								<configuration>
 									<skipITs>false</skipITs>
 									<includes>
-										<include>**/*E2E.java</include>
+										<include>**/*E2ETest.java</include>
 									</includes>
 								</configuration>
 								<goals>
@@ -395,6 +395,9 @@
 					<includes>
 						<include>**/*Test.java</include>
 					</includes>
+					<excludes>
+						<exclude>**E2ETest.java</exclude>
+					</excludes>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -467,7 +470,7 @@
 					<configuration>
 						<excludedTestClasses>
 							<excludedTestClass>org.marco.calamai.todolist.**.*IT</excludedTestClass>
-							<excludedTestClass>org.marco.calamai.todolist.**.*E2E</excludedTestClass>
+							<excludedTestClass>org.marco.calamai.todolist.**.*E2ETest</excludedTestClass>
 						</excludedTestClasses>
 						<targetClasses>
 							<param>org.marco.calamai.todolist.services.*</param>
