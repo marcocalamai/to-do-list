@@ -4,29 +4,38 @@
 <head>
 <meta charset="UTF-8"/>
 <title>Registration page</title>
+<link rel="stylesheet" th:href="@{/toDoManager.css}" TYPE="text/css">
 </head>
 <body>
-<h1>Register</h1>
-		<form name="registrationForm" th:action="@{/registration}" method="post">
-
-			<div id="error" th:if="${error_message}">
-				<span th:text="${error_message}"></span>
-			</div>
+	<h1>Register</h1>
+	
+	<div class="message" id="error" th:if="${error_message}">
+		<span th:text="${error_message}"></span>
+	</div>
+	
+	<div>
+			<form name="registrationForm" th:action="@{/registration}" method="post">
+				<label>Username : </label>
+				<input type="text" placeholder="Enter Username" name="username" required> 
+				<label>Password : </label>   
+	            <input type="password" placeholder="Enter Password" name="password" required>
+	            <label>Confirm Password : </label> 
+	            <input type="password" placeholder="Enter Password" name="passwordConfirmation" required>
+				<div>
+				<button type="submit" name="btn_submit">Register</button>   
+				</div>
+			</form>
 			
-			<label>Username : </label>
-			<input type="text" placeholder="Enter Username" name="username" required> 
-			<label>Password : </label>   
-            <input type="password" placeholder="Enter Password" name="password" required>
-            <label>Confirm Password : </label> 
-            <input type="password" placeholder="Enter Password" name="passwordConfirmation" required>
-            
-			<div>
-			<button type="submit" name="btn_submit">Register</button>   
-			</div>
-		</form>
+			<span></span>
+			<span></span>
+			<span></span>
+
+			<a href="/">Go Back</a>
+			
+		</div>
 
 
-<a href="/">Go Back</a>
+
 
 </body>
 </html>

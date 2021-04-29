@@ -4,16 +4,17 @@
 <head>
 <meta charset="UTF-8" />
 <title>New ToDo</title>
+<link rel="stylesheet" th:href="@{/toDoManager.css}" TYPE="text/css">
 </head>
 
 <body>
 	<h1>Create new ToDo</h1>
+
+	<ul class="nav">
+		<li><a href="/toDoManager">Manage ToDo</a></li>
+	</ul>
 	
-	<div>
-		<ul>
-			<li><a href="/toDoManager">Manage ToDo</a></li>
-		</ul>
-	</div>
+	<div class="line-separator"></div>
 
 	<div>
 		<form name="NewToDoForm" th:action="@{/toDoManager/saveNewToDo}" method="post">

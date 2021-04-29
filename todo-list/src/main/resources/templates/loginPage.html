@@ -4,16 +4,17 @@
 <head>
 <meta charset="UTF-8"/>
 <title>Login Page</title>
+<link rel="stylesheet" th:href="@{/toDoManager.css}" TYPE="text/css">
 </head>
-<h1>Login</h1>
 <body>
+	<h1>Login</h1>
+	
+	<div class="message" id="error" th:if="${error}">
+		<span th:text="${error_message}"></span>
+	</div>
+	
 	<div>
 		<form name="loginForm" th:action="@{/login}" method="post">
-
-			<div id="error" th:if="${error}">
-				<span th:text="${error_message}"></span>
-			</div>
-			
 			<label>Username : </label>
 			<input type="text" placeholder="Enter Username" name="username" required> 
 			<label>Password : </label>   
@@ -22,6 +23,7 @@
 			<button type="submit" name="btn_submit">Login</button>   
 			</div>
 		</form>
+		
 		<a href="/">Go Back</a>
 	</div>
 </body>
