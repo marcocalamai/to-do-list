@@ -81,7 +81,7 @@ button:hover {
   	color: white;
 }
 
-cation, td, th {
+td, th {
   	border-bottom: 1px solid black;
  	text-align: left;
   	padding: 10px;
@@ -98,8 +98,8 @@ table {
 }
 
 caption {
-	  background: #235d93;
-	  font-weight: bold;
-	  font-size: 150%;
+	background: #235d93;
+	font-weight: bold;
+	font-size: 150%;
 }
 
