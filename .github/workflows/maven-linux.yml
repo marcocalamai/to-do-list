@@ -12,7 +12,6 @@ jobs:
             -PintegrationTests
             -DrepoToken=$COVERALLS_TOKEN 
             -DpullRequest=${{ github.event.pull_request.number }}
-            sonar:sonar
       name: Build with Java on Linux
       steps:
       -  uses: actions/checkout@v2
@@ -30,18 +29,19 @@ jobs:
                ~/.sonar/cache
             key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml', '**/*.yml') }}
             restore-keys: ${{ runner.os }}-m2-
-      -  name: Build with Maven
+      -  name: Unit and Integration Tests
          run: >
             ./mvnw verify ${{ env.additional-maven-args }}
          working-directory: ${{ env.workdir }}
          env:
             COVERALLS_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
-            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: E2E-tests
         run: >
-           xvfb-run ./mvnw verify -Pe2e-tests
+           xvfb-run ./mvnw verify -Pe2e-tests sonar:sonar
         working-directory: ${{ env.workdir }}
+        env:
+            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       -  name: Generate JUnit Report
          run: ./mvnw surefire-report:report-only site:site -DgenerateReports=false 
          working-directory: ${{ env.workdir }}
