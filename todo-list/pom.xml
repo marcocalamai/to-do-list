@@ -54,6 +54,7 @@
 		</sonar.issue.ignore.multicriteria.e11.resourceKey>
 
 		<skip.unit-tests>false</skip.unit-tests>
+		<skip.integration-tests>false</skip.integration-tests>
 	</properties>
 
 	<dependencies>
@@ -249,7 +250,7 @@
 			</activation>
 			<properties>
 				<skip.unit-tests>true</skip.unit-tests>
-				<skipITs>true</skipITs>
+				<skip.integration-tests>true</skip.integration-tests>
 			</properties>
 			<build>
 				<plugins>
@@ -334,7 +335,6 @@
 							<execution>
 								<id>e2e-tests</id>
 								<configuration>
-									<skipITs>false</skipITs>
 									<includes>
 										<include>**/*E2ETest.java</include>
 									</includes>
@@ -489,16 +489,21 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-failsafe-plugin</artifactId>
-					<configuration>
-						<includes>
-							<include>**/TodoListApplicationTests.java</include>
-							<include>**/*IT.java</include>
-						</includes>
-					</configuration>
-					<goals>
-						<goal>integration-test</goal>
-						<goal>verify</goal>
-					</goals>
+					<executions>
+						<execution>
+							<configuration>
+								<skipTests>${skip.integration-tests}</skipTests>
+								<includes>
+									<include>**/TodoListApplicationTests.java</include>
+									<include>**/*IT.java</include>
+								</includes>
+							</configuration>
+							<goals>
+								<goal>integration-test</goal>
+								<goal>verify</goal>
+							</goals>
+						</execution>
+					</executions>
 				</plugin>
 				<plugin>
 					<groupId>io.fabric8</groupId>

@@ -33,9 +33,7 @@ class ToDoListE2ETest {
 	
 	@BeforeEach
 	void setup() {
-		baseUrl = "http://localhost:" + port;
 		webDriver = new FirefoxDriver();
-		
 		MongoClient mongoClient = MongoClients.create("mongodb://localhost:27017");
 		mongoClient.getDatabase("ToDoList-MongoDb").drop();
 	}
@@ -49,13 +47,13 @@ class ToDoListE2ETest {
 	void testInsertNewToDo() {
 		webDriver.get(baseUrl);
 		
-		webDriver.findElement(By.linkText("Register")).click();;
+		webDriver.findElement(By.linkText("Register")).click();
 		webDriver.findElement(By.name("username")).sendKeys("username1");
 		webDriver.findElement(By.name("password")).sendKeys("password1");
 		webDriver.findElement(By.name("passwordConfirmation")).sendKeys("password1");
 		webDriver.findElement(By.name("btn_submit")).click();
 		
-		webDriver.findElement(By.linkText("Login")).click();;
+		webDriver.findElement(By.linkText("Login")).click();
 		webDriver.findElement(By.name("username")).sendKeys("username1");
 		webDriver.findElement(By.name("password")).sendKeys("password1");
 		webDriver.findElement(By.name("btn_submit")).click();
@@ -76,13 +74,13 @@ class ToDoListE2ETest {
 	void testInsertThenEditToDo() {
 		webDriver.get(baseUrl);
 		
-		webDriver.findElement(By.linkText("Register")).click();;
+		webDriver.findElement(By.linkText("Register")).click();
 		webDriver.findElement(By.name("username")).sendKeys("username1");
 		webDriver.findElement(By.name("password")).sendKeys("password1");
 		webDriver.findElement(By.name("passwordConfirmation")).sendKeys("password1");
 		webDriver.findElement(By.name("btn_submit")).click();
 		
-		webDriver.findElement(By.linkText("Login")).click();;
+		webDriver.findElement(By.linkText("Login")).click();
 		webDriver.findElement(By.name("username")).sendKeys("username1");
 		webDriver.findElement(By.name("password")).sendKeys("password1");
 		webDriver.findElement(By.name("btn_submit")).click();
@@ -118,13 +116,13 @@ class ToDoListE2ETest {
 	void testInsertThenDeleteToDo() {
 		webDriver.get(baseUrl);
 		
-		webDriver.findElement(By.linkText("Register")).click();;
+		webDriver.findElement(By.linkText("Register")).click();
 		webDriver.findElement(By.name("username")).sendKeys("username1");
 		webDriver.findElement(By.name("password")).sendKeys("password1");
 		webDriver.findElement(By.name("passwordConfirmation")).sendKeys("password1");
 		webDriver.findElement(By.name("btn_submit")).click();
 		
-		webDriver.findElement(By.linkText("Login")).click();;
+		webDriver.findElement(By.linkText("Login")).click();
 		webDriver.findElement(By.name("username")).sendKeys("username1");
 		webDriver.findElement(By.name("password")).sendKeys("password1");
 		webDriver.findElement(By.name("btn_submit")).click();
@@ -150,13 +148,13 @@ class ToDoListE2ETest {
 	void testInsertThenSearchToDoByTitle() {
 		webDriver.get(baseUrl);
 		
-		webDriver.findElement(By.linkText("Register")).click();;
+		webDriver.findElement(By.linkText("Register")).click();
 		webDriver.findElement(By.name("username")).sendKeys("username1");
 		webDriver.findElement(By.name("password")).sendKeys("password1");
 		webDriver.findElement(By.name("passwordConfirmation")).sendKeys("password1");
 		webDriver.findElement(By.name("btn_submit")).click();
 		
-		webDriver.findElement(By.linkText("Login")).click();;
+		webDriver.findElement(By.linkText("Login")).click();
 		webDriver.findElement(By.name("username")).sendKeys("username1");
 		webDriver.findElement(By.name("password")).sendKeys("password1");
 		webDriver.findElement(By.name("btn_submit")).click();
@@ -195,13 +193,13 @@ class ToDoListE2ETest {
 	void testInsertThenSearchToDoByDeadline() {
 		webDriver.get(baseUrl);
 		
-		webDriver.findElement(By.linkText("Register")).click();;
+		webDriver.findElement(By.linkText("Register")).click();
 		webDriver.findElement(By.name("username")).sendKeys("username1");
 		webDriver.findElement(By.name("password")).sendKeys("password1");
 		webDriver.findElement(By.name("passwordConfirmation")).sendKeys("password1");
 		webDriver.findElement(By.name("btn_submit")).click();
 		
-		webDriver.findElement(By.linkText("Login")).click();;
+		webDriver.findElement(By.linkText("Login")).click();
 		webDriver.findElement(By.name("username")).sendKeys("username1");
 		webDriver.findElement(By.name("password")).sendKeys("password1");
 		webDriver.findElement(By.name("btn_submit")).click();
@@ -244,13 +242,13 @@ class ToDoListE2ETest {
 		//User1 register, login, insert new ToDo and logout
 		webDriver.get(baseUrl);
 		
-		webDriver.findElement(By.linkText("Register")).click();;
+		webDriver.findElement(By.linkText("Register")).click();
 		webDriver.findElement(By.name("username")).sendKeys("username1");
 		webDriver.findElement(By.name("password")).sendKeys("password1");
 		webDriver.findElement(By.name("passwordConfirmation")).sendKeys("password1");
 		webDriver.findElement(By.name("btn_submit")).click();
 		
-		webDriver.findElement(By.linkText("Login")).click();;
+		webDriver.findElement(By.linkText("Login")).click();
 		webDriver.findElement(By.name("username")).sendKeys("username1");
 		webDriver.findElement(By.name("password")).sendKeys("password1");
 		webDriver.findElement(By.name("btn_submit")).click();
@@ -261,16 +259,16 @@ class ToDoListE2ETest {
 		webDriver.findElement(By.name("deadline")).sendKeys(LocalDate.now().toString());
 		webDriver.findElement(By.name("btn_createToDo")).click();
 		
-		webDriver.findElement(By.name("btn_logout")).click();;
+		webDriver.findElement(By.name("btn_logout")).click();
 
 		//User2 register, login and insert new ToDo
-		webDriver.findElement(By.linkText("Register")).click();;
+		webDriver.findElement(By.linkText("Register")).click();
 		webDriver.findElement(By.name("username")).sendKeys("username2");
 		webDriver.findElement(By.name("password")).sendKeys("password2");
 		webDriver.findElement(By.name("passwordConfirmation")).sendKeys("password2");
 		webDriver.findElement(By.name("btn_submit")).click();
 		
-		webDriver.findElement(By.linkText("Login")).click();;
+		webDriver.findElement(By.linkText("Login")).click();
 		webDriver.findElement(By.name("username")).sendKeys("username2");
 		webDriver.findElement(By.name("password")).sendKeys("password2");
 		webDriver.findElement(By.name("btn_submit")).click();
