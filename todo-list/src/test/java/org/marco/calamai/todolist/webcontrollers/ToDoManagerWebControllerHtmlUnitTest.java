@@ -40,6 +40,11 @@ import com.gargoylesoftware.htmlunit.html.HtmlTable;
 @DisplayName("HtmlUnit test ToDoManager")
 class ToDoManagerWebControllerHtmlUnitTest {
 	
+	private static final String NO_TO_DO_MESSAGE = "There are no to do";
+	private static final String TODO_NOT_FOUND = "ToDo not found!";
+	private static final String DELETE_SUCCESSFUL = "ToDo successfully deleted!";
+	
+	
 	@Autowired 
 	private WebClient webClient;
 
@@ -85,7 +90,7 @@ class ToDoManagerWebControllerHtmlUnitTest {
 			when(toDoService.getAllToDoOrderByDoneAscDeadlineAsc()).thenReturn(Collections.emptyList());
 			
 			HtmlPage page = webClient.getPage("/toDoManager");
-			assertThat(page.getBody().getTextContent()).contains("There are no to do");
+			assertThat(page.getBody().getTextContent()).contains(NO_TO_DO_MESSAGE);
 		}
 		
 		@Test @DisplayName("Test todoManagerPage should show all ToDo")
@@ -100,7 +105,7 @@ class ToDoManagerWebControllerHtmlUnitTest {
 			when(toDoService.getAllToDoOrderByDoneAscDeadlineAsc()).thenReturn(Arrays.asList(todo1, todo2));
 			
 			HtmlPage page = webClient.getPage("/toDoManager");
-			assertThat(page.getBody().getTextContent()).doesNotContain("There are no to do");
+			assertThat(page.getBody().getTextContent()).doesNotContain(NO_TO_DO_MESSAGE);
 			HtmlTable table = page.getHtmlElementById("toDo_table");
 			String todayAsString = today.toString();
 			assertEquals(
@@ -117,7 +122,7 @@ class ToDoManagerWebControllerHtmlUnitTest {
 			when(toDoService.getToDoByUserOrderByDoneAscDeadlineAsc("AuthenticatedUser")).thenReturn(Collections.emptyList());
 			
 			HtmlPage page = webClient.getPage("/toDoManager/AllMyToDo");
-			assertThat(page.getBody().getTextContent()).contains("There are no to do");
+			assertThat(page.getBody().getTextContent()).contains(NO_TO_DO_MESSAGE);
 		}
 		
 		@Test @DisplayName("Test todoManagerPage AllMyToDo should show them")
@@ -132,7 +137,7 @@ class ToDoManagerWebControllerHtmlUnitTest {
 			when(toDoService.getToDoByUserOrderByDoneAscDeadlineAsc("AuthenticatedUser")).thenReturn(Arrays.asList(todo1, todo2));
 			
 			HtmlPage page = webClient.getPage("/toDoManager/AllMyToDo");
-			assertThat(page.getBody().getTextContent()).doesNotContain("There are no to do");
+			assertThat(page.getBody().getTextContent()).doesNotContain(NO_TO_DO_MESSAGE);
 			HtmlTable table = page.getHtmlElementById("myToDo_table");
 			String todayAsString = today.toString();
 			
@@ -163,7 +168,7 @@ class ToDoManagerWebControllerHtmlUnitTest {
 			form.getInputByName("deadline").setValueAttribute(todayAsString);
 			page = form.getButtonByName("btn_searchByDeadline").click();
 			
-			assertThat(page.getBody().getTextContent()).contains("There are no to do");
+			assertThat(page.getBody().getTextContent()).contains(NO_TO_DO_MESSAGE);
 		}
 		
 		
@@ -185,7 +190,7 @@ class ToDoManagerWebControllerHtmlUnitTest {
 			form.getInputByName("deadline").setValueAttribute(todayAsString);
 			page = form.getButtonByName("btn_searchByDeadline").click();
 			
-			assertThat(page.getBody().getTextContent()).doesNotContain("There are no to do");
+			assertThat(page.getBody().getTextContent()).doesNotContain(NO_TO_DO_MESSAGE);
 			
 			HtmlTable table = page.getHtmlElementById("toDo_table");
 			assertEquals(
@@ -207,7 +212,7 @@ class ToDoManagerWebControllerHtmlUnitTest {
 			form.getInputByName("title").setValueAttribute("title_1");
 			page = form.getButtonByName("btn_searchByTitle").click();
 			
-			assertThat(page.getBody().getTextContent()).contains("There are no to do");
+			assertThat(page.getBody().getTextContent()).contains(NO_TO_DO_MESSAGE);
 		}
 		
 		
@@ -227,7 +232,7 @@ class ToDoManagerWebControllerHtmlUnitTest {
 			form.getInputByName("title").setValueAttribute("title_1");
 			page = form.getButtonByName("btn_searchByTitle").click();
 			
-			assertThat(page.getBody().getTextContent()).doesNotContain("There are no to do");
+			assertThat(page.getBody().getTextContent()).doesNotContain(NO_TO_DO_MESSAGE);
 			
 			HtmlTable table = page.getHtmlElementById("toDo_table");
 			assertEquals(
@@ -251,7 +256,7 @@ class ToDoManagerWebControllerHtmlUnitTest {
 			page = form.getButtonByName("btn_deleteToDo").click();
 			
 			verify(toDoService, times(1)).deleteToDoById(new BigInteger("0"), "AuthenticatedUser");
-			assertThat(page.getBody().getTextContent()).contains("ToDo successfully deleted!");
+			assertThat(page.getBody().getTextContent()).contains(DELETE_SUCCESSFUL);
 			assertEquals("ToDo Manager", page.getTitleText());	
 		}
 	}
@@ -270,7 +275,7 @@ class ToDoManagerWebControllerHtmlUnitTest {
 			when(toDoService.getToDoById(new BigInteger("0"))).thenThrow(ToDoNotFoundException.class);
 			
 			HtmlPage page = webClient.getPage("/toDoManager/editToDo/0");
-			assertThat(page.getBody().getTextContent()).contains("ToDo not found!");
+			assertThat(page.getBody().getTextContent()).contains(TODO_NOT_FOUND);
 		}
 		
 		@Test @DisplayName("Test editToDoPage title and should provide a link for ToDoManagerPage")

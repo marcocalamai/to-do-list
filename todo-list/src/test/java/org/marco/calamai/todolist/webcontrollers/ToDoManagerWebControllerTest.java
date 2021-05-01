@@ -41,13 +41,20 @@ import org.springframework.test.web.servlet.MockMvc;
 class ToDoManagerWebControllerTest {
 	
 	
+	private static final String NEW_TO_DO_PAGE = "newToDoPage";
+	private static final String EDIT_TO_DO_PAGE = "editToDoPage";
 	private static final String TO_DO_MANAGER_PAGE = "toDoManagerPage";
-
+	
 	private static final String ALL_TO_DO_ATTRIBUTE = "allToDo";
 	private static final String ALL_MY_TO_DO_ATTRIBUTE = "allMyToDo";
 	private static final String MESSAGE_ATTRIBUTE = "message";
 	
 	private static final String NO_TO_DO_MESSAGE = "There are no to do";
+	private static final String NOT_VALID_DATE = "The deadline inserted is not a valid date!";
+	private static final String TODO_NOT_FOUND = "ToDo not found!";
+	private static final String DEADLINE_HAS_PASSED = "The deadline inserted has passed!";
+	private static final String DIFFERENT_USER = "Can't edit or delete other users' ToDo";
+	private static final String DELETE_SUCCESSFUL = "ToDo successfully deleted!";
 	
 
 	@Autowired
@@ -232,7 +239,7 @@ class ToDoManagerWebControllerTest {
 					.param("deadline", "2040-122-311"))
 					.andExpect(status().is4xxClientError())
 					.andExpect(view().name(TO_DO_MANAGER_PAGE))
-					.andExpect(model().attribute(MESSAGE_ATTRIBUTE, "The deadline inserted is not a valid date!"));
+					.andExpect(model().attribute(MESSAGE_ATTRIBUTE, NOT_VALID_DATE));
 			
 			verifyNoInteractions(toDoService);
 		}
@@ -260,7 +267,7 @@ class ToDoManagerWebControllerTest {
 			
 			mvc.perform(get("/toDoManager/editToDo/0"))
 					.andExpect(status().isOk())
-					.andExpect(view().name("editToDoPage"))
+					.andExpect(view().name(EDIT_TO_DO_PAGE))
 					.andExpect(model().attribute("toDo", toDo1));
 			
 			verify(toDoService, times(1)).getToDoById(new BigInteger("0"));
@@ -274,7 +281,7 @@ class ToDoManagerWebControllerTest {
 			mvc.perform(get("/toDoManager/editToDo/0"))
 					.andExpect(status().is4xxClientError())
 					.andExpect(view().name(TO_DO_MANAGER_PAGE))
-					.andExpect(model().attribute(MESSAGE_ATTRIBUTE, "ToDo not found!"));
+					.andExpect(model().attribute(MESSAGE_ATTRIBUTE, TODO_NOT_FOUND));
 			
 			verify(toDoService, times(1)).getToDoById(new BigInteger("0"));			
 		}
@@ -284,7 +291,7 @@ class ToDoManagerWebControllerTest {
 		void testInsertNewToDo() throws Exception {
 			mvc.perform(get("/toDoManager/newToDo"))
 					.andExpect(status().isOk())
-					.andExpect(view().name("newToDoPage"))
+					.andExpect(view().name(NEW_TO_DO_PAGE))
 					.andExpect(model().attribute("toDo", new ToDo()));
 			
 			verifyNoInteractions(toDoService);
@@ -327,7 +334,7 @@ class ToDoManagerWebControllerTest {
 					.with(csrf()))
 					.andExpect(status().is4xxClientError())
 					.andExpect(view().name(TO_DO_MANAGER_PAGE))
-					.andExpect(model().attribute(MESSAGE_ATTRIBUTE, "The deadline inserted has passed!"));
+					.andExpect(model().attribute(MESSAGE_ATTRIBUTE, DEADLINE_HAS_PASSED));
 			}
 		
 		@Test @DisplayName("Test post save new ToDo when deadline is not a valid date")
@@ -340,7 +347,7 @@ class ToDoManagerWebControllerTest {
 					.with(csrf()))
 					.andExpect(status().is4xxClientError())
 					.andExpect(view().name(TO_DO_MANAGER_PAGE))
-					.andExpect(model().attribute(MESSAGE_ATTRIBUTE, "The deadline inserted is not a valid date!"));
+					.andExpect(model().attribute(MESSAGE_ATTRIBUTE, NOT_VALID_DATE));
 			
 					verifyNoInteractions(toDoService);
 			}
@@ -387,7 +394,7 @@ class ToDoManagerWebControllerTest {
 					.with(csrf()))
 					.andExpect(status().is4xxClientError())
 					.andExpect(view().name(TO_DO_MANAGER_PAGE))
-					.andExpect(model().attribute(MESSAGE_ATTRIBUTE, "The deadline inserted has passed!"));
+					.andExpect(model().attribute(MESSAGE_ATTRIBUTE, DEADLINE_HAS_PASSED));
 			}
 		
 		@Test @DisplayName("Test post update ToDo when deadline is not a valid date")
@@ -402,7 +409,7 @@ class ToDoManagerWebControllerTest {
 					.with(csrf()))
 					.andExpect(status().is4xxClientError())
 					.andExpect(view().name(TO_DO_MANAGER_PAGE))
-					.andExpect(model().attribute(MESSAGE_ATTRIBUTE, "The deadline inserted is not a valid date!"));
+					.andExpect(model().attribute(MESSAGE_ATTRIBUTE, NOT_VALID_DATE));
 			
 					verifyNoInteractions(toDoService);
 			}
@@ -426,7 +433,7 @@ class ToDoManagerWebControllerTest {
 					.with(csrf()))
 					.andExpect(status().is4xxClientError())
 					.andExpect(view().name(TO_DO_MANAGER_PAGE))
-					.andExpect(model().attribute(MESSAGE_ATTRIBUTE, "Can't edit or delete other users' ToDo"));
+					.andExpect(model().attribute(MESSAGE_ATTRIBUTE, DIFFERENT_USER));
 			}
 		
 		@Test @DisplayName("Test post update ToDo when it is not found")
@@ -446,7 +453,7 @@ class ToDoManagerWebControllerTest {
 					.with(csrf()))
 					.andExpect(status().is4xxClientError())
 					.andExpect(view().name(TO_DO_MANAGER_PAGE))
-					.andExpect(model().attribute(MESSAGE_ATTRIBUTE, "ToDo not found!"));
+					.andExpect(model().attribute(MESSAGE_ATTRIBUTE, TODO_NOT_FOUND));
 			
 			verify(toDoService, times(1)).getToDoById(new BigInteger("0"));	
 		}
@@ -467,7 +474,7 @@ class ToDoManagerWebControllerTest {
 						.with(csrf())))
 						.andExpect(status().isOk())
 						.andExpect(view().name(TO_DO_MANAGER_PAGE))
-						.andExpect(model().attribute(MESSAGE_ATTRIBUTE, "ToDo successfully deleted!"));
+						.andExpect(model().attribute(MESSAGE_ATTRIBUTE, DELETE_SUCCESSFUL));
 			
 			verify(toDoService, times(1)).deleteToDoById(new BigInteger("0"), "AuthenticatedUser");
 		}
@@ -483,7 +490,7 @@ class ToDoManagerWebControllerTest {
 						.with(csrf()))
 						.andExpect(status().is4xxClientError())
 						.andExpect(view().name(TO_DO_MANAGER_PAGE))
-						.andExpect(model().attribute(MESSAGE_ATTRIBUTE, "ToDo not found!"));
+						.andExpect(model().attribute(MESSAGE_ATTRIBUTE, TODO_NOT_FOUND));
 			
 			verify(toDoService, times(1)).deleteToDoById(new BigInteger("0"), "AuthenticatedUser");
 		}
@@ -498,7 +505,7 @@ class ToDoManagerWebControllerTest {
 						.with(csrf()))
 						.andExpect(status().is4xxClientError())
 						.andExpect(view().name(TO_DO_MANAGER_PAGE))
-						.andExpect(model().attribute(MESSAGE_ATTRIBUTE, "Can't edit or delete other users' ToDo"));
+						.andExpect(model().attribute(MESSAGE_ATTRIBUTE, DIFFERENT_USER));
 			
 			verify(toDoService, times(1)).deleteToDoById(new BigInteger("0"), "AuthenticatedUser");
 		}

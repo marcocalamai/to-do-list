@@ -28,6 +28,10 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 @DisplayName("HtmlUnit test Registration")
 class RegistrationWebControllerHtmlUnitTest {
 	
+	private static final String USERNAME_ALREADY_PRESENT = "A user with that username already exists!";
+	private static final String WHITESPACE_IN_FIELD = "The username or password field contains one or more whitespace!";
+	private static final String PASSWORDS_DO_NOT_MATCH = "The two passwords do not match!";
+	
 	@Autowired
 	private WebClient webClient;
 	
@@ -76,7 +80,7 @@ class RegistrationWebControllerHtmlUnitTest {
 	form.getInputByName("passwordConfirmation").setValueAttribute("password_1");
 	page = form.getButtonByName("btn_submit").click();
 	
-	assertThat(page.getBody().getTextContent()).contains("A user with that username already exists!");
+	assertThat(page.getBody().getTextContent()).contains(USERNAME_ALREADY_PRESENT);
 	verify(userService, times(1)).register("username_1", "password_1", "password_1");	
 	}
 	
@@ -93,7 +97,7 @@ class RegistrationWebControllerHtmlUnitTest {
 	form.getInputByName("passwordConfirmation").setValueAttribute("passNotMatch");
 	page = form.getButtonByName("btn_submit").click();
 	
-	assertThat(page.getBody().getTextContent()).contains("The two passwords do not match!");
+	assertThat(page.getBody().getTextContent()).contains(PASSWORDS_DO_NOT_MATCH);
 	verify(userService, times(1)).register("username_1", "password_1", "passNotMatch");	
 	}
 	
@@ -111,7 +115,7 @@ class RegistrationWebControllerHtmlUnitTest {
 	form.getInputByName("passwordConfirmation").setValueAttribute("password_1");
 	page = form.getButtonByName("btn_submit").click();
 	
-	assertThat(page.getBody().getTextContent()).contains("The username or password field contains one or more whitespace!");
+	assertThat(page.getBody().getTextContent()).contains(WHITESPACE_IN_FIELD);
 	verify(userService, times(1)).register("u s e r n a m e", "password_1", "password_1");	
 	}
 }

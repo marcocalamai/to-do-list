@@ -31,6 +31,8 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 @DisplayName("HtmlUnit test Login")
 class LoginWebControllerHtmlUnitTest {
 	
+	private static final String WRONG_USERNAME_OR_PASSWORD = "Wrong username or password!";
+	
 	@Autowired 
 	private WebClient webClient;
 	
@@ -55,7 +57,7 @@ class LoginWebControllerHtmlUnitTest {
 	HtmlPage page = this.webClient.getPage("/login");
 	
 	assertEquals("/", page.getAnchorByText("Go Back").getHrefAttribute());
-	assertThat(page.getBody().getTextContent()).doesNotContain("Wrong username or password!");
+	assertThat(page.getBody().getTextContent()).doesNotContain(WRONG_USERNAME_OR_PASSWORD);
 	}
 	
 	
@@ -71,7 +73,7 @@ class LoginWebControllerHtmlUnitTest {
 	form.getInputByName("password").setValueAttribute("password_1");
 	page = form.getButtonByName("btn_submit").click();
 	
-	assertThat(page.getBody().getTextContent()).contains("Wrong username or password!");
+	assertThat(page.getBody().getTextContent()).contains(WRONG_USERNAME_OR_PASSWORD);
 	verify(userService, times(1)).loadUserByUsername("WrongUsername"); 
 	}
 	
