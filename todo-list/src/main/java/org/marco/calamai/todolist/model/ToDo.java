@@ -45,16 +45,8 @@ public class ToDo {
 		return title;
 	}
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
-
 	public String getDescription() {
 		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
 	}
 
 	public boolean isDone() {
@@ -67,10 +59,6 @@ public class ToDo {
 	
 	public LocalDate getDeadline() {
 		return deadline;
-	}
-
-	public void setDeadline(LocalDate deadline) {
-		this.deadline = deadline;
 	}
 	
 	
