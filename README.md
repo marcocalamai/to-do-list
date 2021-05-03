@@ -1,5 +1,6 @@
 # to-do-list
 [![Java CI with Maven in Linux](https://github.com/marcocalamai/to-do-list/actions/workflows/maven-linux.yml/badge.svg)](https://github.com/marcocalamai/to-do-list/actions/workflows/maven-linux.yml)
+[![Java CI with Maven in Linux with PIT mutation tests](https://github.com/marcocalamai/to-do-list/actions/workflows/maven-pr-linux-pitest.yml/badge.svg)](https://github.com/marcocalamai/to-do-list/actions/workflows/maven-pr-linux-pitest.yml)
 [![Coverage Status](https://coveralls.io/repos/github/marcocalamai/to-do-list/badge.svg?branch=master)](https://coveralls.io/github/marcocalamai/to-do-list?branch=master)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=marcocalamai_to-do-list&metric=alert_status)](https://sonarcloud.io/dashboard?id=marcocalamai_to-do-list)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=marcocalamai_to-do-list&metric=bugs)](https://sonarcloud.io/dashboard?id=marcocalamai_to-do-list)
