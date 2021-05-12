@@ -134,9 +134,8 @@ public class ToDoManagerWebController {
 	
 	@PostMapping("/toDoManager/deleteToDo/{id}")
 	public ModelAndView deleteToDo(@PathVariable BigInteger id, @AuthenticationPrincipal UserDetails principal, ModelAndView mav) {
-		ToDo toDoDeleted = toDoService.deleteToDoById(id, principal.getUsername());
+		toDoService.deleteToDoById(id, principal.getUsername());
 		mav.setViewName(TO_DO_MANAGER_PAGE);
-		mav.addObject("toDoDeleted", toDoDeleted);
 		mav.addObject(MESSAGE_ATTRIBUTE, DELETE_SUCCESSFUL);
 		return mav;
 	}

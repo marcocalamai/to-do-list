@@ -14,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,7 +42,7 @@ public class ToDoService {
 		return toDoSaved;
 	}
 	
-	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE)
+	@Transactional(propagation = Propagation.REQUIRED)
 	public ToDo updateToDo(BigInteger id, String username, ToDo toDo) {
 		deadlineCheck(toDo);
 		usernameCheck(username, toDo);
@@ -53,7 +52,7 @@ public class ToDoService {
 		return toDoSaved;
 	}
 	
-	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE)
+	@Transactional(propagation = Propagation.REQUIRED)
 	public ToDo deleteToDoById(BigInteger id, String username) {	
 		Optional<ToDo> toDo = toDoMongoRepository.findById(id);
 		if (toDo.isPresent()){
