@@ -226,8 +226,7 @@
 											<port>27017:27017</port>
 										</ports>
 										<wait>
-											<log>(?s)MongoDB init process complete.*waiting for
-												connections on port 27017</log>
+											<log>MongoDB init process complete</log>
 											<time>10000</time>
 										</wait>
 									</run>
@@ -307,8 +306,7 @@
 											<port>27017:27017</port>
 										</ports>
 										<wait>
-											<log>(?s)MongoDB init process complete.*waiting for
-												connections on port 27017</log>
+											<log>MongoDB init process complete</log>
 											<time>10000</time>
 										</wait>
 									</run>
