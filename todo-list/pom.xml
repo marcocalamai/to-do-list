@@ -52,7 +52,6 @@
 		<sonar.issue.ignore.multicriteria.e11.resourceKey>
 			**/WebSecurityConfig.java
 		</sonar.issue.ignore.multicriteria.e11.resourceKey>
-
 		<skip.unit-tests>false</skip.unit-tests>
 		<skip.integration-tests>false</skip.integration-tests>
 	</properties>
@@ -124,6 +123,11 @@
 			<groupId>io.github.bonigarcia</groupId>
 			<artifactId>webdrivermanager</artifactId>
 			<version>4.4.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.awaitility</groupId>
+			<artifactId>awaitility</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -210,19 +214,33 @@
 						<groupId>io.fabric8</groupId>
 						<artifactId>docker-maven-plugin</artifactId>
 						<configuration>
+							<showLogs>true</showLogs>
 							<images>
 								<image>
-									<name>mongo</name>
+									<name>mongo-replica-set</name>
+									<build>
+										<dockerFileDir>${project.basedir}/docker</dockerFileDir>
+									</build>
 									<run>
 										<ports>
 											<port>27017:27017</port>
 										</ports>
+										<wait>
+											<log>MongoDB init process complete</log>
+											<time>10000</time>
+										</wait>
 									</run>
 								</image>
 							</images>
-							<showLogs>true</showLogs>
 						</configuration>
 						<executions>
+							<execution>
+								<id>docker:build</id>
+								<phase>package</phase>
+								<goals>
+									<goal>build</goal>
+								</goals>
+							</execution>
 							<execution>
 								<id>docker:start</id>
 								<phase>pre-integration-test</phase>
@@ -276,19 +294,33 @@
 						<groupId>io.fabric8</groupId>
 						<artifactId>docker-maven-plugin</artifactId>
 						<configuration>
+							<showLogs>true</showLogs>
 							<images>
 								<image>
-									<name>mongo</name>
+									<name>mongo-replica-set</name>
+									<build>
+										<dockerFileDir>${project.basedir}/docker</dockerFileDir>
+									</build>
 									<run>
 										<ports>
 											<port>27017:27017</port>
 										</ports>
+										<wait>
+											<log>MongoDB init process complete</log>
+											<time>10000</time>
+										</wait>
 									</run>
 								</image>
 							</images>
-							<showLogs>true</showLogs>
 						</configuration>
 						<executions>
+							<execution>
+								<id>docker:build</id>
+								<phase>package</phase>
+								<goals>
+									<goal>build</goal>
+								</goals>
+							</execution>
 							<execution>
 								<id>docker:start</id>
 								<phase>pre-integration-test</phase>
@@ -298,7 +330,7 @@
 							</execution>
 							<execution>
 								<id>docker:stop</id>
-								<phase>post-integration-test</phase>
+								<phase>verify</phase>
 								<goals>
 									<goal>stop</goal>
 								</goals>
@@ -413,7 +445,9 @@
 							only for surefire tests (not for failsafe) -->
 						<propertyName>surefireArgLine</propertyName>
 						<excludes>
-							<exclude>**com.gargoylesoftware.htmlunit**</exclude>
+							<!-- To avoid method too large exception during instrumentation in 
+								html unit tests -->
+							<exclude>**com/gargoylesoftware**</exclude>
 							<exclude>**/TodoListApplication.class</exclude>
 							<exclude>org/marco/calamai/todolist/model/*</exclude>
 							<exclude>org/marco/calamai/todolist/repositories/mongo/*</exclude>
