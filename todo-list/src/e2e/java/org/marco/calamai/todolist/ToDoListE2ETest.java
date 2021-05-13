@@ -17,6 +17,7 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
+
 @DisplayName("E2E tests")
 class ToDoListE2ETest {
 	
