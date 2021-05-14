@@ -45,7 +45,7 @@
 		</sonar.coverage.exclusions>
 		<sonar.issue.ignore.multicriteria>e11</sonar.issue.ignore.multicriteria>
 		<!-- "Inject this field value directly into "authProvider", the only method 
-			that uses it" avoided early initialization of beans with @Lazy annotation -->
+			that uses it" avoided early initialization of bean with @Lazy annotation -->
 		<sonar.issue.ignore.multicriteria.e11.ruleKey>
 			java:S3305
 		</sonar.issue.ignore.multicriteria.e11.ruleKey>
@@ -69,7 +69,6 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
@@ -505,6 +504,7 @@
 						<excludedTestClasses>
 							<excludedTestClass>org.marco.calamai.todolist.**.*IT</excludedTestClass>
 							<excludedTestClass>org.marco.calamai.todolist.**.*E2ETest</excludedTestClass>
+							<excludedTestClass>org.marco.calamai.todolist.webcontrollers.*HtmlUnitTest</excludedTestClass>
 						</excludedTestClasses>
 						<targetClasses>
 							<param>org.marco.calamai.todolist.services.*</param>
